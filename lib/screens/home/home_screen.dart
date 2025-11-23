@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yumm_ai/screens/home/widgets/home_app_bar.dart';
 import 'package:yumm_ai/screens/home/widgets/home_search_bar.dart';
 import 'package:yumm_ai/screens/home/widgets/welcome_text.dart';
+import 'package:yumm_ai/widgets/purchase_premium_card.dart';
 
 class HomeScreen extends StatelessWidget{
   const HomeScreen({super.key});
@@ -13,7 +14,8 @@ class HomeScreen extends StatelessWidget{
       body: SafeArea(child: Column(
         children: [
           WelcomeText(),
-          HomeSearchBar()
+          HomeSearchBar(),
+          PurchasePremiumCard()
         ],
       )),
     );

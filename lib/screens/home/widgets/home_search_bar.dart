@@ -19,17 +19,15 @@ class HomeSearchBar extends StatelessWidget {
             child: SizedBox(
               height: 36,
               width: 36,
-              child: SvgPicture.asset("assets/images/pizza_icon.svg")),
+              child: SvgPicture.asset("assets/images/pizza_icon.svg"),
+            ),
           ),
 
           // Search Text
           Expanded(
             child: Text(
               'What do you want to eat?',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
             ),
           ),
 
