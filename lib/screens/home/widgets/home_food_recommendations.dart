@@ -1,0 +1,124 @@
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:yumm_ai/core/styles/app_colors.dart';
+import 'package:yumm_ai/core/styles/app_text_styles.dart';
+
+class HomeFoodRecommendations extends StatelessWidget {
+  const HomeFoodRecommendations({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context).size;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          width: mq.width * 0.90,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(40),
+            color: AppColors.lightBlackColor,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Image.asset(
+                    "assets/images/salad.png",
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                // Bottom gradient overlay fixed to the bottom portion only
+                Positioned.fill(
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: FractionallySizedBox(
+                      widthFactor: 1.0,
+                      heightFactor: 0.55,
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Color.fromARGB(180, 0, 0, 0),
+                              Color.fromARGB(80, 0, 0, 0),
+                              Color.fromARGB(0, 0, 0, 0),
+                            ],
+                            stops: [0.0, 0.6, 1.0],
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Name of the Dish and some random descriptions",
+                                softWrap: true,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppTextStyles.h3.copyWith(
+                                  color: AppColors.whiteColor,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  _buildInfoBox(
+                                    info: "25 min",
+                                    icon: LucideIcons.clock,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  _buildInfoBox(
+                                    info: "Intermediate",
+                                    icon: LucideIcons.brain,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoBox({required String info, required IconData icon}) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(26),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(26),
+            color: Colors.white24,
+          ),
+          child: Row(
+            spacing: 8,
+            children: [
+              Icon(icon, size: 18, color: AppColors.whiteColor),
+              Text(
+                info,
+                style: AppTextStyles.normalText.copyWith(
+                  color: AppColors.whiteColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

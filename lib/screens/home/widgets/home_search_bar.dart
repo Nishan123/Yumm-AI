@@ -7,7 +7,8 @@ class HomeSearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70,
+      margin: EdgeInsets.symmetric(horizontal: 18),
+      height: 60,
       decoration: BoxDecoration(
         color: AppColors.lightBlackColor,
         borderRadius: BorderRadius.circular(35),
@@ -17,8 +18,8 @@ class HomeSearchBar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 15),
             child: SizedBox(
-              height: 36,
-              width: 36,
+              height: 32,
+              width: 32,
               child: SvgPicture.asset("assets/images/pizza_icon.svg"),
             ),
           ),
@@ -27,7 +28,7 @@ class HomeSearchBar extends StatelessWidget {
           Expanded(
             child: Text(
               'What do you want to eat?',
-              style: TextStyle(fontSize: 16, color: Colors.grey[500]),
+              style: TextStyle(fontSize: 15, color: Colors.grey[500]),
             ),
           ),
 
@@ -35,8 +36,8 @@ class HomeSearchBar extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: Container(
-              width: 50,
-              height: 50,
+              width: 45,
+              height: 45,
               decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
