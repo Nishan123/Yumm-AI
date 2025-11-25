@@ -19,4 +19,14 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     height: 1.2,
   );
+  static const TextStyle h6 = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    height: 1.2,
+  );
+  static const TextStyle navBarText = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w400,
+    height: 1.2,
+  );
 }

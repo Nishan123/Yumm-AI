@@ -53,6 +53,7 @@ class _CustomChoiceChipState extends State<CustomChoiceChip> {
             borderRadius: BorderRadiusGeometry.circular(30),
           ),
           labelStyle: TextStyle(
+            fontSize: 15,
             color: _selectedIndex == index
                 ? AppColors.whiteColor
                 : AppColors.blackColor,

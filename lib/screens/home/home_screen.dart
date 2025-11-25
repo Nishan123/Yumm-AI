@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:yumm_ai/core/styles/app_colors.dart';
+import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/screens/home/widgets/home_app_bar.dart';
 import 'package:yumm_ai/screens/home/widgets/home_search_bar.dart';
 import 'package:yumm_ai/screens/home/widgets/recommended_food_scroll_snap.dart';
+import 'package:yumm_ai/screens/home/widgets/top_recipe_card.dart';
 import 'package:yumm_ai/widgets/custom_choice_chip.dart';
-import 'package:yumm_ai/widgets/purchase_premium_card.dart';
+import 'package:yumm_ai/widgets/premium_ad_banner.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,8 +28,16 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: 12),
               // Custom Search Bar
               HomeSearchBar(),
+              SizedBox(height: 18),
               //Premium Card
-              PurchasePremiumCard(),
+              PremiumAdBanner(
+                text: 'Unlock\nUnlimited Recipes',
+                backgroundImage: 'assets/images/ad_banner.svg',
+                onTap: () {},
+                buttonText: 'Go Premium',
+              ),
+              SizedBox(height: 12),
+
               //Choice Chips
               CustomChoiceChip(
                 onFoodTypeSelected: (foodType) {
@@ -38,9 +47,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   print(selectedFoodType);
                 },
               ),
+              SizedBox(height: 8),
 
               //Recommendations Card
               RecommendedFoodScrollSnap(),
+
+              Padding(
+                padding: const EdgeInsets.only(left: 18, top: 18,bottom: 18),
+                child: Text("Top Recipes", style: AppTextStyles.title),
+              ),
 
               //Top Recipes
               ListView.builder(
@@ -50,15 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        margin: EdgeInsets.symmetric(horizontal: 18,vertical: 8),
-                        height: 220,
-                        width: double.infinity,
-                        color: AppColors.blackColor,
-                      ),
-                      Text("Recipe name")
-                    ],
+                    children: [TopRecipeCard()],
                   );
                 },
               ),

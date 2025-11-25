@@ -10,7 +10,7 @@ class RecommendedFoodScrollSnap extends StatefulWidget {
 }
 
 class _RecommendedFoodScrollSnapState extends State<RecommendedFoodScrollSnap> {
-  final _controller = PageController(viewportFraction: 0.93);
+  final _controller = PageController(viewportFraction: 0.82);
   int focusedIndex = 0;
 
   @override
@@ -22,7 +22,7 @@ class _RecommendedFoodScrollSnapState extends State<RecommendedFoodScrollSnap> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 450,
+      height: 390,
       width: double.infinity,
       child: PageView.builder(
         padEnds: false,
