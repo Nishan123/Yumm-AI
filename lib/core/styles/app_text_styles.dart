@@ -9,6 +9,16 @@ class AppTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.w500,
   );
+  static const TextStyle h1 = TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
+  );
+  static const TextStyle h2 = TextStyle(
+    fontSize: 26,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
+  );
   static const TextStyle h3 = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w500,
