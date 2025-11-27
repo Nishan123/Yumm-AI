@@ -21,6 +21,7 @@ class SettingListGroup extends StatelessWidget {
           groupName,
           style: AppTextStyles.h5.copyWith(
             color: AppColors.descriptionTextColor,
+            fontWeight: FontWeight.w400
           ),
         ),
         ...settingLists,

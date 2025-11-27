@@ -33,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: 24,
+                      spacing: 20,
                       children: [
                         SizedBox(height: 50),
                         Spacer(),
@@ -77,12 +77,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         Spacer(),
 
-                        PrimaryButton(
-                          text: "Log In",
-                          backgroundColor: AppColors.primaryColor,
-                        ),
+                        PrimaryButton(text: "Log In"),
                         CustomDivider(),
-                        GoogleSigninButton(onTap: () {},text: "Sign In With Google",),
+                        GoogleSigninButton(
+                          onTap: () {},
+                          text: "Sign In With Google",
+                        ),
                         Spacer(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

@@ -9,10 +9,16 @@ class ProfilePreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      
+      padding: EdgeInsets.symmetric(horizontal: 6,vertical: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        color: AppColors.extraLightBlackColor
+      ),
       child: Row(
         spacing: 8,
         children: [
-          CircleAvatar(radius: 30, backgroundColor: AppColors.blackColor),
+          CircleAvatar(radius: 26, backgroundColor: AppColors.blackColor),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

@@ -37,7 +37,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      spacing: 24,
+                      spacing: 20,
                       children: [
                         SizedBox(height: 50),
                         Spacer(),
@@ -104,13 +104,14 @@ class _SignupScreenState extends State<SignupScreen> {
 
                         PrimaryButton(
                           text: "Sign Up",
-                          backgroundColor: AppColors.primaryColor,
                         ),
                         CustomDivider(),
+                        
                         GoogleSigninButton(
                           onTap: () {},
                           text: "Sign Up with Google",
                         ),
+
                         Spacer(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

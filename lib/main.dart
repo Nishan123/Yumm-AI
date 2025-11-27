@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/screens/main/main_screen.dart';
+import 'package:yumm_ai/screens/scanner/scanner_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
       debugShowCheckedModeBanner: false,
-      home: MainScreen(),
+      home: ScannerScreen(),
     );
   }
 }

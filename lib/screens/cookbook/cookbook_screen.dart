@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yumm_ai/screens/cookbook/widgets/cookbook_card.dart';
 
 class CookbookScreen extends StatefulWidget {
   const CookbookScreen({super.key});
@@ -10,6 +11,25 @@ class CookbookScreen extends StatefulWidget {
 class _CookbookScreenState extends State<CookbookScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: SafeArea(child: Placeholder()));
+    return Scaffold(
+      appBar: AppBar(title: Text("Your Cookbook")),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 28,),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: 12,
+                itemBuilder: (context, index) {
+                  return CookbookCard();
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

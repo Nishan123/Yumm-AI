@@ -34,12 +34,16 @@ class _RecommendedFoodScrollSnapState extends State<RecommendedFoodScrollSnap> {
           return AnimatedPadding(
             duration: const Duration(milliseconds: 200),
             padding: EdgeInsets.only(
-              left: index==focusedIndex?18:0,
+              left: isFocused ? 18 : 0,
               right: 12,
               top: isFocused ? 0 : 40,
               bottom: isFocused ? 0 : 0,
             ),
-            child: HomeFoodRecommendations(),
+            child: HomeFoodRecommendations(
+              mainFontSize: isFocused ? 18 : 16,
+              iconsSize: isFocused ? 18 : 14,
+              normalFontSize: isFocused ? 14 : 10,
+            ),
           );
         },
       ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/screens/setting/widgets/profile_preview_card.dart';
 import 'package:yumm_ai/screens/setting/widgets/setting_item_card.dart';
 import 'package:yumm_ai/screens/setting/widgets/setting_list_group.dart';
+import 'package:yumm_ai/widgets/secondary_button.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
@@ -90,6 +92,13 @@ class SettingScreen extends StatelessWidget {
                       subTitle: 'Help center, contacts, privacy policy.',
                     ),
                   ],
+                ),
+                Divider(),
+                SecondaryButton(
+                  text: "Log Out",
+                  borderRadius: 12,
+                  backgroundColor: AppColors.redColor,
+                  onTap: () {},
                 ),
                 SizedBox(height: 108),
               ],

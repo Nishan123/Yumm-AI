@@ -4,6 +4,7 @@ import 'package:readmore/readmore.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/widgets/custom_icon_button.dart';
+import 'package:yumm_ai/widgets/dot.dart';
 
 class TopRecipeCard extends StatelessWidget {
   const TopRecipeCard({super.key});
@@ -28,12 +29,25 @@ class TopRecipeCard extends StatelessWidget {
             height: MediaQuery.of(context).size.height * 0.27,
             child: Stack(
               children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(26),
+                  child: SizedBox(
+                    height: double.infinity,
+                    width: double.infinity,
+                    child: Image.asset(
+                      "assets/images/salad.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
                 Align(
                   alignment: Alignment.topRight,
                   child: Padding(
                     padding: const EdgeInsets.only(right: 12, top: 12),
                     child: CustomIconButton(
+                      backgroundColor: AppColors.lightWhiteColor,
                       icon: LucideIcons.heart,
+                      iconColor: AppColors.whiteColor,
                       onTap: () {},
                     ),
                   ),
@@ -79,7 +93,7 @@ class TopRecipeCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              _dot(),
+              dot(),
               Flexible(
                 child: Text(
                   "45 min read",
@@ -89,7 +103,7 @@ class TopRecipeCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              _dot(),
+              dot(),
               Flexible(
                 child: Text(
                   "Recipe Included",
@@ -103,17 +117,6 @@ class TopRecipeCard extends StatelessWidget {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _dot() {
-    return Container(
-      height: 8,
-      width: 8,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: AppColors.blackColor,
       ),
     );
   }

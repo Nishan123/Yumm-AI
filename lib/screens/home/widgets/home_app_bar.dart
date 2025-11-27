@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/widgets/custom_icon_button.dart';
@@ -18,7 +19,13 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Hi👋,", style: AppTextStyles.h5),
+              Row(
+                children: [
+                  Text("Hi,", style: AppTextStyles.h5),
+                  SvgPicture.asset("assets/images/ai_star.svg",height: 20,),
+
+                ],
+              ),
               Text(
                 "Username",
                 style: AppTextStyles.normalText.copyWith(

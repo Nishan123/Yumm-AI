@@ -3,19 +3,19 @@ import 'package:yumm_ai/core/styles/app_colors.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
-  final Color backgroundColor;
+  final double? borderRadius;
 
   const PrimaryButton({
     super.key,
     required this.text,
-    required this.backgroundColor,
+    this.borderRadius
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(borderRadius??40),
         gradient: LinearGradient(
           colors: [
             AppColors.primaryColor,
@@ -29,10 +29,11 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {},
         style: ElevatedButton.styleFrom(
+          
           elevation: 0,
           foregroundColor: AppColors.whiteColor,
           backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent, // Remove shadow
+          shadowColor: Colors.transparent,
         ),
         child: Text(text),
       ),
