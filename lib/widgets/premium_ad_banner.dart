@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
+import 'package:yumm_ai/core/styles/custom_shadow.dart';
 
 class PremiumAdBanner extends StatelessWidget {
   final String text;
@@ -25,11 +26,7 @@ class PremiumAdBanner extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppColors.whiteColor, width: 4),
         boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowColor,
-            spreadRadius: 1.3,
-            blurRadius: 8,
-          ),
+         CustomShadow.mainShadow
         ],
       ),
       child: Stack(

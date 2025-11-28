@@ -17,13 +17,13 @@ class _CookbookScreenState extends State<CookbookScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 28,),
+              const SizedBox(height: 28,),
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
                 itemCount: 12,
                 itemBuilder: (context, index) {
-                  return CookbookCard();
+                  return CookbookCard(dismissibleKey: ValueKey('recipe_$index'));
                 },
               ),
             ],

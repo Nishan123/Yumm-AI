@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
+import 'package:yumm_ai/core/styles/custom_shadow.dart';
 
 class ItemCard extends StatelessWidget {
   final String itemName;
@@ -31,11 +32,7 @@ class ItemCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(22),
               border: Border.all(width: 3, color: AppColors.whiteColor),
               boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadowColor,
-                  spreadRadius: 1,
-                  blurRadius: 6,
-                ),
+                CustomShadow.mainShadow
               ],
             ),
             child: Center(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/screens/cookbook/cookbook_screen.dart';
 import 'package:yumm_ai/screens/home/home_screen.dart';
 import 'package:yumm_ai/screens/item/item_screen.dart';
@@ -15,7 +16,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int selectedIndex = 0;
-  final screens = [
+  final screens = const [
     HomeScreen(),
     ItemScreen(),
     CookbookScreen(),
@@ -25,25 +26,29 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: CustomFab(),
+      floatingActionButton: CustomFab(
+        onTap: () {
+          context.pushNamed("scanner");
+        },
+      ),
       extendBody: true,
 
       body: Stack(
         children: [
           screens[selectedIndex],
           Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: CustomButtomNav(
-                currentIndex: selectedIndex,
-                onTap: (index) {
-                  setState(() {
-                    selectedIndex = index;
-                  });
-                },
-              ),
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: CustomButtomNav(
+              currentIndex: selectedIndex,
+              onTap: (index) {
+                setState(() {
+                  selectedIndex = index;
+                });
+              },
             ),
+          ),
         ],
       ),
     );

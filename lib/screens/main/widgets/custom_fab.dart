@@ -3,7 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 
 class CustomFab extends StatelessWidget {
-  const CustomFab({super.key});
+  final VoidCallback onTap;
+  const CustomFab({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +12,7 @@ class CustomFab extends StatelessWidget {
       margin: EdgeInsets.only(bottom: 50),
       child: InkWell(
         splashColor: AppColors.primaryColor,
-        onTap: () {},
+        onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -20,10 +21,11 @@ class CustomFab extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-              AppColors.whiteShadowColor,
-              AppColors.primaryColor,
-              AppColors.primaryColor
-            ])
+                AppColors.whiteShadowColor,
+                AppColors.primaryColor,
+                AppColors.primaryColor,
+              ],
+            ),
           ),
           padding: EdgeInsets.all(16),
           child: SvgPicture.asset(

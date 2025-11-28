@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
+import 'package:yumm_ai/core/styles/custom_shadow.dart';
 import 'package:yumm_ai/widgets/dot.dart';
 import 'package:yumm_ai/widgets/secondary_button.dart';
 
 class CookbookCard extends StatelessWidget {
-  const CookbookCard({super.key});
+  final Key dismissibleKey;
+  const CookbookCard({super.key, required this.dismissibleKey});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +56,7 @@ class CookbookCard extends StatelessWidget {
           ],
         ),
       ),
-      key: Key(UniqueKey().toString()),
+      key: dismissibleKey,
       direction: DismissDirection.endToStart,
       child: Container(
         padding: EdgeInsets.only(left: 8, right: 8, bottom: 8, top: 4),
@@ -65,13 +67,7 @@ class CookbookCard extends StatelessWidget {
           color: AppColors.extraLightBlackColor,
           border: Border.all(color: AppColors.whiteColor, width: 4),
           borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowColor,
-              spreadRadius: 1,
-              blurRadius: 6,
-            ),
-          ],
+          boxShadow: [CustomShadow.mainShadow],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.max,
