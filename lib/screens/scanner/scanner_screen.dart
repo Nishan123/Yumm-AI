@@ -29,6 +29,12 @@ class _ScannerScreenState extends State<ScannerScreen> {
   }
 
   @override
+  void dispose() {
+    cameraController!.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -44,25 +50,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
         child: Column(
           children: [
             //camera container
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.6,
-              decoration: BoxDecoration(
-                color: AppColors.extraLightBlackColor,
-                border: Border.all(width: 4, color: AppColors.whiteColor),
-                borderRadius: BorderRadius.circular(36),
-                boxShadow: [CustomShadow.mainShadow],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadiusGeometry.circular(34),
-                child:
-                    (cameraController != null &&
-                        cameraController!.value.isInitialized)
-                    ? CameraPreview(cameraController!)
-                    : const Center(child: CircularProgressIndicator()),
-              ),
-            ),
+            CameraBox(cameraController: cameraController),
             CustomChoiceChip(),
             Padding(
               padding: EdgeInsetsGeometry.symmetric(
@@ -82,6 +70,34 @@ class _ScannerScreenState extends State<ScannerScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CameraBox extends StatelessWidget {
+  const CameraBox({super.key, required this.cameraController});
+
+  final CameraController? cameraController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height * 0.6,
+      decoration: BoxDecoration(
+        color: AppColors.extraLightBlackColor,
+        border: Border.all(width: 4, color: AppColors.whiteColor),
+        borderRadius: BorderRadius.circular(36),
+        boxShadow: [CustomShadow.mainShadow],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadiusGeometry.circular(34),
+        child:
+            (cameraController != null && cameraController!.value.isInitialized)
+            ? CameraPreview(cameraController!)
+            : const Center(child: CircularProgressIndicator()),
       ),
     );
   }
