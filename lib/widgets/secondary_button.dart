@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 
 class SecondaryButton extends StatelessWidget {
@@ -37,7 +38,7 @@ class SecondaryButton extends StatelessWidget {
           children: [
           SizedBox(width: 14,),
           Text(text),
-          SvgPicture.asset("assets/images/hatIcon.svg")
+          SvgPicture.asset("${Constants.assetSvg}/hatIcon.svg")
         ],):Text(text)
       ),
     );

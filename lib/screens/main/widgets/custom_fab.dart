@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 
 class CustomFab extends StatelessWidget {
@@ -29,7 +30,7 @@ class CustomFab extends StatelessWidget {
           ),
           padding: EdgeInsets.all(16),
           child: SvgPicture.asset(
-            "assets/images/scanner_icon.svg",
+            "${Constants.assetSvg}/scanner_icon.svg",
             height: 32,
             width: 32,
           ),

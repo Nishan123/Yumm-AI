@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 
 class HomeSearchBar extends StatelessWidget {
@@ -21,7 +22,7 @@ class HomeSearchBar extends StatelessWidget {
             child: SizedBox(
               height: 32,
               width: 32,
-              child: SvgPicture.asset("assets/images/pizza_icon.svg"),
+              child: SvgPicture.asset("${Constants.assetSvg}/pizza_icon.svg"),
             ),
           ),
 

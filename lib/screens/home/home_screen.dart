@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/screens/home/widgets/home_app_bar.dart';
 import 'package:yumm_ai/screens/home/widgets/home_search_bar.dart';
@@ -32,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
               //Premium Card
               PremiumAdBanner(
                 text: 'Unlock\nUnlimited Recipes',
-                backgroundImage: 'assets/images/ad_banner.svg',
+                backgroundImage: '${Constants.assetSvg}/ad_banner.svg',
                 onTap: () {},
                 buttonText: 'Go Premium',
               ),
@@ -53,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
               RecommendedFoodScrollSnap(),
 
               Padding(
-                padding: const EdgeInsets.only(left: 18, top: 18,bottom: 18),
+                padding: const EdgeInsets.only(left: 18, top: 18, bottom: 18),
                 child: Text("Top Recipes", style: AppTextStyles.title),
               ),
 

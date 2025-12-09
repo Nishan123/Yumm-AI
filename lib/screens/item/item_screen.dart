@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/screens/item/widgets/item_card.dart';
 
 class ItemScreen extends StatefulWidget {
@@ -12,7 +13,6 @@ class _ItemScreenState extends State<ItemScreen> {
   @override
   Widget build(BuildContext context) {
     var mq = MediaQuery.of(context).size;
-    String _imagePath = "assets/images";
 
     // Calculate responsive cross axis count based on screen width
     int getCrossAxisCount() {
@@ -54,25 +54,25 @@ class _ItemScreenState extends State<ItemScreen> {
                   mq: mq,
                   itemName: "Shopping List",
                   savedItems: 0,
-                  image: "$_imagePath/shopping_list.png",
+                  image: "${Constants.assetImage}/shopping_list.png",
                 ),
                 ItemCard(
                   mq: mq,
                   itemName: "Saved Recipes",
                   savedItems: 0,
-                  image: "$_imagePath/pantry.png",
+                  image: "${Constants.assetImage}/pantry.png",
                 ),
                 ItemCard(
                   mq: mq,
                   itemName: "Saved Recipes",
                   savedItems: 0,
-                  image: "$_imagePath/pan.png",
+                  image: "${Constants.assetImage}/pan.png",
                 ),
                 ItemCard(
                   mq: mq,
                   itemName: "Saved Recipes",
                   savedItems: 0,
-                  image: "$_imagePath/saved_recipe.png",
+                  image: "${Constants.assetImage}/saved_recipe.png",
                 ),
               ],
             ),

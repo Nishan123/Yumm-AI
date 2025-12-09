@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/screens/auth/widgets/auth_text_field.dart';
@@ -7,6 +8,7 @@ import 'package:yumm_ai/screens/auth/widgets/google_signin_button.dart';
 import 'package:yumm_ai/widgets/custom_divider.dart';
 import 'package:yumm_ai/widgets/custom_text_button.dart';
 import 'package:yumm_ai/widgets/primary_button.dart';
+import 'package:yumm_ai/widgets/svg_text_logo.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -39,8 +41,11 @@ class _SignupScreenState extends State<SignupScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       spacing: 20,
                       children: [
-                        SizedBox(height: 50),
+                        SizedBox(height: 30),
+
                         Spacer(),
+                        SvgTextLogo(),
+                        SizedBox(height: 10),
                         Text("Sign Up !", style: AppTextStyles.h1),
                         AuthTextField(
                           inputType: TextInputType.emailAddress,
@@ -63,7 +68,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               _isPasswordObscure = !_isPasswordObscure;
                             });
                           },
-                           suffixIcon: _isPasswordObscure
+                          suffixIcon: _isPasswordObscure
                               ? LucideIcons.eye
                               : LucideIcons.eye_off,
                           prefixIcon: LucideIcons.lock,
@@ -103,10 +108,13 @@ class _SignupScreenState extends State<SignupScreen> {
                         Spacer(),
 
                         PrimaryButton(
+                          onTap: () {
+                            context.goNamed("main");
+                          },
                           text: "Sign Up",
                         ),
                         CustomDivider(),
-                        
+
                         GoogleSigninButton(
                           onTap: () {},
                           text: "Sign Up with Google",
@@ -123,7 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
                             CustomTextButton(
                               text: "Log In",
                               onTap: () {
-                                // context.pop();
+                                context.pop();
                               },
                               textColor: AppColors.blueColor,
                             ),

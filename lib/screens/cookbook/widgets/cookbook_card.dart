@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/core/styles/custom_shadow.dart';
@@ -91,7 +92,7 @@ class CookbookCard extends StatelessWidget {
                       child: ClipRRect(
                         borderRadius: BorderRadiusGeometry.circular(16),
                         child: Image.asset(
-                          "assets/images/salad.png",
+                          "${Constants.assetImage}/salad.png",
                           fit: BoxFit.cover,
                         ),
                       ),

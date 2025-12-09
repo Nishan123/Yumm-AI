@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/screens/setting/widgets/profile_preview_card.dart';
 import 'package:yumm_ai/screens/setting/widgets/setting_item_card.dart';
@@ -98,7 +99,9 @@ class SettingScreen extends StatelessWidget {
                   text: "Log Out",
                   borderRadius: 12,
                   backgroundColor: AppColors.redColor,
-                  onTap: () {},
+                  onTap: () {
+                    context.goNamed("onboarding");
+                  },
                 ),
                 SizedBox(height: 108),
               ],

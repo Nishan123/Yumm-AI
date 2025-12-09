@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/screens/auth/widgets/auth_text_field.dart';
@@ -7,6 +8,7 @@ import 'package:yumm_ai/screens/auth/widgets/google_signin_button.dart';
 import 'package:yumm_ai/widgets/custom_divider.dart';
 import 'package:yumm_ai/widgets/custom_text_button.dart';
 import 'package:yumm_ai/widgets/primary_button.dart';
+import 'package:yumm_ai/widgets/svg_text_logo.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -18,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isPasswordObscure = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,8 +38,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       spacing: 20,
                       children: [
-                        SizedBox(height: 50),
+                        SizedBox(height: 30),
                         Spacer(),
+                       SvgTextLogo(),
+                        SizedBox(height:15),
                         Text("Welcome\nBack !", style: AppTextStyles.h1),
                         AuthTextField(
                           inputType: TextInputType.emailAddress,
@@ -53,8 +58,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         AuthTextField(
                           isPassword: true,
-                          isObscure: true,
-                          suffixIcon: LucideIcons.eye,
+                          isObscure: _isPasswordObscure,
+                          onShowPassword: () {
+                            setState(() {
+                              _isPasswordObscure = !_isPasswordObscure;
+                            });
+                          },
+                          suffixIcon: _isPasswordObscure
+                              ? LucideIcons.eye
+                              : LucideIcons.eye_off,
                           prefixIcon: LucideIcons.lock,
                           hintText: "Password",
                           controller: _passwordController,
@@ -77,7 +89,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         Spacer(),
 
-                        PrimaryButton(text: "Log In"),
+                        PrimaryButton(
+                          text: "Log In",
+                          onTap: () {
+                            context.goNamed("main");
+                          },
+                        ),
                         CustomDivider(),
                         GoogleSigninButton(
                           onTap: () {},
@@ -93,7 +110,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             CustomTextButton(
                               text: "Create one",
-                              onTap: () {},
+                              onTap: () {
+                                context.pushNamed("signup");
+                              },
                               textColor: AppColors.blueColor,
                             ),
                           ],
