@@ -137,7 +137,7 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
                 borderRadius: 40,
                 text: "Generate Meal",
                 onTap: () async {
-                  RecipeController().generateRecipe(
+                  RecipeController().generatePantryRecipe(
                     selectedIngredients,
                     _selectedMeal.value,
                     _selectedDuration,
