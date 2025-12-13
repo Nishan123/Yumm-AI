@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yumm_ai/controllers/recipe_controller.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
@@ -136,21 +137,12 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
                 borderRadius: 40,
                 text: "Generate Meal",
                 onTap: () async {
-                  debugPrint(_selectedCookingExpertise.value);
-                  debugPrint(_selectedMeal.value);
-                  // Gemini.instance
-                  //     .prompt(
-                  //       parts: [
-                  //         Part.text(
-                  //           "Hello how are you? and which gemini model is this",
-                  //         ),
-                  //       ],
-                  //     )
-                  //     .then((value) {
-                  //       debugPrint(
-                  //         "Gemini Response: ${value?.output ?? "Failed to generate res"}",
-                  //       );
-                  //     });
+                  RecipeController().generateRecipe(
+                    selectedIngredients,
+                    _selectedMeal.value,
+                    _selectedDuration,
+                    _selectedCookingExpertise.value,
+                  );
                 },
                 backgroundColor: AppColors.blackColor,
                 haveHatIcon: true,

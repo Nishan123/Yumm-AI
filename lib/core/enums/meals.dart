@@ -66,7 +66,7 @@ enum Meal {
       case Meal.snacks:
         return LucideIcons.hamburger;
       case Meal.dessert:
-        return LucideIcons.cake;
+        return LucideIcons.cake_slice;
       case Meal.hardDrink:
         return LucideIcons.bottle_wine;
       case Meal.softDrink:
