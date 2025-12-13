@@ -1,39 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 
-class CustomChoiceChip extends StatefulWidget {
-  final void Function(String sport)? onFoodTypeSelected;
+class CustomChoiceChip<T> extends StatefulWidget {
+  final List<T> values;
+  final String Function(T) labelBuilder;
+  final IconData Function(T) iconBuilder;
+  final void Function(T)? onSelected;
   final EdgeInsetsGeometry padding;
+
   const CustomChoiceChip({
     super.key,
-    this.onFoodTypeSelected,
+    required this.values,
+    required this.labelBuilder,
+    required this.iconBuilder,
+    this.onSelected,
     this.padding = const EdgeInsets.only(right: 16),
   });
 
   @override
-  State<CustomChoiceChip> createState() => _CustomChoiceChipState();
+  State<CustomChoiceChip<T>> createState() => _CustomChoiceChipState<T>();
 }
 
-class _CustomChoiceChipState extends State<CustomChoiceChip> {
-  final List<String> foodTypes = [
-    "Anything",
-    "Breakfast",
-    "Dinner",
-    "Main course",
-    "Snacks",
-    "Dessert",
-    "Hard drinks",
-    "Soft drinks",
-  ];
-
+class _CustomChoiceChipState<T> extends State<CustomChoiceChip<T>> {
   int _selectedIndex = 0;
-  String result = '';
 
   @override
   Widget build(BuildContext context) {
-    final chips = foodTypes.asMap().entries.map((entry) {
+    final chips = widget.values.asMap().entries.map((entry) {
       final index = entry.key;
-      final foodTypes = entry.value;
+      final item = entry.value;
+      final label = widget.labelBuilder(item);
+      final icon = widget.iconBuilder(item);
 
       return Padding(
         padding: index == 0
@@ -41,12 +38,23 @@ class _CustomChoiceChipState extends State<CustomChoiceChip> {
             : const EdgeInsets.only(right: 10),
         child: ChoiceChip(
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-
           showCheckmark: false,
-          label: Text(foodTypes),
+          label: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 20,
+                color: _selectedIndex == index
+                    ? AppColors.whiteColor
+                    : AppColors.blackColor,
+              ),
+              const SizedBox(width: 8),
+              Text(label),
+            ],
+          ),
           selected: _selectedIndex == index,
-          onSelected: (selected) =>
-              _handleSelection(selected, index, foodTypes),
+          onSelected: (selected) => _handleSelection(selected, index, item),
           selectedColor: AppColors.blackColor,
           shape: RoundedRectangleBorder(
             side: BorderSide(color: AppColors.blackColor),
@@ -72,10 +80,10 @@ class _CustomChoiceChipState extends State<CustomChoiceChip> {
     );
   }
 
-  void _handleSelection(bool selected, int index, String foodType) {
+  void _handleSelection(bool selected, int index, T item) {
     if (selected) {
       setState(() => _selectedIndex = index);
-      widget.onFoodTypeSelected?.call(foodType);
+      widget.onSelected?.call(item);
     }
   }
 }

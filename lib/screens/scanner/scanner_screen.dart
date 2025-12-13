@@ -1,8 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
-import 'package:yumm_ai/core/styles/custom_shadow.dart';
+import 'package:yumm_ai/core/styles/container_property.dart';
 import 'package:yumm_ai/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/widgets/secondary_button.dart';
@@ -17,6 +18,7 @@ class ScannerScreen extends StatefulWidget {
 
 class _ScannerScreenState extends State<ScannerScreen> {
   CameraController? cameraController;
+  Meal _selectedMealType = Meal.anything;
 
   @override
   void initState() {
@@ -51,7 +53,16 @@ class _ScannerScreenState extends State<ScannerScreen> {
           children: [
             //camera container
             CameraBox(cameraController: cameraController),
-            CustomChoiceChip(),
+            CustomChoiceChip(
+              values: Meal.values,
+              labelBuilder: (meal) => meal.text,
+              iconBuilder: (meal) => meal.icon,
+              onSelected: (value) {
+                setState(() {
+                  _selectedMealType = value;
+                });
+              },
+            ),
             Padding(
               padding: EdgeInsetsGeometry.symmetric(
                 horizontal: 18,
@@ -90,7 +101,7 @@ class CameraBox extends StatelessWidget {
         color: AppColors.extraLightBlackColor,
         border: Border.all(width: 4, color: AppColors.whiteColor),
         borderRadius: BorderRadius.circular(36),
-        boxShadow: [CustomShadow.mainShadow],
+        boxShadow: [ContainerProperty.mainShadow],
       ),
       child: ClipRRect(
         borderRadius: BorderRadiusGeometry.circular(34),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/core/consts/constants.dart';
+import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/screens/home/widgets/home_app_bar.dart';
 import 'package:yumm_ai/screens/home/widgets/home_search_bar.dart';
@@ -16,7 +17,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String selectedFoodType = "Anything";
+  Meal _selectedMealType = Meal.anything;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,13 +42,16 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: 12),
 
               //Choice Chips
-              CustomChoiceChip(
-                onFoodTypeSelected: (foodType) {
+              CustomChoiceChip<Meal>(
+                values: Meal.values,
+                onSelected: (value) {
                   setState(() {
-                    selectedFoodType = foodType;
+                    _selectedMealType = value;
+                    debugPrint(_selectedMealType.text);
                   });
-                  print(selectedFoodType);
                 },
+                labelBuilder: (meal) => meal.text,
+                iconBuilder: (meal) => meal.icon,
               ),
               SizedBox(height: 8),
 

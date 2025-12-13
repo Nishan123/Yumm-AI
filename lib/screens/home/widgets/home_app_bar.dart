@@ -3,7 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
-import 'package:yumm_ai/widgets/custom_icon_button.dart';
+import 'package:yumm_ai/widgets/primary_icon_button.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   const HomeAppBar({super.key});
@@ -23,7 +23,10 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               Row(
                 children: [
                   Text("Hi,", style: AppTextStyles.h5),
-                  SvgPicture.asset("${Constants.assetSvg}/ai_star.svg", height: 20),
+                  SvgPicture.asset(
+                    "${Constants.assetSvg}/ai_star.svg",
+                    height: 20,
+                  ),
                 ],
               ),
               Text(
@@ -37,7 +40,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        CustomIconButton(onTap: () {}, icon: Icons.menu),
+        PrimaryIconButton(onTap: () {}, icon: Icons.menu),
         SizedBox(width: 18),
       ],
     );

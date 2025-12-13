@@ -3,7 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:readmore/readmore.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
-import 'package:yumm_ai/widgets/custom_icon_button.dart';
+import 'package:yumm_ai/widgets/primary_icon_button.dart';
 import 'package:yumm_ai/widgets/dot.dart';
 
 class TopRecipeCard extends StatelessWidget {
@@ -44,7 +44,7 @@ class TopRecipeCard extends StatelessWidget {
                   alignment: Alignment.topRight,
                   child: Padding(
                     padding: const EdgeInsets.only(right: 12, top: 12),
-                    child: CustomIconButton(
+                    child: PrimaryIconButton(
                       backgroundColor: AppColors.lightWhiteColor,
                       icon: LucideIcons.heart,
                       iconColor: AppColors.whiteColor,

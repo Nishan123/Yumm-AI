@@ -3,12 +3,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 
-class CustomIconButton extends StatelessWidget {
+class PrimaryIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   final Color? iconColor;
   final Color? backgroundColor;
-  const CustomIconButton({
+  const PrimaryIconButton({
     super.key,
     required this.icon,
     required this.onTap,
@@ -19,17 +19,17 @@ class CustomIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-    borderRadius: BorderRadiusGeometry.circular(120),
+      borderRadius: BorderRadiusGeometry.circular(120),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 6,sigmaY: 6),
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: backgroundColor??AppColors.lightBlackColor,
+            color: backgroundColor ?? AppColors.lightBlackColor,
           ),
           child: IconButton(
             onPressed: onTap,
-            icon: Icon(icon, color: iconColor??AppColors.blackColor),
+            icon: Icon(icon, color: iconColor ?? AppColors.blackColor),
           ),
         ),
       ),

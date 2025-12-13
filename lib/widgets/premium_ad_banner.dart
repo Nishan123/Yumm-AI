@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
-import 'package:yumm_ai/core/styles/custom_shadow.dart';
+import 'package:yumm_ai/core/styles/container_property.dart';
 
 class PremiumAdBanner extends StatelessWidget {
   final String text;
@@ -24,10 +24,8 @@ class PremiumAdBanner extends StatelessWidget {
       height: MediaQuery.of(context).size.height * 0.2,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.whiteColor, width: 4),
-        boxShadow: [
-         CustomShadow.mainShadow
-        ],
+        border:ContainerProperty.mainBorder,
+        boxShadow: [ContainerProperty.mainShadow],
       ),
       child: Stack(
         fit: StackFit.expand,

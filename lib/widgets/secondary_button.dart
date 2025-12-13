@@ -9,18 +9,21 @@ class SecondaryButton extends StatelessWidget {
   final VoidCallback onTap;
   final String text;
   final bool? haveHatIcon;
+  final EdgeInsets? margin;
   const SecondaryButton({
     super.key,
     required this.backgroundColor,
     this.borderRadius,
     required this.onTap,
     required this.text,
-    this.haveHatIcon
+    this.haveHatIcon,
+    this.margin
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+      margin: margin??Constants.commonPadding,
       height: 48,
       width: double.infinity,
       child: ElevatedButton(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
-import 'package:yumm_ai/widgets/custom_icon_button.dart';
+import 'package:yumm_ai/widgets/primary_icon_button.dart';
 
 class HomeFoodRecommendations extends StatelessWidget {
   final double mainFontSize;
@@ -42,7 +42,7 @@ class HomeFoodRecommendations extends StatelessWidget {
                   alignment: Alignment.topRight,
                   child: Padding(
                     padding: const EdgeInsets.only(right: 14, top: 14),
-                    child: CustomIconButton(
+                    child: PrimaryIconButton(
                       backgroundColor: AppColors.lightWhiteColor,
                       icon: LucideIcons.heart,
                       iconColor: AppColors.whiteColor,
@@ -92,13 +92,13 @@ class HomeFoodRecommendations extends StatelessWidget {
                                   _buildInfoBox(
                                     info: "25 min",
                                     icon: LucideIcons.clock,
-                                    fontSize: normalFontSize
+                                    fontSize: normalFontSize,
                                   ),
                                   const SizedBox(width: 12),
                                   _buildInfoBox(
                                     info: "Intermediate",
                                     icon: LucideIcons.brain,
-                                    fontSize: normalFontSize
+                                    fontSize: normalFontSize,
                                   ),
                                 ],
                               ),
@@ -118,7 +118,11 @@ class HomeFoodRecommendations extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoBox({required String info, required IconData icon, required double fontSize}) {
+  Widget _buildInfoBox({
+    required String info,
+    required IconData icon,
+    required double fontSize,
+  }) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(26),
       child: BackdropFilter(
@@ -137,7 +141,7 @@ class HomeFoodRecommendations extends StatelessWidget {
                 info,
                 style: AppTextStyles.normalText.copyWith(
                   color: AppColors.whiteColor,
-                  fontSize: fontSize
+                  fontSize: fontSize,
                 ),
               ),
             ],

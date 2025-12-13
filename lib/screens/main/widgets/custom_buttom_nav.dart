@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
-import 'package:yumm_ai/core/styles/custom_shadow.dart';
+import 'package:yumm_ai/core/styles/container_property.dart';
 
 class CustomButtomNav extends StatelessWidget {
   final int currentIndex;
@@ -19,11 +19,7 @@ class CustomButtomNav extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 18),
       padding: EdgeInsets.symmetric(horizontal: 0),
-      decoration: BoxDecoration(
-        boxShadow: [
-          CustomShadow.navBarShadow
-        ],
-      ),
+      decoration: BoxDecoration(boxShadow: [ContainerProperty.navBarShadow]),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(25),
         child: Container(

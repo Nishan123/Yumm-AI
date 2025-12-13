@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
-import 'package:yumm_ai/core/styles/custom_shadow.dart';
+import 'package:yumm_ai/core/styles/container_property.dart';
 import 'package:yumm_ai/widgets/dot.dart';
 import 'package:yumm_ai/widgets/secondary_button.dart';
 
@@ -66,9 +66,9 @@ class CookbookCard extends StatelessWidget {
         width: mq.width,
         decoration: BoxDecoration(
           color: AppColors.extraLightBlackColor,
-          border: Border.all(color: AppColors.whiteColor, width: 4),
+          border: ContainerProperty.mainBorder,
           borderRadius: BorderRadius.circular(30),
-          boxShadow: [CustomShadow.mainShadow],
+          boxShadow: [ContainerProperty.mainShadow],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -167,6 +167,7 @@ class CookbookCard extends StatelessWidget {
 
             Spacer(),
             SecondaryButton(
+              margin: EdgeInsets.symmetric(horizontal: 0),
               haveHatIcon: true,
               borderRadius: 40,
               backgroundColor: AppColors.blackColor,

@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
-import 'package:yumm_ai/core/styles/custom_shadow.dart';
+import 'package:yumm_ai/core/styles/container_property.dart';
 
-class CustomTabBar extends StatefulWidget {
-  final Function(int)? onTabChanged;
+class CustomTabBar<T> extends StatefulWidget {
+  final Function(T)? onTabChanged;
   final List<String> tabItems;
+  final List<T>? values;
   final TabController? externalController;
+  final EdgeInsets? margin;
+
   const CustomTabBar({
     super.key,
     this.onTabChanged,
     this.externalController,
     required this.tabItems,
-  });
+    this.values,
+    this.margin,
+  }) : assert(
+         values == null || values.length == tabItems.length,
+         "Values list length must match tabItems length",
+       );
 
   @override
-  State<CustomTabBar> createState() => _CustomTabBarState();
+  State<CustomTabBar<T>> createState() => _CustomTabBarState<T>();
 }
 
-class _CustomTabBarState extends State<CustomTabBar>
+class _CustomTabBarState<T> extends State<CustomTabBar<T>>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
@@ -32,8 +41,13 @@ class _CustomTabBarState extends State<CustomTabBar>
   }
 
   void _handleTabChange() {
-    if (widget.onTabChanged != null) {
-      widget.onTabChanged!(_tabController.index);
+    if (widget.onTabChanged != null && !_tabController.indexIsChanging) {
+      // If values are provided, return the value at the index, otherwise return index as T (if T is int)
+      if (widget.values != null) {
+        widget.onTabChanged!(widget.values![_tabController.index]);
+      } else if (T == int) {
+        widget.onTabChanged!(_tabController.index as T);
+      }
     }
   }
 
@@ -48,13 +62,13 @@ class _CustomTabBarState extends State<CustomTabBar>
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: widget.margin ?? Constants.commonPadding,
+      height: 60,
       decoration: BoxDecoration(
-        color: AppColors.lightBlackColor,
-        borderRadius: BorderRadius.circular(28),
+        color: AppColors.extraLightBlackColor,
+        borderRadius: BorderRadius.circular(30),
         border: Border.all(width: 4, color: AppColors.whiteColor),
-        boxShadow: [
-          CustomShadow.mainShadow
-        ]
+        boxShadow: [ContainerProperty.mainShadow],
       ),
       child: TabBar(
         controller: _tabController,
@@ -63,7 +77,9 @@ class _CustomTabBarState extends State<CustomTabBar>
           color: AppColors.whiteColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        labelStyle: AppTextStyles.normalText.copyWith(fontWeight: FontWeight.w700),
+        labelStyle: AppTextStyles.normalText.copyWith(
+          fontWeight: FontWeight.w700,
+        ),
         dividerColor: Colors.transparent,
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorPadding: const EdgeInsets.all(6),
