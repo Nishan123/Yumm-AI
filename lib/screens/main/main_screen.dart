@@ -28,7 +28,7 @@ class _MainScreenState extends State<MainScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: CustomFab(
         onTap: () {
-          context.pushNamed("pantryChef");
+          context.pushNamed("chefs");
         },
       ),
       extendBody: true,

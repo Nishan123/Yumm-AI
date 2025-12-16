@@ -9,6 +9,10 @@ class AppTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.w500,
   );
+  static  TextStyle descriptionText = TextStyle(
+    fontSize: 13,
+    fontWeight: FontWeight.w400,
+  );
   static const TextStyle h1 = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w800,
