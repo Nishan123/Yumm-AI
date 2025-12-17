@@ -28,6 +28,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w500,
     height: 1.2,
   );
+
   static const TextStyle h5 = TextStyle(
     fontSize: 17,
     fontWeight: FontWeight.w700,
