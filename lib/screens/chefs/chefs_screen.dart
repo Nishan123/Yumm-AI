@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/screens/chefs/widgets/chef_card_widget.dart';
 import 'package:yumm_ai/widgets/premium_ad_banner.dart';
@@ -18,14 +19,16 @@ class ChefsScreen extends StatelessWidget {
             PremiumAdBanner(
               text: "Unlock\nAll Chefs",
               backgroundImage: "${Constants.assetSvg}/ad_banner2.svg",
-              onTap: (){},
+              onTap: () {},
               buttonText: "Go Premium",
             ),
             ChefCardWidget(
               isLocked: true,
               suffixImage: Constants.fridgeScannerSuffix,
               backgroundImage: Constants.fridgeScannerBackground,
-              onTap: () {},
+              onTap: () {
+                context.pushNamed("scanner", queryParameters: {"selectedScanner":"fridgeScanner"});
+              },
               title: "Fridge Scanner",
               description:
                   "Scan inside your fridge to prepare the combination of available items ",
@@ -34,7 +37,9 @@ class ChefsScreen extends StatelessWidget {
               isLocked: true,
               suffixImage: Constants.receiptScannerSuffix,
               backgroundImage: Constants.receiptScannerBackground,
-              onTap: () {},
+              onTap: () {
+                context.pushNamed("scanner", queryParameters: {"selectedScanner":"receiptScanner"});
+              },
               title: "Receipt Scanner",
               description: "Scan your ingredients receipt to prepare a meal",
             ),

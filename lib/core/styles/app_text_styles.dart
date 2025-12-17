@@ -19,7 +19,7 @@ class AppTextStyles {
     height: 1.2,
   );
   static const TextStyle h2 = TextStyle(
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: FontWeight.w800,
     height: 1.2,
   );

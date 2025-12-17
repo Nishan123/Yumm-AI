@@ -7,6 +7,11 @@ class ContainerProperty {
     spreadRadius: 1,
     blurRadius: 6,
   );
+  static final BoxShadow darkerShadow = BoxShadow(
+    color: AppColors.darkerShadowColor,
+    spreadRadius: 2,
+    blurRadius: 6,
+  );
   static final BoxShadow miniShadow = BoxShadow(
     color: AppColors.shadowColor,
     spreadRadius: 0.5,
