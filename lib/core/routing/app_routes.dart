@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/screens/auth/login_screen.dart';
 import 'package:yumm_ai/screens/auth/signup_screen.dart';
+import 'package:yumm_ai/screens/chefs/chefs_screen.dart';
+import 'package:yumm_ai/screens/cooking/cooking_screen.dart';
 import 'package:yumm_ai/screens/kitchen_tools/kitchen_tools_screen.dart';
 import 'package:yumm_ai/screens/main/main_screen.dart';
 import 'package:yumm_ai/screens/pantry_chef/pantry_chef_screen.dart';
@@ -22,6 +24,13 @@ class AppRoutes {
         },
       ),
       GoRoute(
+        path: "/chefs",
+        name: "chefs",
+        builder: (context, state) {
+          return ChefsScreen();
+        },
+      ),
+      GoRoute(
         path: "/pantryChef",
         name: "pantryChef",
         builder: (context, state) {
@@ -29,10 +38,18 @@ class AppRoutes {
         },
       ),
       GoRoute(
+        path: "/cooking",
+        name: "cooking",
+        builder: (context, state) {
+          return CookingScreen();
+        },
+      ),
+      GoRoute(
         path: "/scanner",
         name: "scanner",
         builder: (context, state) {
-          return ScannerScreen();
+          final scannerType = state.uri.queryParameters["selectedScanner"];
+          return ScannerScreen(selectedScanner: scannerType!);
         },
       ),
       GoRoute(

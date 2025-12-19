@@ -9,7 +9,7 @@ Future main() async {
   Gemini.init(apiKey: dotenv.get("gemini_api_key"));
   runApp(const MyApp());
 }
-
+ 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

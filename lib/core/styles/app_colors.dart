@@ -8,6 +8,7 @@ class AppColors {
   static Color lightBlackColor = const Color.fromRGBO(0, 0, 0, 0.071);
   static Color extraLightBlackColor = const Color.fromARGB(255, 223, 223, 223);
   static Color shadowColor = const Color.fromARGB(60, 0, 0, 0);
+  static Color darkerShadowColor = const Color.fromARGB(80, 0, 0, 0);
   static Color whiteShadowColor = const Color.fromARGB(255, 186, 255, 175);
   static Color lightWhiteColor = const Color.fromARGB(60, 255, 255, 255);
   static Color whiteColor = const Color.fromARGB(255, 255, 255, 255);

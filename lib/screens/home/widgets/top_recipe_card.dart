@@ -5,6 +5,7 @@ import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/widgets/primary_icon_button.dart';
 import 'package:yumm_ai/widgets/dot.dart';
+import 'package:yumm_ai/widgets/read_more_widget.dart';
 
 class TopRecipeCard extends StatelessWidget {
   const TopRecipeCard({super.key});
@@ -63,24 +64,7 @@ class TopRecipeCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: AppTextStyles.title,
           ),
-          ReadMoreText(
-            "Short description of the Food with some rich  laskdl lkas dlaks d history of origin of the food kdsnjfk sdkfj sa flkasd kla slkdc sald c.jkas dkcs kldj ",
-            style: AppTextStyles.normalText.copyWith(
-              color: AppColors.descriptionTextColor,
-            ),
-            trimLines: 2,
-            trimMode: TrimMode.Line,
-            trimCollapsedText: "More",
-            trimExpandedText: "Read Less",
-            moreStyle: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.blueColor,
-            ),
-            lessStyle: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: AppColors.blueColor,
-            ),
-          ),
+          ReadMoreWidget(text: "Short description of the Food with some rich  laskdl lkas dlaks d history of origin of the food kdsnjfk sdkfj sa flkasd kla slkdc sald c.jkas dkcs kldj" ),
           Row(
             spacing: 6,
             children: [

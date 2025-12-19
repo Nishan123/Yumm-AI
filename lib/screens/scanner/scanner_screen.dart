@@ -10,7 +10,8 @@ import 'package:yumm_ai/widgets/secondary_button.dart';
 import 'package:yumm_ai/screens/scanner/controller/camera_controller.dart';
 
 class ScannerScreen extends StatefulWidget {
-  const ScannerScreen({super.key});
+  final String selectedScanner;
+  const ScannerScreen({super.key, required this.selectedScanner});
 
   @override
   State<ScannerScreen> createState() => _ScannerScreenState();
@@ -32,7 +33,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
 
   @override
   void dispose() {
-    cameraController!.dispose();
+    cameraController?.dispose();
     super.dispose();
   }
 
@@ -63,21 +64,19 @@ class _ScannerScreenState extends State<ScannerScreen> {
                 });
               },
             ),
-            Padding(
-              padding: EdgeInsetsGeometry.symmetric(
-                horizontal: 18,
-                vertical: 12,
-              ),
-              child: CustomTabBar(tabItems: ["Scan Fridge", "Scan Receipt"]),
+            SizedBox(height: 16),
+            CustomTabBar(
+              tabItems: ["Scan Fridge", "Scan Receipt"],
+              values: ["fridgeScanner", "receiptScanner"],
+              initialValue: widget.selectedScanner,
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 18),
-              child: SecondaryButton(
-                borderRadius: 30,
-                backgroundColor: AppColors.blackColor,
-                onTap: () {},
-                text: "Generate Recipe",
-              ),
+            SizedBox(height: 16),
+
+            SecondaryButton(
+              borderRadius: 30,
+              backgroundColor: AppColors.blackColor,
+              onTap: () {},
+              text: "Generate Recipe",
             ),
           ],
         ),
