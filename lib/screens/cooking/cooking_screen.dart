@@ -3,7 +3,6 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/core/consts/constants.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
-import 'package:yumm_ai/core/styles/container_property.dart';
 import 'package:yumm_ai/screens/cooking/widgets/recipe_details_widget.dart';
 import 'package:yumm_ai/widgets/primary_icon_button.dart';
 

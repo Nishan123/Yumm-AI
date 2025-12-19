@@ -11,6 +11,7 @@ class CustomTabBar<T> extends StatefulWidget {
   final TabController? externalController;
   final EdgeInsets? margin;
   final String? initialValue;
+  final TextStyle? itemTextStyle;
 
   const CustomTabBar({
     super.key,
@@ -20,6 +21,7 @@ class CustomTabBar<T> extends StatefulWidget {
     this.values,
     this.margin,
     this.initialValue,
+    this.itemTextStyle
   }) : assert(
          values == null || values.length == tabItems.length,
          "Values list length must match tabItems length",
@@ -96,7 +98,7 @@ class _CustomTabBarState<T> extends State<CustomTabBar<T>>
           color: AppColors.whiteColor,
           borderRadius: BorderRadius.circular(20),
         ),
-        labelStyle: AppTextStyles.normalText.copyWith(
+        labelStyle: widget.itemTextStyle?? AppTextStyles.normalText.copyWith(
           fontWeight: FontWeight.w700,
         ),
         dividerColor: Colors.transparent,
