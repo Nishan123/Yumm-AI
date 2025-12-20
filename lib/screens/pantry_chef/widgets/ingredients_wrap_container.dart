@@ -14,13 +14,14 @@ class IngredientsWrapContainer extends StatelessWidget {
       margin: Constants.commonPadding,
       padding: EdgeInsets.only(left: 11, top: 10, bottom: 8, right: 0),
       width: double.infinity,
+      height: items.isEmpty?120:null,
       decoration: BoxDecoration(
         color: AppColors.extraLightBlackColor,
         borderRadius: BorderRadius.circular(28),
         border: ContainerProperty.mainBorder,
         boxShadow: [ContainerProperty.mainShadow],
       ),
-      child: Wrap(children: [...items]),
+      child: items.isEmpty?Center(child: Text("No Ingredients Selected !"),):Wrap(children: [...items]),
     );
   }
 }

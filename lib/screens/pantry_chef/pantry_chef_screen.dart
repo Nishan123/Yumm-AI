@@ -24,28 +24,7 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
   Duration _selectedDuration = const Duration(minutes: 30);
   CookingExpertise _selectedCookingExpertise = CookingExpertise.newbie;
   Meal _selectedMeal = Meal.anything;
-  List<IngredientsModel> selectedIngredients = [
-    IngredientsModel(
-      id: "ing001",
-      prefixImage: "https://cdn-icons-png.flaticon.com/512/1790/1790387.png",
-      ingredientName: "Tomato",
-    ),
-    IngredientsModel(
-      ingredientName: "Egg",
-      prefixImage: "https://cdn-icons-png.flaticon.com/512/837/837560.png",
-      id: "ing002",
-    ),
-    IngredientsModel(
-      ingredientName: "Milk",
-      prefixImage: "https://cdn-icons-png.flaticon.com/128/869/869869.png",
-      id: "ing003",
-    ),
-    IngredientsModel(
-      ingredientName: "Butter",
-      prefixImage: "https://cdn-icons-png.flaticon.com/128/3050/3050158.png",
-      id: "ing004",
-    ),
-  ];
+  List<IngredientsModel> selectedIngredients = [];
   @override
   Widget build(BuildContext context) {
     var mq = MediaQuery.of(context).size;
@@ -67,23 +46,37 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
                 actionButtonText: "Add Item",
                 onActionTap: () {
                   showModalBottomSheet(
+                    isScrollControlled: true,
                     context: context,
                     builder: (context) {
-                      return AddIngredientsBottomSheet();
+                      return AddIngredientsBottomSheet(
+                        selectedIngredients: selectedIngredients,
+                        onSubmit: (List<IngredientsModel> newSelection) {
+                          setState(() {
+                            selectedIngredients = newSelection;
+                          });
+                        },
+                      );
                     },
                   );
                 },
               ),
               IngredientsWrapContainer(
-                items: [
-                  ...selectedIngredients.map(
-                    (ingredients) => IngredientsChip(
-                      onTap: () {},
-                      text: ingredients.ingredientName,
-                      image: ingredients.prefixImage,
-                    ),
-                  ),
-                ],
+                items: selectedIngredients
+                    .map(
+                      (ing) => IngredientsChip(
+                        onTap: () {
+                          setState(() {
+                            selectedIngredients.removeWhere(
+                              (item) => item.id == ing.id,
+                            );
+                          });
+                        },
+                        text: ing.ingredientName,
+                        image: ing.prefixImage,
+                      ),
+                    )
+                    .toList(),
               ),
               SizedBox(height: 6),
 

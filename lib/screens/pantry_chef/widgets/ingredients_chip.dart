@@ -45,7 +45,7 @@ class IngredientsChip extends StatelessWidget {
               fontWeight: FontWeight.w600,
             ),
           ),
-          SecondaryIconButton(icon: LucideIcons.circle_x, onTap: () {}),
+          SecondaryIconButton(icon: LucideIcons.circle_x, onTap: onTap),
         ],
       ),
     );

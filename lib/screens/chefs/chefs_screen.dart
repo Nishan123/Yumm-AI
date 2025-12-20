@@ -27,7 +27,10 @@ class ChefsScreen extends StatelessWidget {
               suffixImage: Constants.fridgeScannerSuffix,
               backgroundImage: Constants.fridgeScannerBackground,
               onTap: () {
-                context.pushNamed("scanner", queryParameters: {"selectedScanner":"fridgeScanner"});
+                context.pushNamed(
+                  "scanner",
+                  queryParameters: {"selectedScanner": "fridgeScanner"},
+                );
               },
               title: "Fridge Scanner",
               description:
@@ -38,7 +41,10 @@ class ChefsScreen extends StatelessWidget {
               suffixImage: Constants.receiptScannerSuffix,
               backgroundImage: Constants.receiptScannerBackground,
               onTap: () {
-                context.pushNamed("scanner", queryParameters: {"selectedScanner":"receiptScanner"});
+                context.pushNamed(
+                  "scanner",
+                  queryParameters: {"selectedScanner": "receiptScanner"},
+                );
               },
               title: "Receipt Scanner",
               description: "Scan your ingredients receipt to prepare a meal",
@@ -48,7 +54,9 @@ class ChefsScreen extends StatelessWidget {
               isSuffixCropped: true,
               suffixImage: Constants.pantryChefSuffix,
               backgroundImage: Constants.pantryChefBackground,
-              onTap: () {},
+              onTap: () {
+                context.pushNamed("pantryChef");
+              },
               title: "Pantry Chef",
               description:
                   "Generate recipes based on the ingredients in you pantry.",

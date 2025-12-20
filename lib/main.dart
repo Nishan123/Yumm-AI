@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/routing/app_routes.dart';
 import 'package:yumm_ai/core/styles/app_theme.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
   Gemini.init(apiKey: dotenv.get("gemini_api_key"));
-  runApp(const MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
  
 class MyApp extends StatelessWidget {
