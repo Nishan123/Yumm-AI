@@ -24,7 +24,7 @@ class Constants {
   static const pantryChefSuffix =
       "https://firebasestorage.googleapis.com/v0/b/gaff-15c42.appspot.com/o/randomImages%2Fpantry_chef.png?alt=media&token=eaf1e083-4a40-40b4-85b0-db7db37df152";
   static const pantryChefBackground =
-      "https://firebasestorage.googleapis.com/v0/b/gaff-15c42.appspot.com/o/randomImages%2Fpantry_chef_background.png?alt=media&token=8672da0a-feb4-4e55-9156-5eec87bd6fa7";
+      "https://firebasestorage.googleapis.com/v0/b/gaff-15c42.appspot.com/o/randomImages%2Fpantry_chef_background.png?alt=media&token=e8807f06-b64d-4f1a-aea8-494c1dc1cad8";
 
   static const masterChefSuffix =
       "https://firebasestorage.googleapis.com/v0/b/gaff-15c42.appspot.com/o/randomImages%2Fmaster_chef.png?alt=media&token=1f2712a2-7e12-43fc-a81d-32595692b52b";

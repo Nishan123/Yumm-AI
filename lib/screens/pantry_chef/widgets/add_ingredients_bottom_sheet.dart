@@ -70,6 +70,8 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
             padding: EdgeInsets.only(left: 0, top: 8, bottom: 8),
           ),
 
+          SizedBox(height: 12),
+
           // search text field
           PrimaryTexField(
             hintText: 'Search: egg',

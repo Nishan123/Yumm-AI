@@ -55,7 +55,12 @@ class ChefCardWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 18,right: 8,top: 8,bottom: 8),
+                      padding: const EdgeInsets.only(
+                        left: 18,
+                        right: 8,
+                        top: 8,
+                        bottom: 8,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -66,7 +71,23 @@ class ChefCardWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(title, style: AppTextStyles.h5),
-                              isLocked? Icon(LucideIcons.lock,size: 18,):SizedBox(),
+                              isLocked
+                                  ? Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(3),
+                                        color: AppColors.redColor,
+                                      ),
+                                      child: Icon(
+                                        LucideIcons.lock,
+                                        size: 18,
+                                        color: AppColors.whiteColor,
+                                      ),
+                                    )
+                                  : SizedBox(),
                             ],
                           ),
                           const SizedBox(height: 8),

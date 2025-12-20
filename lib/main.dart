@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppRoutes routingConfig = AppRoutes();
     return MaterialApp.router(
-      title: "YummAI",
+      title: "Yumm AI",
       theme: getAppTheme(),
       debugShowCheckedModeBanner: false,
       routeInformationParser: routingConfig.appRoutes.routeInformationParser,
