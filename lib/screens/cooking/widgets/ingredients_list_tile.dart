@@ -7,51 +7,65 @@ import 'package:yumm_ai/models/ingredients_model.dart';
 class IngredientsListTile extends StatelessWidget {
   final IngredientsModel ingredient;
   final String quantity;
-  final Color bgColor;
+  final Color textColor;
   const IngredientsListTile({
     super.key,
     required this.ingredient,
     required this.quantity,
-    required this.bgColor
+    required this.textColor,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          height: MediaQuery.of(context).size.height * 0.09,
-          width: MediaQuery.of(context).size.height * 0.09,
-          padding: EdgeInsets.all(20),
-          margin: EdgeInsets.only(right: 12),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: bgColor,
-          ),
-          child: SizedBox(
-            height: 40,
-            width: 40,
+    return Container(
+      margin: EdgeInsets.only(left: 16, right: 16, top: 12),
+      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(width: 0.6, color: AppColors.borderColor),
+      ),
+      child: Row(
+        children: [
+          SizedBox(
+            height: 35,
+            width: 35,
             child: CachedNetworkImage(
               imageUrl: ingredient.prefixImage,
               errorWidget: (context, url, error) {
-                return Text("N/A");
+                return SizedBox(height: 35, width: 35, child: Text("N/A"));
               },
             ),
           ),
-        ),
-        Text(
-          ingredient.ingredientName,
-          style: AppTextStyles.normalText.copyWith(fontWeight: FontWeight.bold),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: AppColors.extraLightBlackColor,
+          SizedBox(width: 8),
+
+          Text(
+            ingredient.ingredientName,
+            style: AppTextStyles.normalText.copyWith(
+              fontWeight: FontWeight.bold,
+              color: textColor
+            ),
           ),
-          child: Text(quantity, style: AppTextStyles.descriptionText),
-        ),
-      ],
+          Spacer(),
+          RichText(
+            text: TextSpan(
+              style: AppTextStyles.descriptionText.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.descriptionTextColor,
+              ),
+              children: [
+                TextSpan(text: "QTY: "),
+                TextSpan(
+                  text: "2",
+                  style: AppTextStyles.descriptionText.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

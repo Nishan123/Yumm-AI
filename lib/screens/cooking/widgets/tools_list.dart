@@ -1,10 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:yumm_ai/core/styles/app_text_styles.dart';
 import 'package:yumm_ai/screens/cooking/widgets/tools_list_tile.dart';
 
 class ToolsList extends StatelessWidget {
-  const ToolsList({super.key});
+  final bool isActive;
+  final ScrollController? scrollController;
+
+  const ToolsList({super.key, required this.isActive, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -13,29 +17,34 @@ class ToolsList extends StatelessWidget {
       final r = rnd.nextInt(256);
       final g = rnd.nextInt(256);
       final b = rnd.nextInt(256);
-      return Color.fromARGB(77, r, g, b);
+      return Color.fromARGB(500, r, g, b);
     }
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 18, left: 16),
-      child: SizedBox(
-        height: 140,
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          primary: false,
-          shrinkWrap: true,
-          physics: const BouncingScrollPhysics(),
-          itemCount: 5,
-          itemBuilder: (context, index) {
-            return ToolsListTile(
-              toolName: "Microwave",
-              image:
-                  "https://assets.stickpng.com/images/5b51f104c051e602a568ce69.png",
-              bgColor: _colorForIndex(index),
-            );
-          },
-        ),
-      ),
+    return ListView.builder(
+      primary: false,
+      shrinkWrap: true,
+      physics: isActive
+          ? BouncingScrollPhysics()
+          : NeverScrollableScrollPhysics(),
+      controller: isActive ? scrollController : null,
+      itemCount: 20,
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 16, top: 16),
+            child: Text(
+              "All the tools you'll need 🔪",
+              style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.w700),
+            ),
+          );
+        }
+        return ToolsListTile(
+          toolName: "Microwave",
+          image:
+              "https://assets.stickpng.com/images/5b51f104c051e602a568ce69.png",
+          textColor: _colorForIndex(index),
+        );
+      },
     );
   }
 }

@@ -18,7 +18,7 @@ class RecipeDetailsWidget extends StatefulWidget {
 
 class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
     with SingleTickerProviderStateMixin {
-  static const double _collapsedFraction = 0.63;
+  static const double _collapsedFraction = 0.64;
   static const double _expandedFraction = 0.9;
 
   late final DraggableScrollableController _draggableController;
@@ -58,18 +58,6 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
       setState(() {
         _currentTabIndex = _tabController.index;
       });
-
-      if (_isSheetAttached) {
-        if (_tabController.index == 1) {
-          _draggableController.animateTo(
-            _expandedFraction,
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-          );
-        } else {
-          _draggableController.jumpTo(_collapsedFraction);
-        }
-      }
     }
   }
 
@@ -122,86 +110,73 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
                       topRight: Radius.circular(40),
                     ),
                   ),
-                  child: CustomScrollView(
-                    controller: scrollController,
-                    physics: const BouncingScrollPhysics(),
-                    slivers: [
-                      SliverToBoxAdapter(
-                        child: Column(
-                          children: [
-                            Container(
-                              width: screenWidth * 0.3,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: AppColors.blackColor,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                          ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: screenWidth * 0.3,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: AppColors.descriptionTextColor,
                         ),
                       ),
-                      SliverPadding(
+                      const SizedBox(height: 16),
+                      Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverToBoxAdapter(
-                          child: Text(
-                            "AI Generated Recipe Title or Name",
-                            style: AppTextStyles.h2.copyWith(
-                              fontWeight: FontWeight.w700,
-                              height: 1.4,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: const ReadMoreWidget(
-                            text:
-                                "Savor the zest of hot chicken legs enhanced with a citrus shower of lemon, combining spicy warmth with a refreshing tang. Short description of the Food with some rich  laskdl lkas dlaks d history of origin of the food kdsnjfk sdkfj sa flkasd kla slkdc sald c.jkas dkcs kldj ",
-                            trimLine: 3,
-                          ),
-                        ),
-                      ),
-                      const SliverToBoxAdapter(
-                        child: RecipeInfoCard(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 16,
-                          ),
-                        ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: CustomTabBar(
-                          externalController: _tabController,
-                          tabItems: const [
-                            "Ingredients",
-                            "Instructions",
-                            "Tools",
-                          ],
-                          margin: const EdgeInsets.symmetric(horizontal: 16),
-                          itemTextStyle: AppTextStyles.descriptionText.copyWith(
+                        child: Text(
+                          "AI Generated Recipe Title or Name",
+                          style: AppTextStyles.h2.copyWith(
                             fontWeight: FontWeight.w700,
-                            color: AppColors.blackColor,
+                            height: 1.4,
                           ),
-                          onTabChanged: (value) {},
                         ),
                       ),
-                      SliverFillRemaining(
-                        hasScrollBody: true,
+                      const SizedBox(height: 6),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: const ReadMoreWidget(
+                          text:
+                              "Savor the zest of hot chicken legs enhanced with a citrus shower of lemon, combining spicy warmth with a refreshing tang. Short description of the Food with some rich  laskdl lkas dlaks d history of origin of the food kdsnjfk sdkfj sa flkasd kla slkdc sald c.jkas dkcs kldj ",
+                          trimLine: 3,
+                        ),
+                      ),
+                      const RecipeInfoCard(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
+                      ),
+                      CustomTabBar(
+                        externalController: _tabController,
+                        tabItems: const [
+                          "Ingredients",
+                          "Instructions",
+                          "Tools",
+                        ],
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        itemTextStyle: AppTextStyles.descriptionText.copyWith(
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.blackColor,
+                        ),
+                        onTabChanged: (value) {},
+                      ),
+                      Expanded(
                         child: TabBarView(
                           controller: _tabController,
                           children: [
-                            SingleChildScrollView(
-                              primary: false,
-                              physics: const BouncingScrollPhysics(),
-                              child: const IngredientList(),
+                            IngredientList(
+                              isActive: _currentTabIndex == 0,
+                              scrollController: scrollController,
                             ),
-                            const InstructionsList(),
-                            SingleChildScrollView(
-                              primary: false,
-                              physics: const BouncingScrollPhysics(),
-                              child: const ToolsList(),
+                            InstructionsList(
+                              scrollController: scrollController,
+                              isActive: _currentTabIndex == 1,
+                            ),
+                            ToolsList(
+                              isActive: _currentTabIndex == 2,
+                              scrollController: scrollController,
                             ),
                           ],
                         ),

@@ -15,6 +15,6 @@ class AppColors {
   static Color normalIconColor = const Color.fromARGB(80, 0, 0, 0);
   static Color blueColor = const Color.fromARGB(255, 73, 0, 162);
   static Color redColor = const Color.fromARGB(255, 228, 0, 19);
-  static Color borderColor = const Color.fromARGB(255, 134, 134, 134);
+  static Color borderColor = const Color.fromARGB(255, 211, 211, 211);
 
 }
