@@ -18,7 +18,7 @@ class RecipeDetailsWidget extends StatefulWidget {
 
 class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
     with SingleTickerProviderStateMixin {
-  static const double _collapsedFraction = 0.62;
+  static const double _collapsedFraction = 0.63;
   static const double _expandedFraction = 0.9;
 
   late final DraggableScrollableController _draggableController;
@@ -58,6 +58,18 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
       setState(() {
         _currentTabIndex = _tabController.index;
       });
+
+      if (_isSheetAttached) {
+        if (_tabController.index == 1) {
+          _draggableController.animateTo(
+            _expandedFraction,
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOut,
+          );
+        } else {
+          _draggableController.jumpTo(_collapsedFraction);
+        }
+      }
     }
   }
 
@@ -101,7 +113,7 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
                 child: Container(
                   clipBehavior: Clip.none,
                   width: screenWidth,
-                  padding: const EdgeInsets.only(top: 14, left: 16, right: 16),
+                  padding: const EdgeInsets.only(top: 14),
                   decoration: BoxDecoration(
                     color: AppColors.whiteColor,
                     boxShadow: [ContainerProperty.darkerShadow],
@@ -110,62 +122,86 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
                       topRight: Radius.circular(40),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: screenWidth * 0.3,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColors.blackColor,
+                  child: CustomScrollView(
+                    controller: scrollController,
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                      SliverToBoxAdapter(
+                        child: Column(
+                          children: [
+                            Container(
+                              width: screenWidth * 0.3,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: AppColors.blackColor,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 16),
-                      Text(
-                        "AI Generated Recipe Title or Name",
-                        style: AppTextStyles.h2.copyWith(
-                          fontWeight: FontWeight.w700,
-                          height: 1.4,
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        sliver: SliverToBoxAdapter(
+                          child: Text(
+                            "AI Generated Recipe Title or Name",
+                            style: AppTextStyles.h2.copyWith(
+                              fontWeight: FontWeight.w700,
+                              height: 1.4,
+                            ),
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      const ReadMoreWidget(
-                        text:
-                            "Savor the zest of hot chicken legs enhanced with a citrus shower of lemon, combining spicy warmth with a refreshing tang. Short description of the Food with some rich  laskdl lkas dlaks d history of origin of the food kdsnjfk sdkfj sa flkasd kla slkdc sald c.jkas dkcs kldj ",
-                        trimLine: 3,
-                      ),
-                      const RecipeInfoCard(),
-                      CustomTabBar(
-                        externalController: _tabController,
-                        tabItems: const [
-                          "Ingredients",
-                          "Instructions",
-                          "Tools",
-                        ],
-                        margin: const EdgeInsets.symmetric(horizontal: 0),
-                        itemTextStyle: AppTextStyles.descriptionText.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.blackColor,
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: const ReadMoreWidget(
+                            text:
+                                "Savor the zest of hot chicken legs enhanced with a citrus shower of lemon, combining spicy warmth with a refreshing tang. Short description of the Food with some rich  laskdl lkas dlaks d history of origin of the food kdsnjfk sdkfj sa flkasd kla slkdc sald c.jkas dkcs kldj ",
+                            trimLine: 3,
+                          ),
                         ),
-                        onTabChanged: (value) {},
                       ),
-                      Expanded(
+                      const SliverToBoxAdapter(
+                        child: RecipeInfoCard(
+                          margin: EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
+                        ),
+                      ),
+                      SliverToBoxAdapter(
+                        child: CustomTabBar(
+                          externalController: _tabController,
+                          tabItems: const [
+                            "Ingredients",
+                            "Instructions",
+                            "Tools",
+                          ],
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          itemTextStyle: AppTextStyles.descriptionText.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.blackColor,
+                          ),
+                          onTabChanged: (value) {},
+                        ),
+                      ),
+                      SliverFillRemaining(
+                        hasScrollBody: true,
                         child: TabBarView(
                           controller: _tabController,
                           children: [
-                            IngredientList(
-                              scrollController: scrollController,
-                              isActive: _currentTabIndex == 0,
+                            SingleChildScrollView(
+                              primary: false,
+                              physics: const BouncingScrollPhysics(),
+                              child: const IngredientList(),
                             ),
-                            InstructionsList(
-                              scrollController: scrollController,
-                              isActive: _currentTabIndex == 1,
-                            ),
-                            ToolsList(
-                              scrollController: scrollController,
-                              isActive: _currentTabIndex == 2,
+                            const InstructionsList(),
+                            SingleChildScrollView(
+                              primary: false,
+                              physics: const BouncingScrollPhysics(),
+                              child: const ToolsList(),
                             ),
                           ],
                         ),

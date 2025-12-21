@@ -1,18 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/core/styles/app_text_styles.dart';
-import 'package:yumm_ai/models/ingredients_model.dart';
 
-class IngredientsListTile extends StatelessWidget {
-  final IngredientsModel ingredient;
-  final String quantity;
+class ToolsListTile extends StatelessWidget {
+  final String toolName;
+  final String image;
   final Color bgColor;
-  const IngredientsListTile({
+  const ToolsListTile({
     super.key,
-    required this.ingredient,
-    required this.quantity,
-    required this.bgColor
+    required this.toolName,
+    required this.image,
+    required this.bgColor,
   });
 
   @override
@@ -24,15 +22,12 @@ class IngredientsListTile extends StatelessWidget {
           width: MediaQuery.of(context).size.height * 0.09,
           padding: EdgeInsets.all(20),
           margin: EdgeInsets.only(right: 12),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: bgColor,
-          ),
+          decoration: BoxDecoration(shape: BoxShape.circle, color: bgColor),
           child: SizedBox(
             height: 40,
             width: 40,
             child: CachedNetworkImage(
-              imageUrl: ingredient.prefixImage,
+              imageUrl: image,
               errorWidget: (context, url, error) {
                 return Text("N/A");
               },
@@ -40,16 +35,8 @@ class IngredientsListTile extends StatelessWidget {
           ),
         ),
         Text(
-          ingredient.ingredientName,
+          toolName,
           style: AppTextStyles.normalText.copyWith(fontWeight: FontWeight.bold),
-        ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: AppColors.extraLightBlackColor,
-          ),
-          child: Text(quantity, style: AppTextStyles.descriptionText),
         ),
       ],
     );

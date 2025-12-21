@@ -5,12 +5,13 @@ import 'package:yumm_ai/core/styles/container_property.dart';
 import 'package:yumm_ai/screens/cooking/widgets/icon_with_label.dart';
 
 class RecipeInfoCard extends StatelessWidget {
-  const RecipeInfoCard({super.key});
+  final EdgeInsets margin;
+  const RecipeInfoCard({super.key, required this.margin});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 16),
+      margin: margin,
       padding: EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: AppColors.extraLightBlackColor,

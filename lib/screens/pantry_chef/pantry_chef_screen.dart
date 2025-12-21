@@ -8,6 +8,7 @@ import 'package:yumm_ai/screens/pantry_chef/widgets/available_time_selector.dart
 import 'package:yumm_ai/screens/pantry_chef/widgets/ingredients_chip.dart';
 import 'package:yumm_ai/screens/pantry_chef/widgets/ingredients_wrap_container.dart';
 import 'package:yumm_ai/screens/pantry_chef/widgets/add_ingredients_bottom_sheet.dart';
+import 'package:yumm_ai/widgets/cookbook_hint.dart';
 import 'package:yumm_ai/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/widgets/input_widget_title.dart';
@@ -37,6 +38,8 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
             spacing: 8,
             children: [
               SizedBox(height: 12),
+              CookbookHint(),
+              SizedBox(height:6),
               CustomTabBar(tabItems: ["Ingredients List", "Your Inventory"]),
               SizedBox(height: 6),
 

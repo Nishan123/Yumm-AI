@@ -23,7 +23,7 @@ class ChefsScreen extends StatelessWidget {
               buttonText: "Go Premium",
             ),
             ChefCardWidget(
-              isLocked: true,
+              isLocked: false,
               suffixImage: Constants.fridgeScannerSuffix,
               backgroundImage: Constants.fridgeScannerBackground,
               onTap: () {
@@ -37,7 +37,7 @@ class ChefsScreen extends StatelessWidget {
                   "Scan inside your fridge to prepare the combination of available items ",
             ),
             ChefCardWidget(
-              isLocked: true,
+              isLocked: false,
               suffixImage: Constants.receiptScannerSuffix,
               backgroundImage: Constants.receiptScannerBackground,
               onTap: () {
@@ -50,7 +50,7 @@ class ChefsScreen extends StatelessWidget {
               description: "Scan your ingredients receipt to prepare a meal",
             ),
             ChefCardWidget(
-              isLocked: true,
+              isLocked: false,
               isSuffixCropped: true,
               suffixImage: Constants.pantryChefSuffix,
               backgroundImage: Constants.pantryChefBackground,
