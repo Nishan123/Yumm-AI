@@ -54,6 +54,9 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
     required int count,
   }) {
     return CupertinoPicker(
+      squeeze: 1,
+      diameterRatio: 80,
+      useMagnifier: true,
       scrollController: controller,
       itemExtent: 40,
       selectionOverlay: Container(),
@@ -104,7 +107,7 @@ class _TimeSelectorWidgetState extends State<TimeSelectorWidget> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                child: _buildPicker(controller: _hourController, count: 24),
+                child: _buildPicker(controller: _hourController, count: 24, ),
               ),
               Text(":", style: textStyle),
               Expanded(

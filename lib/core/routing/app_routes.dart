@@ -14,7 +14,7 @@ import 'package:yumm_ai/screens/shopping_list/shopping_list_screen.dart';
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
-    initialLocation: "/",
+    initialLocation: "/pantryChef",
     routes: [
       GoRoute(
         path: "/",

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yumm_ai/controllers/recipe_controller.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
+import 'package:yumm_ai/core/interactions/custom_snack_bar.dart';
 import 'package:yumm_ai/core/styles/app_colors.dart';
 import 'package:yumm_ai/models/ingredients_model.dart';
 import 'package:yumm_ai/screens/pantry_chef/widgets/available_time_selector.dart';
@@ -39,7 +40,7 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
             children: [
               SizedBox(height: 12),
               CookbookHint(),
-              SizedBox(height:6),
+              SizedBox(height: 6),
               CustomTabBar(tabItems: ["Ingredients List", "Your Inventory"]),
               SizedBox(height: 6),
 
@@ -133,12 +134,19 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
                 borderRadius: 40,
                 text: "Generate Meal",
                 onTap: () async {
-                  RecipeController().generatePantryRecipe(
+                  if (selectedIngredients.isEmpty) {
+                    CustomSnackBar.showErrorSnackBar(
+                      context,
+                      "No Ingredients Selected !",
+                    );
+                  }else{
+                    RecipeController().generatePantryRecipe(
                     selectedIngredients,
                     _selectedMeal.value,
                     _selectedDuration,
                     _selectedCookingExpertise.value,
                   );
+                  }
                 },
                 backgroundColor: AppColors.blackColor,
                 haveHatIcon: true,
