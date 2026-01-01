@@ -6,12 +6,14 @@ class PrimaryButton extends StatelessWidget {
   final double? borderRadius;
   final VoidCallback onTap;
   final EdgeInsets? margin;
+  final bool? isLoading;
   const PrimaryButton({
     super.key,
     required this.text,
     this.borderRadius,
     required this.onTap,
     this.margin,
+    this.isLoading,
   });
 
   @override
@@ -31,14 +33,18 @@ class PrimaryButton extends StatelessWidget {
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: onTap,
+        onPressed: isLoading == true ? null : onTap,
         style: ElevatedButton.styleFrom(
           elevation: 0,
           foregroundColor: AppColors.whiteColor,
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
         ),
-        child: Text(text),
+        child: isLoading == true
+            ? CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.whiteColor),
+              )
+            : Text(text), 
       ),
     );
   }

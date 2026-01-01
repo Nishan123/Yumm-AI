@@ -100,7 +100,7 @@ class SettingScreen extends StatelessWidget {
                   borderRadius: 12,
                   backgroundColor: AppColors.redColor,
                   onTap: () {
-                    context.goNamed("onboarding");
+                    context.goNamed("signup");
                   },
                 ),
                 SizedBox(height: 108),
