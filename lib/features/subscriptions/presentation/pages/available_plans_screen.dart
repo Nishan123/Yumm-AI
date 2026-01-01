@@ -6,9 +6,15 @@ import 'package:yumm_ai/core/widgets/custom_text_button.dart';
 import 'package:yumm_ai/core/widgets/primary_button.dart';
 import 'package:yumm_ai/features/subscriptions/presentation/widgets/deals_card.dart';
 
-class AvailablePlansScreen extends StatelessWidget {
+class AvailablePlansScreen extends StatefulWidget {
   const AvailablePlansScreen({super.key});
 
+  @override
+  State<AvailablePlansScreen> createState() => _AvailablePlansScreenState();
+}
+
+class _AvailablePlansScreenState extends State<AvailablePlansScreen> {
+  String _selectedPlans = "";
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
@@ -26,9 +32,7 @@ class AvailablePlansScreen extends StatelessWidget {
                 Icon(LucideIcons.rocket, size: 36),
                 Text(
                   "Free for first 7 days !",
-                  style: AppTextStyles.h1.copyWith(
-                    color: AppColors.grayColor,
-                  ),
+                  style: AppTextStyles.h1.copyWith(color: AppColors.grayColor),
                 ),
               ],
             ),
@@ -39,9 +43,34 @@ class AvailablePlansScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
 
-            DealsCard(mq: mq),
+            DealsCard(
+              onTap: () {
+                setState(() {
+                  _selectedPlans = "years";
+                });
+              },
+              mq: mq,
+              isSelected: _selectedPlans=="years",
+              haveBestValueTag: true,
+              actualPrice: 29.99,
+              oldPrice: 35.88,
+              duration: "year",
+            ),
             SizedBox(height: 8),
-            DealsCard(mq: mq),
+            DealsCard(
+              onTap: () {
+                setState(() {
+                  _selectedPlans = "months";
+                });
+              },
+              mq: mq,
+              isSelected: _selectedPlans=="months",
+              haveBestValueTag: false,
+              actualPrice: 2.99,
+              oldPrice: 0,
+              duration: "month",
+              haveOldPrice: false,
+            ),
             SizedBox(height: 30),
             PrimaryButton(
               margin: EdgeInsets.symmetric(horizontal: 12),
@@ -57,9 +86,8 @@ class AvailablePlansScreen extends StatelessWidget {
               ),
             ),
             CustomTextButton(text: "Terms & Conditions", onTap: () {}),
-            
-            SizedBox(height: 8),
 
+            SizedBox(height: 8),
           ],
         ),
       ),

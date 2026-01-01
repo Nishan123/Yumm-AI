@@ -19,7 +19,6 @@ class ChefsScreen extends StatelessWidget {
             PremiumAdBanner(
               text: "Unlock\nAll Chefs",
               backgroundImage: "${ConstantsString.assetSvg}/ad_banner2.svg",
-              onTap: () {},
               buttonText: "Go Premium",
             ),
             ChefCardWidget(

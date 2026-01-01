@@ -36,7 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
               PremiumAdBanner(
                 text: 'Unlock\nUnlimited Recipes',
                 backgroundImage: '${ConstantsString.assetSvg}/ad_banner.svg',
-                onTap: () {},
                 buttonText: 'Go Premium',
               ),
               SizedBox(height: 12),

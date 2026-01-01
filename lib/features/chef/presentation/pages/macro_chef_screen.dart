@@ -101,7 +101,7 @@ class _MacroChefScreenState extends State<MacroChefScreen> {
               SizedBox(height: 6),
 
               // macro nutrients input fields
-              InputWidgetTitle(title: "Enter your target macronutrients."),
+              InputWidgetTitle(title: "Enter your target macro nutrients."),
               PrimaryTextField(
                 keyboardType: TextInputType.number,
                 hintText: "Crabs (gr.)",

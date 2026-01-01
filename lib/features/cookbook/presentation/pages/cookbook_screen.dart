@@ -24,7 +24,6 @@ class _CookbookScreenState extends State<CookbookScreen> {
               PremiumAdBanner(
                 text: "Store\nUnlimited Meals",
                 backgroundImage: "${ConstantsString.assetSvg}/ad_banner2.svg",
-                onTap: () {},
                 buttonText: "Go Premium",
               ),
               SizedBox(height: 18,),
