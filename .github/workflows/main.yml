@@ -25,8 +25,9 @@ jobs:
           architecture: x64
 
       - name: Create .env file
+        shell: bash
         run: |
-          cat > .env <<'EOF'
+          cat <<'EOF' > .env
           gemini_api_key=${{ secrets.GEMINI_API_KEY }}
           # add other keys as needed
           EOF
