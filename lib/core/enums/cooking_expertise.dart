@@ -1,39 +1,76 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 
-enum CookingExpertise {
-  newbie,
-  canCook,
-  expert;
+enum Meal {
+  anything,
+  breakfast,
+  dinner,
+  mainCourse,
+  snacks,
+  dessert,
+  hardDrink,
+  softDrink;
 
   String get text {
     switch (this) {
-      case CookingExpertise.newbie:
-        return "Newbie";
-      case CookingExpertise.canCook:
-        return "Can Cook";
-      case CookingExpertise.expert:
-        return "Expert";
-    }
-  }
-  String get value {
-    switch (this) {
-      case CookingExpertise.newbie:
-        return "newBie";
-      case CookingExpertise.canCook:
-        return "canCook";
-      case CookingExpertise.expert:
-        return "expert";
+      case Meal.anything:
+        return "Anything";
+      case Meal.breakfast:
+        return "Breakfast";
+      case Meal.dinner:
+        return "Dinner";
+      case Meal.mainCourse:
+        return "Main Course";
+      case Meal.snacks:
+        return "Snacks";
+      case Meal.dessert:
+        return "Dessert";
+      case Meal.hardDrink:
+        return "Hard Drinks";
+      case Meal.softDrink:
+        return "Soft Drinks";
     }
   }
 
-  Color get color {
+  String get value {
     switch (this) {
-      case CookingExpertise.newbie:
-        return Colors.green;
-      case CookingExpertise.canCook:
-        return Colors.blue;
-      case CookingExpertise.expert:
-        return Colors.red;
+      case Meal.anything:
+        return "anything";
+      case Meal.breakfast:
+        return "breakfast";
+      case Meal.dinner:
+        return "dinner";
+      case Meal.mainCourse:
+        return "main Course";
+      case Meal.snacks:
+        return "snacks";
+      case Meal.dessert:
+        return "dessert";
+      case Meal.hardDrink:
+        return "hard Drinks";
+      case Meal.softDrink:
+        return "soft Drinks";
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case Meal.anything:
+        return LucideIcons.soup;
+      case Meal.breakfast:
+        return LucideIcons.egg_fried;
+      case Meal.dinner:
+        return LucideIcons.ham;
+      case Meal.mainCourse:
+        return LucideIcons.beef;
+      case Meal.snacks:
+        return LucideIcons.hamburger;
+      case Meal.dessert:
+        return LucideIcons.cake_slice;
+      case Meal.hardDrink:
+        return LucideIcons.bottle_wine;
+      case Meal.softDrink:
+        return LucideIcons.martini;
     }
   }
 }
