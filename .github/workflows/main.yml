@@ -53,6 +53,14 @@ jobs:
         with:
           channel: stable
 
+      - name: Create .env file
+        shell: bash
+        run: |
+          cat <<'EOF' > .env
+          gemini_api_key=${{ secrets.GEMINI_API_KEY }}
+          # add other keys as needed
+          EOF
+
       - run: flutter pub get
 
       - run: flutter build ios --no-codesign --simulator
@@ -68,19 +76,6 @@ jobs:
           name: ios-simulator-app
           path: build/ios/iphonesimulator/Runner.app.zip
 
-      - name: Create IPA
-        run: |
-          cd build/ios/iphoneos
-          mkdir Payload
-          mv Runner.app Payload/
-          zip -r app.ipa Payload
-
-      - name: Upload iOS artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-ipa
-          path: build/ios/iphoneos/app.ipa
-
   release:
     name: Create GitHub Release
     needs: [android, ios]
@@ -95,5 +90,5 @@ jobs:
           tag: v1.0.${{ github.run_number }}
           artifacts: |
             android-apk/*.apk
-            ios-ipa/app.ipa
+            ios-simulator-app/Runner.app.zip
           token: ${{ secrets.TOKEN }}
