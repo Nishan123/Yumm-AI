@@ -24,6 +24,13 @@ jobs:
           channel: stable
           architecture: x64
 
+      - name: Create .env file
+        run: |
+          cat > .env <<'EOF'
+          gemini_api_key=${{ secrets.GEMINI_API_KEY }}
+          # add other keys as needed
+          EOF
+
       - run: flutter pub get
 
       - run: flutter build apk --release --split-per-abi
