@@ -49,17 +49,11 @@ class PrimaryTextField extends StatelessWidget {
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              width: 4,
-              color: AppColors.redColor,
-            ),
+            borderSide: BorderSide(width: 4, color: AppColors.redColor),
           ),
           focusedErrorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(
-              width: 4,
-              color: AppColors.redColor,
-            ),
+            borderSide: BorderSide(width: 4, color: AppColors.redColor),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
