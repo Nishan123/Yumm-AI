@@ -18,7 +18,8 @@ class CustomDropdownChecklist extends StatefulWidget {
   });
 
   @override
-  State<CustomDropdownChecklist> createState() => _CustomDropdownChecklistState();
+  State<CustomDropdownChecklist> createState() =>
+      _CustomDropdownChecklistState();
 }
 
 class _CustomDropdownChecklistState extends State<CustomDropdownChecklist> {
@@ -86,7 +87,9 @@ class _CustomDropdownChecklistState extends State<CustomDropdownChecklist> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: isExpanded ? AppColors.primaryColor : AppColors.lightPrimaryColor,
+                  color: isExpanded
+                      ? AppColors.primaryColor
+                      : AppColors.lightPrimaryColor,
                   width: 2,
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -97,28 +100,34 @@ class _CustomDropdownChecklistState extends State<CustomDropdownChecklist> {
                 children: [
                   Text(
                     displayText,
-                    style: AppTextStyles.h6.copyWith(fontWeight: FontWeight.w500)
+                    style: AppTextStyles.h6.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   Icon(
-                    isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    isExpanded
+                        ? Icons.keyboard_arrow_up
+                        : Icons.keyboard_arrow_down,
                     size: 28,
                   ),
                 ],
               ),
             ),
           ),
-      
+
           // Dropdown Content
           if (isExpanded) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 6),
             Container(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey.shade400,
-                  width: 2,
+                border: Border.all(color: Colors.grey.shade400, width: 2),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(0),
+                  topRight: Radius.circular(0),
+                  bottomLeft: Radius.circular(14),
+                  bottomRight: Radius.circular(14),
                 ),
-                borderRadius: BorderRadius.circular(16),
                 color: Colors.white,
               ),
               child: Column(
@@ -142,7 +151,9 @@ class _CustomDropdownChecklistState extends State<CustomDropdownChecklist> {
                                   width: 2,
                                 ),
                                 borderRadius: BorderRadius.circular(6),
-                                color: isSelected ? AppColors.primaryColor : AppColors.whiteColor,
+                                color: isSelected
+                                    ? AppColors.primaryColor
+                                    : AppColors.whiteColor,
                               ),
                               child: isSelected
                                   ? const Icon(
@@ -165,14 +176,16 @@ class _CustomDropdownChecklistState extends State<CustomDropdownChecklist> {
                       ),
                     );
                   }),
-      
+
                   const SizedBox(height: 8),
-      
+
                   // Confirm Button
                   SecondaryButton(
                     margin: EdgeInsets.symmetric(horizontal: 0),
-                    backgroundColor: AppColors.primaryColor, onTap: confirm, text: "Confirm Saves")
-                   
+                    backgroundColor: AppColors.primaryColor,
+                    onTap: confirm,
+                    text: "Confirm Saves",
+                  ),
                 ],
               ),
             ),

@@ -8,16 +8,17 @@ import 'package:yumm_ai/features/chef/presentation/pages/pantry_chef_screen.dart
 import 'package:yumm_ai/features/cooking/presentation/pages/cooking_screen.dart';
 import 'package:yumm_ai/features/dashboard/presentation/pages/main_screen.dart';
 import 'package:yumm_ai/features/kitchen_tool/presentation/pages/kitchen_tools_screen.dart';
-import 'package:yumm_ai/features/pantry_inventory.dart/presentation/pages/pantry_inventory_screen.dart';
+import 'package:yumm_ai/features/pantry_inventory/presentation/pages/pantry_inventory_screen.dart';
 import 'package:yumm_ai/features/save_recipe/presentation/pages/saved_recipe_screen.dart';
 import 'package:yumm_ai/features/scanner/presentation/pages/scanner_screen.dart';
+import 'package:yumm_ai/features/shopping_list/presentation/pages/add_shopping_list_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/shopping_list_screen.dart';
 import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plans_screen.dart';
 
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
-    initialLocation: "/",
+    initialLocation: "/macroChef",
     routes: [
       GoRoute(
         path: "/",
@@ -97,6 +98,13 @@ class AppRoutes {
         name: "pantry_inventory",
         builder: (context, state) {
           return PantryInventoryScreen();
+        },
+      ),
+      GoRoute(
+        path: "/add_shopping_list",
+        name: "add_shopping_list",
+        builder: (context, state) {
+          return AddShoppingListScreen();
         },
       ),
 

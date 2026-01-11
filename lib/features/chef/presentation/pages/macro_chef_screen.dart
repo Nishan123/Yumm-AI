@@ -159,12 +159,35 @@ class _MacroChefScreenState extends State<MacroChefScreen> {
                 onDurationChange: (value) {},
               ),
               SizedBox(height: 6),
+
+              // Cooking expertise selector
+              InputWidgetTitle(title: "Select your expertise in cooking."),
+              CustomTabBar(
+                tabItems: [
+                  CookingExpertise.newbie.text,
+                  CookingExpertise.canCook.text,
+                  CookingExpertise.expert.text,
+                ],
+                onTabChanged: (value) {
+                  setState(() {
+                    _selectedCookingExpertise = value;
+                  });
+                },
+                values: [
+                  CookingExpertise.newbie,
+                  CookingExpertise.canCook,
+                  CookingExpertise.expert,
+                ],
+              ),
+              SizedBox(height: 8),
               // Generate Recipe button
               SecondaryButton(
                 borderRadius: 40,
                 haveHatIcon: true,
                 backgroundColor: AppColors.blackColor,
-                onTap: () {},
+                onTap: () {
+                  debugPrint("${_selectedCookingExpertise.value}");
+                },
                 text: "Generate Recipe",
               ),
               SizedBox(height: 18),

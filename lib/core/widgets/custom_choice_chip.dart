@@ -4,7 +4,7 @@ import 'package:yumm_ai/app/theme/app_colors.dart';
 class CustomChoiceChip<T> extends StatefulWidget {
   final List<T> values;
   final String Function(T) labelBuilder;
-  final IconData Function(T) iconBuilder;
+  final IconData? Function(T)? iconBuilder;
   final void Function(T)? onSelected;
   final EdgeInsetsGeometry padding;
 
@@ -30,7 +30,7 @@ class _CustomChoiceChipState<T> extends State<CustomChoiceChip<T>> {
       final index = entry.key;
       final item = entry.value;
       final label = widget.labelBuilder(item);
-      final icon = widget.iconBuilder(item);
+      final icon = widget.iconBuilder?.call(item);
 
       return Padding(
         padding: index == 0
@@ -40,16 +40,17 @@ class _CustomChoiceChipState<T> extends State<CustomChoiceChip<T>> {
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
           showCheckmark: false,
           label: Row(
+            spacing: icon == null?0:8,
             mainAxisSize: MainAxisSize.min,
+             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
+              icon == null?SizedBox():Icon(
                 icon,
                 size: 20,
                 color: _selectedIndex == index
                     ? AppColors.whiteColor
                     : AppColors.blackColor,
               ),
-              const SizedBox(width: 8),
               Text(label),
             ],
           ),
