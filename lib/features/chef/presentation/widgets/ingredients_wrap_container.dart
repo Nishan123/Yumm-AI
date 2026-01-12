@@ -6,13 +6,24 @@ import 'package:yumm_ai/core/constants/constants_string.dart';
 
 class IngredientsWrapContainer extends StatelessWidget {
   final List<Widget> items;
+  final EdgeInsets? margin;
+  final String? emptyText;
+  final bool? haveAddIngredientButton;
+  final VoidCallback? onAddIngredientButtonPressed;
 
-  const IngredientsWrapContainer({super.key, required this.items});
+  const IngredientsWrapContainer({
+    super.key,
+    required this.items,
+    this.margin,
+    this.emptyText,
+    this.haveAddIngredientButton,
+    this.onAddIngredientButtonPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: ConstantsString.commonPadding,
+      margin: margin ?? ConstantsString.commonPadding,
       padding: EdgeInsets.only(left: 11, top: 10, bottom: 8, right: 0),
       width: double.infinity,
       height: items.isEmpty ? 120 : null,
@@ -24,9 +35,31 @@ class IngredientsWrapContainer extends StatelessWidget {
       ),
       child: items.isEmpty
           ? Center(
-              child: Text(
-                "No Ingredients Selected 😪",
-                style: AppTextStyles.h3.copyWith(color: AppColors.descriptionTextColor,fontWeight: FontWeight.bold),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    emptyText ?? "No Ingredients Selected 😪",
+                    style: AppTextStyles.h3.copyWith(
+                      color: AppColors.descriptionTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  haveAddIngredientButton ?? false
+                      ? SizedBox(height: 12)
+                      : SizedBox(),
+                  haveAddIngredientButton ?? false
+                      ? ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            elevation: 0,
+                            backgroundColor: AppColors.blackColor,
+                            foregroundColor: AppColors.whiteColor,
+                          ),
+                          onPressed: onAddIngredientButtonPressed,
+                          child: Text("Add Item"),
+                        )
+                      : SizedBox(),
+                ],
               ),
             )
           : Wrap(children: [...items]),

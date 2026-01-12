@@ -25,6 +25,24 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
   CookingExpertise _selectedCookingExpertise = CookingExpertise.newbie;
   Meal _selectedMeal = Meal.anything;
   List<IngredientModel> selectedIngredients = [];
+
+  void onAddItem() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return AddIngredientsBottomSheet(
+          selectedIngredients: selectedIngredients,
+          onSubmit: (List<IngredientModel> newSelection) {
+            setState(() {
+              selectedIngredients = newSelection;
+            });
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     var mq = MediaQuery.of(context).size;
@@ -47,23 +65,14 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
                 haveActionButton: true,
                 actionButtonText: "Add Item",
                 onActionTap: () {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (context) {
-                      return AddIngredientsBottomSheet(
-                        selectedIngredients: selectedIngredients,
-                        onSubmit: (List<IngredientModel> newSelection) {
-                          setState(() {
-                            selectedIngredients = newSelection;
-                          });
-                        },
-                      );
-                    },
-                  );
+                  onAddItem();
                 },
               ),
               IngredientsWrapContainer(
+                haveAddIngredientButton: true,
+                onAddIngredientButtonPressed: () {
+                  onAddItem();
+                },
                 items: selectedIngredients
                     .map(
                       (ing) => IngredientsChip(

@@ -15,7 +15,7 @@ class ProfilePreviewCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 8, vertical: 18),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(24),
           color: AppColors.extraLightBlackColor,
           border: Border.all(width: 1, color: AppColors.lightBlackColor),
         ),

@@ -8,6 +8,7 @@ import 'package:yumm_ai/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_search_bar.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/recommended_food_scroll_snap.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/top_recipe_card.dart';
+import 'package:yumm_ai/features/search/presentation/pages/search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,7 +31,12 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               SizedBox(height: 12),
               // Custom Search Bar
-              HomeSearchBar(),
+              HomeSearchBar(
+                onTap: () {
+                  Navigator.of(context).push(SearchScreen.route());
+                },
+              ),
+
               SizedBox(height: 18),
               //Premium Card
               PremiumAdBanner(
@@ -74,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-              SizedBox(height:80)
+              SizedBox(height: 80),
             ],
           ),
         ),
