@@ -14,6 +14,7 @@ class AppColors {
   static Color whiteColor = const Color.fromARGB(255, 255, 255, 255);
   static Color normalIconColor = const Color.fromARGB(80, 0, 0, 0);
   static Color blueColor = const Color.fromARGB(255, 73, 0, 162);
+  static Color lightBlueColor = const Color.fromARGB(255, 83, 20, 159);
   static Color redColor = const Color.fromARGB(255, 228, 0, 19);
   static Color borderColor = const Color.fromARGB(255, 211, 211, 211);
   static Color grayColor = const Color.fromARGB(255, 0, 151, 53);

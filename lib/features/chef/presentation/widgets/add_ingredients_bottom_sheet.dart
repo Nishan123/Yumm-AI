@@ -12,10 +12,13 @@ import 'package:yumm_ai/features/chef/presentation/providers/get_ingredients_pro
 class AddIngredientsBottomSheet extends StatefulWidget {
   final List<IngredientModel> selectedIngredients;
   final ValueChanged<List<IngredientModel>> onSubmit;
+  final String? title;
+
   const AddIngredientsBottomSheet({
     super.key,
     required this.selectedIngredients,
     required this.onSubmit,
+    this.title
   });
 
   @override
@@ -65,7 +68,7 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
             },
             haveActionButton: true,
             actionButtonText: "Done",
-            title: "Add available ingredients",
+            title: widget.title??"Add available ingredients",
             padding: EdgeInsets.only(left: 0, top: 8, bottom: 8),
           ),
 

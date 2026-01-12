@@ -28,11 +28,27 @@ class _MacroChefScreenState extends State<MacroChefScreen> {
   final crabsController = TextEditingController();
   final fatsController = TextEditingController();
 
-  Duration _selectedDuration = Duration(minutes: 30);
   CookingExpertise _selectedCookingExpertise = CookingExpertise.newbie;
   Meal _selectedMeal = Meal.anything;
   List<IngredientModel> selectedIngredients = [];
   List<String> selectedDietary = [];
+
+  void onAddItem() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return AddIngredientsBottomSheet(
+          selectedIngredients: selectedIngredients,
+          onSubmit: (List<IngredientModel> newSelection) {
+            setState(() {
+              selectedIngredients = newSelection;
+            });
+          },
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -63,25 +79,16 @@ class _MacroChefScreenState extends State<MacroChefScreen> {
                 haveActionButton: true,
                 actionButtonText: "Add Item",
                 onActionTap: () {
-                  showModalBottomSheet(
-                    isScrollControlled: true,
-                    context: context,
-                    builder: (context) {
-                      return AddIngredientsBottomSheet(
-                        selectedIngredients: selectedIngredients,
-                        onSubmit: (List<IngredientModel> newSelection) {
-                          setState(() {
-                            selectedIngredients = newSelection;
-                          });
-                        },
-                      );
-                    },
-                  );
+                  onAddItem();
                 },
               ),
 
               // selected ingredients widget
               IngredientsWrapContainer(
+                haveAddIngredientButton: true,
+                onAddIngredientButtonPressed: () {
+                  onAddItem();
+                },
                 items: selectedIngredients
                     .map(
                       (ing) => IngredientsChip(
