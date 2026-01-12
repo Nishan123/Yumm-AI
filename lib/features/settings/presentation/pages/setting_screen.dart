@@ -21,7 +21,11 @@ class SettingScreen extends StatelessWidget {
             child: Column(
               spacing: 12,
               children: [
-                ProfilePreviewCard(),
+                ProfilePreviewCard(
+                  onTap: () {
+                    context.pushNamed("profile");
+                  },
+                ),
                 SizedBox(height: 12),
                 SettingListGroup(
                   groupName: "Account",

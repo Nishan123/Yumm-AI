@@ -54,7 +54,7 @@ class ChefsScreen extends StatelessWidget {
               suffixImage: ConstantsString.pantryChefSuffix,
               backgroundImage: ConstantsString.pantryChefBackground,
               onTap: () {
-                context.pushNamed("pantryChef");
+                context.pushNamed("pantry_chef");
               },
               title: "Pantry Chef",
               description:
@@ -66,7 +66,7 @@ class ChefsScreen extends StatelessWidget {
               suffixImage: ConstantsString.masterChefSuffix,
               backgroundImage: ConstantsString.masterChefBackground,
               onTap: () {
-                context.pushNamed("masterChef");
+                context.pushNamed("master_chef");
               },
               title: "Master Chef",
               description:
@@ -77,7 +77,7 @@ class ChefsScreen extends StatelessWidget {
               suffixImage: ConstantsString.macroChefSuffix,
               backgroundImage: ConstantsString.macroChefBackground,
               onTap: () {
-                context.pushNamed("macroChef");
+                context.pushNamed("macro_chef");
               },
               title: "Macro Chef",
               description:

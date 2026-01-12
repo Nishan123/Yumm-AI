@@ -18,7 +18,7 @@ class AddShoppingListScreen extends StatefulWidget {
 }
 
 class _AddShoppingListScreenState extends State<AddShoppingListScreen> {
-  ShoppingListType _itemType = ShoppingListType.vegetable;
+  ShoppingListType _itemType = ShoppingListType.any;
   String _selectedUnit = "";
   final itemController = TextEditingController();
   final quantityController = TextEditingController();

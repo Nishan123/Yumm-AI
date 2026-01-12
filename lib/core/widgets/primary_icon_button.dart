@@ -8,12 +8,14 @@ class PrimaryIconButton extends StatelessWidget {
   final VoidCallback onTap;
   final Color? iconColor;
   final Color? backgroundColor;
+  final double? iconSize;
   const PrimaryIconButton({
     super.key,
     required this.icon,
     required this.onTap,
     this.iconColor,
     this.backgroundColor,
+    this.iconSize
   });
 
   @override
@@ -29,7 +31,7 @@ class PrimaryIconButton extends StatelessWidget {
           ),
           child: IconButton(
             onPressed: onTap,
-            icon: Icon(icon, color: iconColor ?? AppColors.blackColor),
+            icon: Icon(icon, color: iconColor ?? AppColors.blackColor,size: iconSize??24,),
           ),
         ),
       ),
