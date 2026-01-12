@@ -25,6 +25,7 @@ class ShoppingListTile extends StatelessWidget {
     final mq = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(
+        border: Border.all(width: 0.6, color: AppColors.lightPrimaryColor),
         borderRadius: BorderRadius.circular(16),
         color: AppColors.extraLightBlackColor,
       ),
@@ -62,7 +63,12 @@ class ShoppingListTile extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(itemName, style: AppTextStyles.h6),
+              Text(
+                itemName,
+                style: AppTextStyles.h6.copyWith(
+                  decoration: isChecked ? TextDecoration.lineThrough : null,
+                ),
+              ),
               Row(
                 spacing: 8,
                 children: [

@@ -9,6 +9,7 @@ import 'package:yumm_ai/features/cooking/presentation/pages/cooking_screen.dart'
 import 'package:yumm_ai/features/dashboard/presentation/pages/main_screen.dart';
 import 'package:yumm_ai/features/kitchen_tool/presentation/pages/kitchen_tools_screen.dart';
 import 'package:yumm_ai/features/pantry_inventory/presentation/pages/pantry_inventory_screen.dart';
+import 'package:yumm_ai/features/profile/presentation/pages/profile_screen.dart';
 import 'package:yumm_ai/features/save_recipe/presentation/pages/saved_recipe_screen.dart';
 import 'package:yumm_ai/features/scanner/presentation/pages/scanner_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/add_shopping_list_screen.dart';
@@ -18,7 +19,7 @@ import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plan
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
-    initialLocation: "/macroChef",
+    initialLocation: "/",
     routes: [
       GoRoute(
         path: "/",
@@ -54,6 +55,13 @@ class AppRoutes {
         builder: (context, state) {
           final scannerType = state.uri.queryParameters["selectedScanner"];
           return ScannerScreen(selectedScanner: scannerType!);
+        },
+      ),
+      GoRoute(
+        path: "/profile",
+        name: "profile",
+        builder: (context, state) {
+          return ProfileScreen();
         },
       ),
       GoRoute(
@@ -110,24 +118,24 @@ class AppRoutes {
 
       // Different types of chefs
       GoRoute(
-        path: "/pantryChef",
-        name: "pantryChef",
+        path: "/pantry_chef",
+        name: "pantry_chef",
         builder: (context, state) {
           return PantryChefScreen();
         },
       ),
 
       GoRoute(
-        path: "/masterChef",
-        name: "masterChef",
+        path: "/master_chef",
+        name: "master_chef",
         builder: (context, state) {
           return MasterChefScreen();
         },
       ),
 
       GoRoute(
-        path: "/macroChef",
-        name: "macroChef",
+        path: "/macro_chef",
+        name: "macro_chef",
         builder: (context, state) {
           return MacroChefScreen();
         },
