@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:yumm_ai/core/constants/hive_table_contansts.dart';
-import 'package:yumm_ai/core/services/user_hive_service.dart';
+import 'package:yumm_ai/core/services/storage/user_hive_service.dart';
 import 'package:yumm_ai/features/auth/data/datasource/user_datasource.dart';
 import 'package:yumm_ai/features/auth/data/model/user_hive_model.dart';
 
@@ -10,7 +10,7 @@ final authLocalDatasourceProvider = Provider<AuthLocalDatasource>((ref) {
   return AuthLocalDatasource(hiveService: hiveService);
 });
 
-class AuthLocalDatasource implements IAuthDatasource {
+class AuthLocalDatasource implements IAuthLocalDatasource {
   final HiveService _hiveService;
   AuthLocalDatasource({required HiveService hiveService})
     : _hiveService = hiveService;

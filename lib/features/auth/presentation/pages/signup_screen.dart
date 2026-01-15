@@ -22,10 +22,10 @@ class SignupScreen extends ConsumerStatefulWidget {
 }
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController(text:"jamal@gmail.com");
+  final TextEditingController _passwordController = TextEditingController(text:"Nishan@123");
   final TextEditingController _confirmPasswordController =
-      TextEditingController();
+      TextEditingController(text:"Nishan@123");
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordObscure = true;
   bool _isConfirmObscure = true;
@@ -41,7 +41,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       );
       return;
     }
-    await Future.delayed(Duration(seconds: 3));
     await ref
         .read(authViewModelProvider.notifier)
         .signup(
@@ -50,17 +49,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           fullName: _emailController.text.trim().split('@').first,
         );
   }
-
-//   @override
-// void initState() {
-//   super.initState();
-//   WidgetsBinding.instance.addPostFrameCallback((_) async {
-//     if (!Hive.isBoxOpen(HiveTableConstants.userTable)) {
-//       await Hive.openBox(HiveTableConstants.userTable);
-//     }
-//     await Hive.box(HiveTableConstants.userTable).clear();
-//   });
-// }
 
   @override
   Widget build(BuildContext context) {
@@ -130,9 +118,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return "Enter Password";
-                              } else {
-                                return null;
+                              } else if (value.length < 6) {
+                                return "Password must be at least 6 characters";
                               }
+                              return null;
                             },
                           ),
                           AuthTextField(

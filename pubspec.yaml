@@ -37,6 +37,12 @@ dependencies:
   jwt_decoder: ^2.0.1
   hive_flutter: ^1.1.0
   path_provider: ^2.1.5
+  connectivity_plus: ^7.0.0
+  shared_preferences: ^2.5.4
+  pretty_dio_logger: ^1.4.0
+  flutter_secure_storage: ^10.0.0
+  dio_smart_retry: ^7.0.1
+  dio: ^5.9.0
 
 dev_dependencies:
   flutter_test:
