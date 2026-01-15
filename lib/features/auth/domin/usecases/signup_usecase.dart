@@ -2,6 +2,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 import 'package:yumm_ai/core/error/failure.dart';
 import 'package:yumm_ai/core/usecases/app_usecases.dart';
 import 'package:yumm_ai/features/auth/data/repositories/auth_repository.dart';
@@ -37,10 +38,15 @@ class SignupUsecase implements UsecaseWithParms<bool, SignupUsecaseParam> {
   @override
   Future<Either<Failure, bool>> call(params) async {
     final entity = UserEntity(
+      uid: Uuid().v4(),
+      role: "user",
       email: params.email,
       fullName: params.fullName,
       authProvider: params.authProvider,
       password: params.password,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      profilePic: "https://assets.stickpng.com/images/61194988f8fe340004e0d2c8.png"
     );
     return _authRepository.signUpWithEmailPassword(entity);
   }
