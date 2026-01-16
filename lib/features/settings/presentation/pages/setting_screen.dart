@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
+import 'package:yumm_ai/core/widgets/custom_dialogue_box.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
+import 'package:yumm_ai/features/auth/presentation/state/auth_state.dart';
+import 'package:yumm_ai/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:yumm_ai/features/settings/presentation/widgets/profile_preview_card.dart';
 import 'package:yumm_ai/features/settings/presentation/widgets/setting_item_card.dart';
 import 'package:yumm_ai/features/settings/presentation/widgets/setting_list_group.dart';
 
-class SettingScreen extends StatelessWidget {
+class SettingScreen extends ConsumerWidget {
   const SettingScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (next.status == AuthStatus.unauthenticated) {
+        context.goNamed('login');
+      } else if (next.status == AuthStatus.error && next.errorMessage != null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(next.errorMessage!)));
+      }
+    });
     return Scaffold(
       appBar: AppBar(title: Text("Settings")),
       body: SafeArea(
@@ -104,7 +117,18 @@ class SettingScreen extends StatelessWidget {
                   borderRadius: 12,
                   backgroundColor: AppColors.redColor,
                   onTap: () {
-                    context.goNamed("signup");
+                    CustomDialogueBox.show(
+                      context,
+                      title: "Log Out?",
+                      description: "Are you sure you want to log out?",
+                      okText: "Cancel",
+                      onOkTap: () {},
+                      actionButtonText: "Log Out",
+                      onActionButtonTap: () {
+                        ref.read(authViewModelProvider.notifier).logout();
+                      },
+                      barrierDismissible: false,
+                    );
                   },
                 ),
                 SizedBox(height: 108),

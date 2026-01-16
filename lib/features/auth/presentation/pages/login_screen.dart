@@ -22,8 +22,12 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController(text: "jamal@gmail.com");
-  final TextEditingController _passwordController = TextEditingController(text: "Nishan@123");
+  final TextEditingController _emailController = TextEditingController(
+    text: "jamal@gmail.com",
+  );
+  final TextEditingController _passwordController = TextEditingController(
+    text: "Nishan@123",
+  );
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordObscure = true;
 
@@ -36,6 +40,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+  }
+
+  void _signinWithGoogle() async {
+    ref.read(authViewModelProvider.notifier).signInWithGoogle();
   }
 
   @override
@@ -119,13 +127,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                           PrimaryButton(
                             text: "Log In",
-                            onTap: _onLogin,
-                            isLoading: authState.status == AuthStatus.loading,
+                            onTap: () {
+                              authState.status == AuthStatus.googleAuthLoading
+                                  ? null
+                                  : _onLogin();
+                            },
+                            isLoading:
+                                authState.status ==
+                                AuthStatus.emailPasswordLoading,
                           ),
                           CustomDivider(),
                           GoogleSigninButton(
-                            onTap: () {},
-                            text: "Sign In With Google",
+                            isLoading:
+                                authState.status ==
+                                AuthStatus.googleAuthLoading,
+                            onTap: () {
+                              authState.status ==
+                                      AuthStatus.emailPasswordLoading
+                                  ? null
+                                  : _signinWithGoogle();
+                            },
+                            text: "Continue With Google",
                           ),
                           Spacer(),
                           Row(

@@ -140,7 +140,7 @@ class ApiClient {
 // Auth Interceptor to add JWT token to requests
 class _AuthInterceptor extends Interceptor {
   final _storage = const FlutterSecureStorage();
-  static const String _tokenKey = 'auth_token';
+  static const String _tokenKey = 'token';
 
   @override
   void onRequest(

@@ -5,12 +5,18 @@ import 'package:yumm_ai/app/theme/app_text_styles.dart';
 class GoogleSigninButton extends StatelessWidget {
   final VoidCallback onTap;
   final String text;
-  const GoogleSigninButton({super.key, required this.onTap, required this.text});
+  final bool? isLoading;
+  const GoogleSigninButton({
+    super.key,
+    required this.onTap,
+    required this.text,
+     this.isLoading,
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      onTap: isLoading??false?null:onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         width: double.infinity,
@@ -18,22 +24,27 @@ class GoogleSigninButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(40),
           border: Border.all(width: 2),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SizedBox(
-              height: 22,
-              width: 22,
-              child: CachedNetworkImage(
-                imageUrl:
-                    "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/1024px-Google_Favicon_2025.svg.png",
-                fit: BoxFit.cover,
+        child: isLoading ?? false
+            ? Center(child: SizedBox(
+              height: 21,
+              width: 21,
+              child: CircularProgressIndicator(strokeWidth: 3,)))
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CachedNetworkImage(
+                      imageUrl:
+                          "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/1024px-Google_Favicon_2025.svg.png",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Text(text, style: AppTextStyles.h6),
+                  SizedBox(),
+                ],
               ),
-            ),
-            Text(text, style: AppTextStyles.h6),
-            SizedBox(),
-          ],
-        ),
       ),
     );
   }

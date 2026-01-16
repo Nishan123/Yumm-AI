@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/login_screen.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/signup_screen.dart';
+import 'package:yumm_ai/features/auth/presentation/pages/splash_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/chefs_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/macro_chef_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/master_chef_screen.dart';
@@ -23,6 +24,13 @@ class AppRoutes {
     routes: [
       GoRoute(
         path: "/",
+        name: "splash",
+        builder: (context, state) {
+          return const SplashScreen();
+        },
+      ),
+      GoRoute(
+        path: "/main",
         name: "main",
         builder: (context, state) {
           return MainScreen();

@@ -3,6 +3,7 @@ import 'package:yumm_ai/features/auth/domin/usecases/get_current_user_usecase.da
 import 'package:yumm_ai/features/auth/domin/usecases/login_usercase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/logout_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/signup_usecase.dart';
+import 'package:yumm_ai/features/auth/domin/usecases/google_signin_usecase.dart';
 
 import 'package:yumm_ai/features/auth/presentation/state/auth_state.dart';
 
@@ -15,6 +16,7 @@ class AuthViewModel extends Notifier<AuthState> {
   late final LoginUsecase _loginUsecase;
   late final LogoutUsecase _logoutUsecase;
   late final GetCurrentUserUsecase _getCurrentUserUsecase;
+  late final GoogleSigninUsecase _googleSignInUsecase;
 
   @override
   AuthState build() {
@@ -22,6 +24,7 @@ class AuthViewModel extends Notifier<AuthState> {
     _loginUsecase = ref.read(loginUsecaseProvider);
     _logoutUsecase = ref.read(logoutUsercaseProvider);
     _getCurrentUserUsecase = ref.read(getCurrentUserUsecaseProvider);
+    _googleSignInUsecase = ref.read(googleSignInUsecaseProvider);
     return const AuthState();
   }
 
@@ -31,7 +34,7 @@ class AuthViewModel extends Notifier<AuthState> {
     String? fullName,
     String authProvider = "email_password",
   }) async {
-    state = state.copyWith(status: AuthStatus.loading);
+    state = state.copyWith(status: AuthStatus.emailPasswordLoading);
     final params = SignupUsecaseParam(
       email: email,
       password: password,
@@ -60,7 +63,7 @@ class AuthViewModel extends Notifier<AuthState> {
   }
 
   Future<void> login({required String email, required String password}) async {
-    state = state.copyWith(status: AuthStatus.loading);
+    state = state.copyWith(status: AuthStatus.emailPasswordLoading);
     final result = await _loginUsecase.call(
       LoginUsecaseParam(email: email, password: password),
     );
@@ -78,7 +81,7 @@ class AuthViewModel extends Notifier<AuthState> {
   }
 
   Future<void> logout() async {
-    state = state.copyWith(status: AuthStatus.loading);
+    state = state.copyWith(status: AuthStatus.emailPasswordLoading);
     final result = await _logoutUsecase.call();
     result.fold(
       (failure) {
@@ -104,12 +107,28 @@ class AuthViewModel extends Notifier<AuthState> {
   }
 
   Future<void> getCurrentUser() async {
-    state = state.copyWith(status: AuthStatus.loading);
+    state = state.copyWith(status: AuthStatus.emailPasswordLoading);
     final result = await _getCurrentUserUsecase.call();
     result.fold(
       (failure) {
         state = state.copyWith(
           status: AuthStatus.unauthenticated,
+          errorMessage: failure.errorMessage,
+        );
+      },
+      (user) {
+        state = state.copyWith(status: AuthStatus.authenticated, user: user);
+      },
+    );
+  }
+
+  Future<void> signInWithGoogle() async {
+    state = state.copyWith(status: AuthStatus.googleAuthLoading);
+    final result = await _googleSignInUsecase.call();
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: AuthStatus.error,
           errorMessage: failure.errorMessage,
         );
       },

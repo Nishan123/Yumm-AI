@@ -1,19 +1,29 @@
 import 'package:equatable/equatable.dart';
 
 import 'package:yumm_ai/features/auth/domin/entities/user_entity.dart';
-enum AuthStatus { initial, authenticated, unauthenticated, loading, error, registered }
+
+enum AuthStatus {
+  initial,
+  authenticated,
+  unauthenticated,
+  googleAuthLoading,
+  emailPasswordLoading,
+  error,
+  registered,
+}
+
 class AuthState extends Equatable {
-final AuthStatus status;
-final UserEntity ? user;
-final String? errorMessage;
+  final AuthStatus status;
+  final UserEntity? user;
+  final String? errorMessage;
 
-const AuthState({
-  this.status = AuthStatus.initial,
-  this.user,
-  this.errorMessage,
-});
+  const AuthState({
+    this.status = AuthStatus.initial,
+    this.user,
+    this.errorMessage,
+  });
 
-// copyWith method
+  // copyWith method
   AuthState copyWith({
     AuthStatus? status,
     UserEntity? user,

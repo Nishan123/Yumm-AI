@@ -1,24 +1,35 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/error/failure.dart';
+import 'package:yumm_ai/core/services/storage/user_session_service.dart';
 import 'package:yumm_ai/core/usecases/app_usecases.dart';
 import 'package:yumm_ai/features/auth/data/repositories/auth_repository.dart';
 import 'package:yumm_ai/features/auth/domin/repositories/auth_repository.dart';
 
 final logoutUsercaseProvider = Provider((ref) {
   final authRepository = ref.watch(authRepositoryProvider);
-  return LogoutUsecase(authRepository: authRepository);
+  final userSessionService = ref.watch(userSessionServiceProvider);
+  return LogoutUsecase(
+    authRepository: authRepository,
+    userSessionService: userSessionService,
+  );
 });
-
 
 class LogoutUsecase implements UsecaseWithoutParms<bool> {
   final IAuthRepository _authRepository;
+  final UserSessionService _userSessionService;
 
-  LogoutUsecase({required IAuthRepository authRepository})
-    : _authRepository = authRepository;
+  LogoutUsecase({
+    required IAuthRepository authRepository,
+    required UserSessionService userSessionService,
+  }) : _authRepository = authRepository,
+       _userSessionService = userSessionService;
 
   @override
-  Future<Either<Failure, bool>> call() {
+  Future<Either<Failure, bool>> call() async {
+    // Clear the SharedPreferences session
+    await _userSessionService.clearSession();
+    // Clear the Hive storage
     return _authRepository.logOut();
   }
 }

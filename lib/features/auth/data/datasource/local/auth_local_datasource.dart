@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive/hive.dart';
 import 'package:yumm_ai/core/constants/hive_table_contansts.dart';
+import 'package:yumm_ai/core/services/security/password_hasher.dart';
 import 'package:yumm_ai/core/services/storage/user_hive_service.dart';
 import 'package:yumm_ai/features/auth/data/datasource/user_datasource.dart';
 import 'package:yumm_ai/features/auth/data/model/user_hive_model.dart';
@@ -39,7 +40,12 @@ class AuthLocalDatasource implements IAuthLocalDatasource {
 
     if (user == null) return null;
 
-    final passwordMatches = (user.password ?? "").trim() == password.trim();
+    // Verify password using secure hash comparison
+    final storedHash = user.password ?? "";
+    final passwordMatches = PasswordHasher.verifyPassword(
+      password.trim(),
+      storedHash,
+    );
     if (!passwordMatches) return null;
 
     await _hiveService.setCurrentUser(user);
@@ -57,7 +63,25 @@ class AuthLocalDatasource implements IAuthLocalDatasource {
 
       if (alreadyExists) return false;
 
-      await _hiveService.createUser(userEntity);
+      // Hash the password before storing
+      final hashedPassword = PasswordHasher.hashPassword(
+        userEntity.password ?? "",
+      );
+      final userWithHashedPassword = UserHiveModel(
+        uid: userEntity.uid,
+        email: userEntity.email,
+        role: userEntity.role,
+        fullName: userEntity.fullName,
+        profilePic: userEntity.profilePic,
+        allergicTo: userEntity.allergicTo,
+        authProvider: userEntity.authProvider,
+        password: hashedPassword,
+        isSubscribed: userEntity.isSubscribed,
+        createdAt: userEntity.createdAt,
+        updatedAt: userEntity.updatedAt,
+      );
+
+      await _hiveService.createUser(userWithHashedPassword);
       return true;
     } catch (e) {
       return false;

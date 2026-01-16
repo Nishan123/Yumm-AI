@@ -52,7 +52,10 @@ class AuthRepository implements IAuthRepository {
         return Left(ApiFailure(message: "Login Failed"));
       } on DioException catch (e) {
         return Left(
-          ApiFailure(message: e.response?.data["message"], statusCode: e.response?.statusCode),
+          ApiFailure(
+            message: e.response?.data["message"],
+            statusCode: e.response?.statusCode,
+          ),
         );
       }
     } else {
@@ -119,6 +122,34 @@ class AuthRepository implements IAuthRepository {
       );
     } catch (e) {
       return Left(LocalDatabaseFailure(message: "$e"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> signInWithGoogle(String idToken) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final userApiModel = await _userRemoteDatasource.signInWithGoogle(
+          idToken,
+        );
+        if (userApiModel != null) {
+          return Right(userApiModel.toEntity());
+        }
+        return Left(ApiFailure(message: "Google Sign-In failed"));
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data["message"] ?? "Google Sign-In failed",
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      }
+    } else {
+      return Left(
+        ApiFailure(
+          message: "No internet connection. Google Sign-In requires network.",
+        ),
+      );
     }
   }
 

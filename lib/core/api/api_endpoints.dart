@@ -10,6 +10,7 @@ class ApiEndpoints {
   static const String login = "/auth/login";
   static const String signup = "/auth/register";
   static const String logout = "/auth/logout";
+  static const String googleSignIn = "/auth/google";
 
   // ================ User Endpoints ===============
   static const String getAllUsers = "/getAllUsers";

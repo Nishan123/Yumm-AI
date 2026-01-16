@@ -8,10 +8,10 @@ abstract interface class IAuthLocalDatasource {
   Future<bool> logOut();
 }
 
-
-abstract interface class IAuthRemoteDatasource{
+abstract interface class IAuthRemoteDatasource {
   Future<UserApiModel?> signWithEmailPassword(UserApiModel userModel);
   Future<UserApiModel?> loginWithEmailPassword(String email, String password);
+  Future<UserApiModel?> signInWithGoogle(String idToken);
   Future<UserApiModel?> getCurrentUser();
   Future<bool> logOut();
 }
