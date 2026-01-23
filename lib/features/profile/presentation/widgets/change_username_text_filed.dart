@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 
 class ChangeUsernameTextFiled extends StatelessWidget {
-  const ChangeUsernameTextFiled({super.key});
+  final TextEditingController userNameController;
+  const ChangeUsernameTextFiled({super.key, required this.userNameController});
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: userNameController,
       decoration: InputDecoration(
         hintText: "Username",
         isDense: false,

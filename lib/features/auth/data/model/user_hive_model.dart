@@ -62,7 +62,7 @@ class UserHiveModel extends HiveObject {
       fullName: fullName,
       allergicTo: allergicTo,
       profilePic: profilePic,
-      isSubscribed: isSubscribed,
+      isSubscribedUser: isSubscribed,
       authProvider: authProvider,
       password: password,
       createdAt: createdAt,

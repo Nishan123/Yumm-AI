@@ -46,7 +46,7 @@ class SignupUsecase implements UsecaseWithParms<bool, SignupUsecaseParam> {
       password: params.password,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      profilePic: "https://assets.stickpng.com/images/61194988f8fe340004e0d2c8.png"
+      profilePic: "https://i.pinimg.com/1200x/f5/47/d8/f547d800625af9056d62efe8969aeea0.jpg"
     );
     return _authRepository.signUpWithEmailPassword(entity);
   }

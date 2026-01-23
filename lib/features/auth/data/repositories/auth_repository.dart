@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/error/failure.dart';
 import 'package:yumm_ai/core/services/connectivity/network_info.dart';
+import 'package:yumm_ai/core/services/storage/user_session_service.dart';
 import 'package:yumm_ai/features/auth/data/datasource/local/auth_local_datasource.dart';
 import 'package:yumm_ai/features/auth/data/datasource/remote/remote_auth_datasource.dart';
 import 'package:yumm_ai/features/auth/data/datasource/user_datasource.dart';
@@ -15,10 +16,12 @@ final authRepositoryProvider = Provider((ref) {
   final userLocalDataSource = ref.read(authLocalDatasourceProvider);
   final userRemoteDataSource = ref.read(authRemoteDatasourceProvider);
   final networkInfo = ref.read(networkInfoProvider);
+  final userSessionService = ref.watch(userSessionServiceProvider);
   return AuthRepository(
     userLocalDatasource: userLocalDataSource,
     userRemoteDatasource: userRemoteDataSource,
     networkInfo: networkInfo,
+    userSessionService: userSessionService,
   );
 });
 
@@ -26,14 +29,17 @@ class AuthRepository implements IAuthRepository {
   final IAuthLocalDatasource _userLocalDatasource;
   final IAuthRemoteDatasource _userRemoteDatasource;
   final NetworkInfo _networkInfo;
+  final UserSessionService _userSessionService;
 
   AuthRepository({
     required IAuthLocalDatasource userLocalDatasource,
     required IAuthRemoteDatasource userRemoteDatasource,
     required NetworkInfo networkInfo,
+    required UserSessionService userSessionService,
   }) : _userLocalDatasource = userLocalDatasource,
        _userRemoteDatasource = userRemoteDatasource,
-       _networkInfo = networkInfo;
+       _networkInfo = networkInfo,
+       _userSessionService = userSessionService;
 
   @override
   Future<Either<Failure, UserEntity>> loginWithEmailPassword(
@@ -113,6 +119,14 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<Either<Failure, UserEntity>> getCurrentUser() async {
     try {
+      // First try to get user from session service (SharedPreferences)
+      // This is where API login stores the user data
+      final sessionUser = _userSessionService.getCurrentUser();
+      if (sessionUser != null) {
+        return Right(sessionUser.toEntity());
+      }
+
+      // Fall back to local Hive storage for offline scenarios
       final user = await _userLocalDatasource.getCurrentUser();
       if (user != null) {
         return Right(user.toEntity());
@@ -122,6 +136,33 @@ class AuthRepository implements IAuthRepository {
       );
     } catch (e) {
       return Left(LocalDatabaseFailure(message: "$e"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> getCurrentUserFromServer() async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final userApiModel = await _userRemoteDatasource.getCurrentUser();
+        if (userApiModel != null) {
+          // Update local session cache with fresh data from server
+          await _userSessionService.saveUserSession(userApiModel);
+          return Right(userApiModel.toEntity());
+        }
+        return Left(ApiFailure(message: "Failed to fetch user from server"));
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data["message"] ?? "Network error",
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      } catch (e) {
+        return Left(ApiFailure(message: "$e"));
+      }
+    } else {
+      // No network - fall back to local storage
+      return getCurrentUser();
     }
   }
 
@@ -165,4 +206,5 @@ class AuthRepository implements IAuthRepository {
       return Left(LocalDatabaseFailure(message: "$e"));
     }
   }
+
 }

@@ -5,7 +5,7 @@ import 'package:yumm_ai/features/chef/data/Ingrident_model.dart';
 class IngredientController {
   Future<List<IngredientModel>> getIngredients() async {
     final String jsonString = await rootBundle.loadString(
-      'assets/ingridents.json',
+      'assets/json/ingridents.json',
     );
     final List<dynamic> jsonList = jsonDecode(jsonString);
     final validItems = jsonList.where((item) =>

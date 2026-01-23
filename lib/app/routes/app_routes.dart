@@ -13,6 +13,7 @@ import 'package:yumm_ai/features/pantry_inventory/presentation/pages/pantry_inve
 import 'package:yumm_ai/features/profile/presentation/pages/profile_screen.dart';
 import 'package:yumm_ai/features/save_recipe/presentation/pages/saved_recipe_screen.dart';
 import 'package:yumm_ai/features/scanner/presentation/pages/scanner_screen.dart';
+import 'package:yumm_ai/features/settings/presentation/pages/setting_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/add_shopping_list_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/shopping_list_screen.dart';
 import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plans_screen.dart';
@@ -20,7 +21,7 @@ import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plan
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
-    initialLocation: "/",
+    initialLocation: "/profile",
     routes: [
       GoRoute(
         path: "/",
@@ -34,6 +35,13 @@ class AppRoutes {
         name: "main",
         builder: (context, state) {
           return MainScreen();
+        },
+      ),
+      GoRoute(
+        path: "/setting",
+        name: "setting",
+        builder: (context, state) {
+          return SettingScreen();
         },
       ),
       GoRoute(

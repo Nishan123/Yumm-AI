@@ -8,7 +8,7 @@ class UserApiModel {
   final String? profilePic;
   final List<String>? allergicTo;
   final String authProvider;
-  final bool? isSubscribed;
+  final bool? isSubscribedUser;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String? password;
@@ -20,7 +20,7 @@ class UserApiModel {
     this.profilePic,
     this.allergicTo,
     required this.authProvider,
-    this.isSubscribed,
+    this.isSubscribedUser,
     this.createdAt,
     this.updatedAt,
     this.password,
@@ -36,7 +36,7 @@ class UserApiModel {
       "profilePic": profilePic,
       "allergicTo": allergicTo,
       "authProvider": authProvider,
-      "isSubscribed": isSubscribed,
+      "isSubscribedUser": isSubscribedUser,
       "createdAt": createdAt?.toIso8601String(),
       "updatedAt": updatedAt?.toIso8601String(),
       "password": password,
@@ -63,14 +63,14 @@ class UserApiModel {
           ?.map((e) => e.toString())
           .toList(),
       authProvider: (json["authProvider"] ?? "") as String,
-      isSubscribed: json["isSubscribed"] as bool?,
+      isSubscribedUser: json["isSubscribedUser"] as bool?,
       createdAt: parseDate(json["createdAt"]),
       updatedAt: parseDate(json["updatedAt"]),
     );
   }
 
   // to entity
-   UserEntity toEntity() {
+  UserEntity toEntity() {
     return UserEntity(
       uid: uid,
       email: email,
@@ -79,7 +79,7 @@ class UserApiModel {
       profilePic: profilePic,
       allergicTo: allergicTo,
       authProvider: authProvider,
-      isSubscribed: isSubscribed,
+      isSubscribedUser: isSubscribedUser,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
@@ -95,7 +95,7 @@ class UserApiModel {
       profilePic: entity.profilePic,
       allergicTo: entity.allergicTo,
       authProvider: entity.authProvider,
-      isSubscribed: entity.isSubscribed,
+      isSubscribedUser: entity.isSubscribedUser,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       password: entity.password,

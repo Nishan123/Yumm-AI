@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/constants/constants_string.dart';
-import 'package:yumm_ai/core/enums/cooking_expertise.dart';
+import 'package:yumm_ai/core/enums/meals.dart';
+import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/premium_ad_banner.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_app_bar.dart';
@@ -10,20 +12,30 @@ import 'package:yumm_ai/features/home/presentation/widgets/recommended_food_scro
 import 'package:yumm_ai/features/home/presentation/widgets/top_recipe_card.dart';
 import 'package:yumm_ai/features/search/presentation/pages/search_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   Meal _selectedMealType = Meal.anything;
 
   @override
   Widget build(BuildContext context) {
+    // Watch user data from the database
+    final userAsync = ref.watch(currentUserProvider);
+
     return Scaffold(
-      appBar: HomeAppBar(),
+      appBar: userAsync.when(
+        data: (user) =>
+            HomeAppBar(userName: user!.fullName, profilePic: user.profilePic!),
+        loading: () {
+          return HomeAppBar(userName: "", profilePic: "");
+        },
+        error: (_, __) => HomeAppBar(userName: 'Guest', profilePic: ''),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -44,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 backgroundImage: '${ConstantsString.assetSvg}/ad_banner.svg',
                 buttonText: 'Go Premium',
               ),
+
               SizedBox(height: 12),
 
               //Choice Chips

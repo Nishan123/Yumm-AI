@@ -15,4 +15,6 @@ class ApiEndpoints {
   // ================ User Endpoints ===============
   static const String getAllUsers = "/getAllUsers";
   static String getUserById(String uid) => "/users/$uid";
+  static String getCurrentUser(String uid) => "/me/$uid";
+  static String updateProfilePic(String uid) => "/users/$uid/profile-pic";
 }

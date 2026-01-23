@@ -31,13 +31,21 @@ class RemoteAuthDatasource implements IAuthRemoteDatasource {
        _tokenStorageService = tokenStorageService;
 
   @override
-  Future<UserApiModel?> getCurrentUser() {
-    throw UnimplementedError();
+  Future<UserApiModel?> getCurrentUser() async {
+    final response = await _apiClient.get(
+      ApiEndpoints.getCurrentUser(_userSessionService.getCurrentUserUid()!),
+    );
+    if (response.data["success"]) {
+      final userData = response.data["data"] as Map<String, dynamic>;
+      return UserApiModel.fromJson(userData);
+    }
+    return null;
   }
 
   @override
   Future<bool> logOut() async {
     await _tokenStorageService.deleteToken();
+    await _userSessionService.clearSession();
     return true;
   }
 

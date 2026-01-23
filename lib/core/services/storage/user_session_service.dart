@@ -53,8 +53,8 @@ class UserSessionService {
     if (user.allergicTo != null) {
       await _prefs.setString(_keyAllergicTo, jsonEncode(user.allergicTo));
     }
-    if (user.isSubscribed != null) {
-      await _prefs.setBool(_keyIsSubscribed, user.isSubscribed!);
+    if (user.isSubscribedUser != null) {
+      await _prefs.setBool(_keyIsSubscribed, user.isSubscribedUser!);
     }
     if (user.createdAt != null) {
       await _prefs.setString(_keyCreatedAt, user.createdAt!.toIso8601String());
@@ -107,7 +107,7 @@ class UserSessionService {
       profilePic: _prefs.getString(_keyProfilePic),
       allergicTo: allergicTo,
       authProvider: authProvider,
-      isSubscribed: _prefs.getBool(_keyIsSubscribed),
+      isSubscribedUser: _prefs.getBool(_keyIsSubscribed),
       createdAt: createdAt,
       updatedAt: updatedAt,
     );

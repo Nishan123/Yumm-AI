@@ -1,3 +1,4 @@
+
 import 'package:dartz/dartz.dart';
 import 'package:yumm_ai/core/error/failure.dart';
 import 'package:yumm_ai/features/auth/domin/entities/user_entity.dart';
@@ -8,7 +9,12 @@ abstract interface class IAuthRepository {
     String email,
     String password,
   );
+
+  /// Gets current user from local storage (SharedPreferences/Hive)
   Future<Either<Failure, UserEntity>> getCurrentUser();
+
+  /// Gets current user from the server/database (requires network)
+  Future<Either<Failure, UserEntity>> getCurrentUserFromServer();
   Future<Either<Failure, UserEntity>> signInWithGoogle(String idToken);
   Future<Either<Failure, bool>> logOut();
 }

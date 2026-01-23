@@ -10,7 +10,7 @@ class UserEntity extends Equatable {
   final List<String>? allergicTo;
   final String authProvider;
   final String? password;
-  final bool? isSubscribed;
+  final bool? isSubscribedUser;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -23,7 +23,7 @@ class UserEntity extends Equatable {
     this.allergicTo,
     required this.authProvider,
     this.password,
-    this.isSubscribed,
+    this.isSubscribedUser,
     this.createdAt,
     this.updatedAt,
   });
@@ -39,7 +39,7 @@ class UserEntity extends Equatable {
       allergicTo,
       authProvider,
       password,
-      isSubscribed,
+      isSubscribedUser,
       createdAt,
       updatedAt,
     ];

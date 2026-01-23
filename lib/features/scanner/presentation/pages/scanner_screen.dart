@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/container_property.dart';
-import 'package:yumm_ai/core/enums/cooking_expertise.dart';
+import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
