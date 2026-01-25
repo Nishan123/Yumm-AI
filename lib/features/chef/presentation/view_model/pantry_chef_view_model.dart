@@ -1,35 +1,12 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_gemini/flutter_gemini.dart';
+import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yumm_ai/core/api/api_client.dart';
-import 'package:yumm_ai/core/constants/propmpts.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
-import 'package:yumm_ai/core/services/imagen_service.dart';
-import 'package:yumm_ai/features/chef/data/datasource/recipe_remote_datasource.dart';
 import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
-import 'package:yumm_ai/features/chef/data/repositories/recipe_repository_impl.dart';
-import 'package:yumm_ai/features/chef/domain/repositories/recipe_repository.dart';
-
-// Providers
-final recipeRemoteDataSourceProvider = Provider<RecipeRemoteDataSource>((ref) {
-  return RecipeRemoteDataSourceImpl(ref.read(apiClientProvider));
-});
-
-final recipeRepositoryProvider = Provider<RecipeRepository>((ref) {
-  return RecipeRepositoryImpl(ref.read(recipeRemoteDataSourceProvider));
-});
-
-final imagenServiceProvider = Provider<ImagenService>((ref) {
-  return ImagenService();
-});
-
-final pantryChefViewModelProvider =
-    NotifierProvider<PantryChefViewModel, PantryChefState>(
-      PantryChefViewModel.new,
-    );
+import 'package:yumm_ai/features/chef/domain/usecases/generate_recipe_images_usecase.dart';
+import 'package:yumm_ai/features/chef/domain/usecases/generate_recipe_plan_usecase.dart';
+import 'package:yumm_ai/features/chef/domain/usecases/save_recipe_usecase.dart';
 
 // State
 class PantryChefState {
@@ -55,20 +32,28 @@ class PantryChefState {
       isLoading: isLoading ?? this.isLoading,
       loadingMessage: loadingMessage ?? this.loadingMessage,
       generatedRecipe: generatedRecipe ?? this.generatedRecipe,
-      error: error, // Clear error if not provided
+      error: error,
     );
   }
 }
 
-// ViewModel
+final pantryChefViewModelProvider =
+    NotifierProvider<PantryChefViewModel, PantryChefState>(
+      PantryChefViewModel.new,
+    );
+
 class PantryChefViewModel extends Notifier<PantryChefState> {
-  late final RecipeRepository _recipeRepository;
-  late final ImagenService _imagenService;
+  late final GenerateRecipePlanUsecase _generateRecipePlanUsecase;
+  late final GenerateRecipeImagesUsecase _generateRecipeImagesUsecase;
+  late final SaveRecipeUsecase _saveRecipeUsecase;
 
   @override
   PantryChefState build() {
-    _recipeRepository = ref.read(recipeRepositoryProvider);
-    _imagenService = ref.read(imagenServiceProvider);
+    _generateRecipePlanUsecase = ref.read(generateRecipePlanUsecaseProvider);
+    _generateRecipeImagesUsecase = ref.read(
+      generateRecipeImagesUsecaseProvider,
+    );
+    _saveRecipeUsecase = ref.read(saveRecipeUsecaseProvider);
     return PantryChefState();
   }
 
@@ -79,111 +64,104 @@ class PantryChefViewModel extends Notifier<PantryChefState> {
     required CookingExpertise expertise,
     required String currentUserId,
   }) async {
-    try {
-      state = state.copyWith(
-        isLoading: true,
-        loadingMessage: "Crafting your recipe with Gemini...",
-        error: null,
-      );
+    state = state.copyWith(
+      isLoading: true,
+      loadingMessage: "Crafting your recipe with Gemini...",
+      error: null,
+    );
 
-      // 1. Generate text recipe with Gemini
-      final prompt = await Propmpts().getPantryChefMealPrompt(
-        availableIngridents: ingredients,
+    // 1. Generate text recipe with Gemini
+    final textResult = await _generateRecipePlanUsecase.call(
+      GenerateRecipePlanParams(
+        ingredients: ingredients,
         mealType: mealType,
         availableTime: availableTime,
-        cookingExperties: expertise,
-      );
+        expertise: expertise,
+        currentUserId: currentUserId,
+      ),
+    );
 
-      final response = await Gemini.instance.prompt(parts: [Part.text(prompt)]);
-
-      if (response?.output == null) {
-        throw Exception("Failed to generate recipe text");
-      }
-
-      // Parse JSON from Gemini response
-      String jsonString = response!.output!;
-      // Clean up markdown code blocks if present
-      if (jsonString.contains('```json')) {
-        jsonString = jsonString.replaceAll('```json', '').replaceAll('```', '');
-      } else if (jsonString.contains('```')) {
-        jsonString = jsonString.replaceAll('```', '');
-      }
-
-      final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-
-      // Create partial model from AI response
-      // We use fromAiJson to map ingredient names back to original IDs/images if needed
-      // But for simplicity, we first just get the structure
-      var tempRecipe = RecipeModel.fromAiJson(jsonMap, ingredients);
-
-      // Ensure generatedBy is set
-      // (Since fromAiJson might leave it empty if not in JSON, which it isn't)
-      // We will reconstruct it properly
-
-      state = state.copyWith(
-        loadingMessage: "Generating mouth-watering images with Imagen 3.0...",
-      );
-
-      // 2. Generate Images (Client-side)
-      final generatedImages = await _imagenService.generateRecipeImages(
-        recipeName: tempRecipe.recipeName,
-        description: tempRecipe.description,
-        numberOfImages: 2,
-      );
-
-      state = state.copyWith(loadingMessage: "Saving your masterpiece...");
-
-      // 3. Upload Images to Server
-      // We need a temporary recipeId if one wasn't generated by AI,
-      // but the prompt says "<generate a unique UUID>".
-      // Assuming AI follows instruction, we use that ID.
-      final String recipeId = tempRecipe.recipeId;
-
-      List<String> imageUrls = [];
-      if (generatedImages.isNotEmpty) {
-        imageUrls = await _recipeRepository.uploadRecipeImages(
-          recipeId: recipeId,
-          images: generatedImages,
+    // Handle failure or success for text generation
+    await textResult.fold(
+      (failure) async {
+        state = state.copyWith(
+          isLoading: false,
+          error: failure.errorMessage,
+          loadingMessage: null,
         );
-      }
+      },
+      (tempRecipe) async {
+        // 2. Generate Images
+        state = state.copyWith(
+          loadingMessage: "Generating mouth-watering images with Imagen 3.0...",
+        );
 
-      // 4. Save Recipe to Server (with image URLs and user ID)
-      final finalRecipe = RecipeModel(
-        recipeId: recipeId,
-        generatedBy: currentUserId, // Set the current user ID
-        recipeName: tempRecipe.recipeName,
-        ingredients: tempRecipe.ingredients,
-        steps: tempRecipe.steps,
-        initialPreparation: tempRecipe.initialPreparation,
-        kitchenTools: tempRecipe.kitchenTools,
-        experienceLevel: tempRecipe.experienceLevel,
-        estCookingTime: tempRecipe.estCookingTime,
-        description: tempRecipe.description,
-        mealType: tempRecipe.mealType,
-        cuisine: tempRecipe.cuisine,
-        calorie: tempRecipe.calorie,
-        images: imageUrls, // Add the uploaded URLs
-        nutrition: tempRecipe.nutrition,
-        servings: tempRecipe.servings,
-        likes: [],
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      );
+        final imageResult = await _generateRecipeImagesUsecase.call(
+          GenerateRecipeImagesParams(
+            recipeName: tempRecipe.recipeName,
+            description: tempRecipe.description,
+          ),
+        );
 
-      await _recipeRepository.saveRecipe(finalRecipe);
+        await imageResult.fold(
+          (failure) async {
+            // If image generation fails, we might still want to save the recipe without images?
+            // The original code allowed empty images on failure (though it logged and returned empty list).
+            // Here, usecase returns Failure.
+            // Let's assume we proceed with empty images if failure, OR show error.
+            // Original code: "Fallback: Return empty list".
+            // My Usecase implementation catches exception and returns Left(Failure).
+            // I should handle Left by proceeding with empty list to match original resilience, OR stop.
+            // Let's stop for now to be explicit about errors, OR proceed with warning.
+            // Given "clean the chef feature without breaking any logic", original logic was resilient.
+            // My usecase returns Left on error.
+            // I will treat image failure as non-fatal but log it (or just pass empty list to save).
 
-      state = state.copyWith(
-        isLoading: false,
-        generatedRecipe: finalRecipe,
-        loadingMessage: null,
-      );
-    } catch (e) {
-      debugPrint("Error in generateMeal: $e");
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-        loadingMessage: null,
-      );
-    }
+            // Actually, let's treat it as non-fatal.
+            await _saveRecipe(tempRecipe, [], currentUserId);
+          },
+          (images) async {
+            await _saveRecipe(tempRecipe, images, currentUserId);
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _saveRecipe(
+    RecipeModel tempRecipe,
+    List<Uint8List> images,
+    String currentUserId,
+  ) async {
+    state = state.copyWith(loadingMessage: "Saving your masterpiece...");
+
+    final saveResult = await _saveRecipeUsecase.call(
+      SaveRecipeParams(
+        recipeModel: tempRecipe,
+        generatedImages: images,
+        currentUserId: currentUserId,
+      ),
+    );
+
+    saveResult.fold(
+      (failure) {
+        state = state.copyWith(
+          isLoading: false,
+          error: failure.errorMessage,
+          loadingMessage: null,
+        );
+      },
+      (savedRecipe) {
+        // SavedRecipe is Entity, convert back to Model if needed for State
+        // Or change State to hold Entity.
+        // Current State holds RecipeModel.
+        // RecipeModel.fromEntity(savedRecipe)
+        state = state.copyWith(
+          isLoading: false,
+          generatedRecipe: RecipeModel.fromEntity(savedRecipe),
+          loadingMessage: null,
+        );
+      },
+    );
   }
 }

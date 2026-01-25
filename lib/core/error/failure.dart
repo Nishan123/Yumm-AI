@@ -20,3 +20,7 @@ class ApiFailure extends Failure {
   const ApiFailure({this.statusCode, required String message})
     : super(errorMessage: message);
 }
+
+class GeneralFailure extends Failure {
+  const GeneralFailure(String message) : super(errorMessage: message);
+}

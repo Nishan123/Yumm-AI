@@ -1,28 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/custom_drop_down.dart';
 import 'package:yumm_ai/core/widgets/primary_text_field.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
 import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
-import 'package:yumm_ai/features/chef/domain/ingredient_controller.dart';
+import 'package:yumm_ai/features/chef/presentation/providers/get_ingredients_provider.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/item_unit.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/shopping_list_type.dart';
 
-class AddShoppingListScreen extends StatefulWidget {
+class AddShoppingListScreen extends ConsumerStatefulWidget {
   const AddShoppingListScreen({super.key});
 
   @override
-  State<AddShoppingListScreen> createState() => _AddShoppingListScreenState();
+  ConsumerState<AddShoppingListScreen> createState() =>
+      _AddShoppingListScreenState();
 }
 
-class _AddShoppingListScreenState extends State<AddShoppingListScreen> {
+class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
   ShoppingListType _itemType = ShoppingListType.any;
   String _selectedUnit = "";
   final itemController = TextEditingController();
   final quantityController = TextEditingController();
-  final IngredientController _ingredientController = IngredientController();
   final GlobalKey<FormState> _form = GlobalKey<FormState>();
 
   List<IngredientModel> _ingredients = [];
@@ -44,7 +45,7 @@ class _AddShoppingListScreenState extends State<AddShoppingListScreen> {
       _ingredientsError = null;
     });
     try {
-      final items = await _ingredientController.getIngredients();
+      final items = await ref.read(getIngredientsProvider.future);
       if (!mounted) return;
       setState(() {
         _ingredients = items;

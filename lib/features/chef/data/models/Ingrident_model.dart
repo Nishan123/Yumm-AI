@@ -29,9 +29,9 @@ class IngredientModel {
   // fromJson - creates model from JSON map
   factory IngredientModel.fromJson(Map<String, dynamic> json) {
     return IngredientModel(
-      id: json['ingridentId'] as String? ?? '',
-      ingredientName: json['name'] as String? ?? '',
-      prefixImage: json['imageUrl'] as String? ?? '',
+      id: (json['ingridentId'] ?? json['id']) as String? ?? '',
+      ingredientName: (json['name'] ?? json['ingredientName']) as String? ?? '',
+      prefixImage: (json['imageUrl'] ?? json['prefixImage']) as String? ?? '',
       quantity: json['quantity'] as String? ?? '',
       unit: json['unit'] as String? ?? '',
     );

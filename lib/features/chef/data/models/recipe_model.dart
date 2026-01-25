@@ -46,6 +46,50 @@ class RecipeModel {
     this.updatedAt,
   });
 
+  RecipeModel copyWith({
+    String? recipeId,
+    String? generatedBy,
+    String? recipeName,
+    List<IngredientModel>? ingredients,
+    List<String>? steps,
+    List<String>? initialPreparation,
+    List<KitchenToolModel>? kitchenTools,
+    String? experienceLevel,
+    String? estCookingTime,
+    String? description,
+    String? mealType,
+    String? cuisine,
+    int? calorie,
+    List<String>? images,
+    NutritionModel? nutrition,
+    int? servings,
+    List<String>? likes,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return RecipeModel(
+      recipeId: recipeId ?? this.recipeId,
+      generatedBy: generatedBy ?? this.generatedBy,
+      recipeName: recipeName ?? this.recipeName,
+      ingredients: ingredients ?? this.ingredients,
+      steps: steps ?? this.steps,
+      initialPreparation: initialPreparation ?? this.initialPreparation,
+      kitchenTools: kitchenTools ?? this.kitchenTools,
+      experienceLevel: experienceLevel ?? this.experienceLevel,
+      estCookingTime: estCookingTime ?? this.estCookingTime,
+      description: description ?? this.description,
+      mealType: mealType ?? this.mealType,
+      cuisine: cuisine ?? this.cuisine,
+      calorie: calorie ?? this.calorie,
+      images: images ?? this.images,
+      nutrition: nutrition ?? this.nutrition,
+      servings: servings ?? this.servings,
+      likes: likes ?? this.likes,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   // toJson - converts model to JSON map
   Map<String, dynamic> toJson() {
     return {

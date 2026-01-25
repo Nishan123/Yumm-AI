@@ -4,6 +4,12 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+final imagenServiceProvider = Provider<ImagenService>((ref) {
+  return ImagenService();
+});
+
 class ImagenService {
   static final String _apiKey = dotenv.env['GOOGLE_AI_API_KEY'] ?? "";
 
