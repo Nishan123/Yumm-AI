@@ -5,7 +5,7 @@ import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/custom_drop_down.dart';
 import 'package:yumm_ai/core/widgets/primary_text_field.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
-import 'package:yumm_ai/features/chef/data/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
 import 'package:yumm_ai/features/chef/domain/ingredient_controller.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/item_unit.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/shopping_list_type.dart';
@@ -37,7 +37,6 @@ class _AddShoppingListScreenState extends State<AddShoppingListScreen> {
     super.initState();
     _loadIngredients();
   }
-
 
   Future<void> _loadIngredients() async {
     setState(() {

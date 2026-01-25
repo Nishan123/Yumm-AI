@@ -14,7 +14,7 @@ class KitchenToolsScreen extends StatefulWidget {
 }
 
 class _KitchenToolsScreenState extends State<KitchenToolsScreen> {
-  List<KitchenToolsModel> _selectedTools = [];
+  List<KitchenToolModel> _selectedTools = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +30,7 @@ class _KitchenToolsScreenState extends State<KitchenToolsScreen> {
                 context: context,
                 builder: (context) {
                   return AddToolBottomSheet(
-                    onSubmit: (List<KitchenToolsModel> tools) {
+                    onSubmit: (List<KitchenToolModel> tools) {
                       setState(() {
                         _selectedTools = tools;
                       });

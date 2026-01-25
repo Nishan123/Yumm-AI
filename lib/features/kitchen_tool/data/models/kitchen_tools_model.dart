@@ -1,32 +1,53 @@
-import 'dart:convert';
+import '../../domain/entities/kitchen_tool_entity.dart';
 
-class KitchenToolsModel {
+class KitchenToolModel {
   final String id;
   final String name;
   final String prefixImage;
-  KitchenToolsModel({
+
+  const KitchenToolModel({
     required this.id,
     required this.name,
     required this.prefixImage,
   });
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'name': name,
-      'prefixImage': prefixImage,
-    };
+  // toJson - converts model to JSON map
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'name': name, 'prefixImage': prefixImage};
   }
 
-  factory KitchenToolsModel.fromMap(Map<String, dynamic> map) {
-    return KitchenToolsModel(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      prefixImage: map['prefixImage'] as String,
+  // fromJson - creates model from JSON map
+  factory KitchenToolModel.fromJson(Map<String, dynamic> json) {
+    return KitchenToolModel(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      prefixImage: json['prefixImage'] as String? ?? '',
     );
   }
 
-  String toJson() => json.encode(toMap());
+  // toEntity - converts model to entity
+  KitchenToolEntity toEntity() {
+    return KitchenToolEntity(toolId: id, toolName: name, imageUrl: prefixImage);
+  }
 
-  factory KitchenToolsModel.fromJson(String source) => KitchenToolsModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  // fromEntity - creates model from entity
+  factory KitchenToolModel.fromEntity(KitchenToolEntity entity) {
+    return KitchenToolModel(
+      id: entity.toolId,
+      name: entity.toolName,
+      prefixImage: entity.imageUrl,
+    );
+  }
+
+  // toEntityList - converts list of models to list of entities
+  static List<KitchenToolEntity> toEntityList(List<KitchenToolModel> models) {
+    return models.map((model) => model.toEntity()).toList();
+  }
+
+  // fromJsonList - creates list of models from JSON list
+  static List<KitchenToolModel> fromJsonList(List<dynamic> jsonList) {
+    return jsonList
+        .map((json) => KitchenToolModel.fromJson(json as Map<String, dynamic>))
+        .toList();
+  }
 }

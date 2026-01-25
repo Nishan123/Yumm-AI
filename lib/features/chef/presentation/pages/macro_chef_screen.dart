@@ -10,7 +10,7 @@ import 'package:yumm_ai/core/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/primary_text_field.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
-import 'package:yumm_ai/features/chef/data/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/add_ingredients_bottom_sheet.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/available_time_selector.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_chip.dart';
@@ -27,6 +27,7 @@ class _MacroChefScreenState extends State<MacroChefScreen> {
   final proteinController = TextEditingController();
   final crabsController = TextEditingController();
   final fatsController = TextEditingController();
+  final fiberController = TextEditingController();
 
   CookingExpertise _selectedCookingExpertise = CookingExpertise.newbie;
   Meal _selectedMeal = Meal.anything;
@@ -126,6 +127,12 @@ class _MacroChefScreenState extends State<MacroChefScreen> {
                 hintText: "Fats (gr.)",
                 controller: fatsController,
                 margin: EdgeInsets.symmetric(horizontal: 16),
+              ),
+              PrimaryTextField(
+                keyboardType: TextInputType.number,
+                hintText: "Fiber (gr.)",
+                controller: fiberController,
+                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               ),
 
               SizedBox(height: 6),

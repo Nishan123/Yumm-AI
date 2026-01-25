@@ -11,7 +11,7 @@ import 'package:yumm_ai/core/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/primary_text_field.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
-import 'package:yumm_ai/features/chef/data/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/add_ingredients_bottom_sheet.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/available_time_selector.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_chip.dart';

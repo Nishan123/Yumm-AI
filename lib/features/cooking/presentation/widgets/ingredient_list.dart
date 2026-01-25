@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
-import 'package:yumm_ai/features/chef/data/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/ingredients_list_tile.dart';
 
 class IngredientList extends StatelessWidget {
@@ -48,6 +48,8 @@ class IngredientList extends StatelessWidget {
             prefixImage:
                 "https://www.themealdb.com/images/ingredients/Tomato.png",
             ingredientName: "Tomato",
+            quantity: '',
+            unit: '',
           ),
           quantity: "x3",
           textColor: textColor(index),

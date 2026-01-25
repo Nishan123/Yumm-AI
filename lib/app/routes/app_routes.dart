@@ -21,7 +21,7 @@ import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plan
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
-    initialLocation: "/profile",
+    initialLocation: "/main",
     routes: [
       GoRoute(
         path: "/",

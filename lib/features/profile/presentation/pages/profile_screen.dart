@@ -12,7 +12,7 @@ import 'package:yumm_ai/core/widgets/custom_dialogue_box.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
 import 'package:yumm_ai/core/widgets/secondary_icon_button.dart';
-import 'package:yumm_ai/features/chef/data/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/add_ingredients_bottom_sheet.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_wrap_container.dart';
 import 'package:yumm_ai/features/profile/presentation/view_model/profile_view_model.dart';
@@ -203,7 +203,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                         );
                                       });
                                     },
-                                    text: ing.ingredientName,
+                                    text: ing.id,
                                   ),
                                 )
                                 .toList(),

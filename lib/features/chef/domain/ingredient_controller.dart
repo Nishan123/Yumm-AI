@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
-import 'package:yumm_ai/features/chef/data/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
 
 class IngredientController {
   Future<List<IngredientModel>> getIngredients() async {
@@ -14,7 +14,7 @@ class IngredientController {
         item['prefixImage'] != null);
 
     return validItems
-        .map((json) => IngredientModel.fromMap(json as Map<String, dynamic>))
+        .map((json) => IngredientModel.fromJson(json as Map<String, dynamic>))
         .toList();
   }
 }

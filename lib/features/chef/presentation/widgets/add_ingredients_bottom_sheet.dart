@@ -6,7 +6,7 @@ import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/primary_text_field.dart';
-import 'package:yumm_ai/features/chef/data/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
 import 'package:yumm_ai/features/chef/presentation/providers/get_ingredients_provider.dart';
 
 class AddIngredientsBottomSheet extends StatefulWidget {
@@ -18,7 +18,7 @@ class AddIngredientsBottomSheet extends StatefulWidget {
     super.key,
     required this.selectedIngredients,
     required this.onSubmit,
-    this.title
+    this.title,
   });
 
   @override
@@ -68,7 +68,7 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
             },
             haveActionButton: true,
             actionButtonText: "Done",
-            title: widget.title??"Add available ingredients",
+            title: widget.title ?? "Add available ingredients",
             padding: EdgeInsets.only(left: 0, top: 8, bottom: 8),
           ),
 

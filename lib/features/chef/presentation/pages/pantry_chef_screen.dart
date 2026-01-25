@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
+import 'package:yumm_ai/core/constants/propmpts.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/widgets/cookbook_hint.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
+import 'package:yumm_ai/core/widgets/custom_snack_bar.dart';
 import 'package:yumm_ai/core/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
-import 'package:yumm_ai/features/chef/data/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/add_ingredients_bottom_sheet.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/available_time_selector.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_chip.dart';
@@ -141,19 +144,23 @@ class _PantryChefScreenState extends State<PantryChefScreen> {
                 borderRadius: 40,
                 text: "Generate Meal",
                 onTap: () async {
-                  // if (selectedIngredients.isEmpty) {
-                  //   CustomSnackBar.showErrorSnackBar(
-                  //     context,
-                  //     "No Ingredients Selected !",
-                  //   );
-                  // } else {
-                  //   RecipeController().generatePantryRecipe(
-                  //     selectedIngredients,
-                  //     _selectedMeal.value,
-                  //     _selectedDuration,
-                  //     _selectedCookingExpertise.value,
-                  //   );
-                  // }
+                  if (selectedIngredients.isEmpty) {
+                    CustomSnackBar.showErrorSnackBar(
+                      context,
+                      "No Ingredients Selected !",
+                    );
+                  } else {
+                    final prompt = await Propmpts().getPantryChefMealPrompt(
+                      availableIngridents: selectedIngredients,
+                      mealType: _selectedMeal,
+                      availableTime: _selectedDuration,
+                      cookingExperties: _selectedCookingExpertise,
+                    );
+                    final response = await Gemini.instance.prompt(
+                      parts: [Part.text(prompt)],
+                    );
+                    debugPrint(response?.output);
+                  }
                 },
                 backgroundColor: AppColors.blackColor,
                 haveHatIcon: true,

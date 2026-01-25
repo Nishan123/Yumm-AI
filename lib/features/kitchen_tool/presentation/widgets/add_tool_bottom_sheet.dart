@@ -9,8 +9,8 @@ import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.da
 import 'package:yumm_ai/features/kitchen_tool/presentation/providers/get_tools_provider.dart';
 
 class AddToolBottomSheet extends StatefulWidget {
-  final List<KitchenToolsModel> selectedTools;
-  final ValueChanged<List<KitchenToolsModel>> onSubmit;
+  final List<KitchenToolModel> selectedTools;
+  final ValueChanged<List<KitchenToolModel>> onSubmit;
   const AddToolBottomSheet({
     super.key,
     required this.selectedTools,
@@ -25,7 +25,7 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
   final TextEditingController searchToolsController = TextEditingController();
   String query = "";
   late Set<String> _selectedIds;
-  List<KitchenToolsModel> _tools = [];
+  List<KitchenToolModel> _tools = [];
   @override
   void initState() {
     super.initState();
@@ -138,7 +138,7 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
                                           Icon(Icons.kitchen),
                                     ),
                                   ),
-                                  SizedBox(width: 12,),
+                                  SizedBox(width: 12),
                                   Text(
                                     tool.name,
                                     style: AppTextStyles.normalText.copyWith(
@@ -165,7 +165,7 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
                         );
                       },
                       error: (error, stack) {
-                        return Center(child: Text("Failed to load tools"));
+                        return Center(child: Text("Failed to load tools: $error"));
                       },
                       loading: () {
                         return Center(child: CircularProgressIndicator());
