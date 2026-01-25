@@ -13,15 +13,15 @@ class KitchenToolModel {
 
   // toJson - converts model to JSON map
   Map<String, dynamic> toJson() {
-    return {'id': id, 'name': name, 'prefixImage': prefixImage};
+    return {'toolId': id, 'toolName': name, 'imageUrl': prefixImage};
   }
 
   // fromJson - creates model from JSON map
   factory KitchenToolModel.fromJson(Map<String, dynamic> json) {
     return KitchenToolModel(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      prefixImage: json['prefixImage'] as String? ?? '',
+      id: json['toolId'] as String? ?? '',
+      name: json['toolName'] as String? ?? '',
+      prefixImage: json['imageUrl'] as String? ?? '',
     );
   }
 
