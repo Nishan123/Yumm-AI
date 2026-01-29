@@ -97,14 +97,16 @@ class ShoppingListTile extends StatelessWidget {
             ],
           ),
           Spacer(),
-          CachedNetworkImage(
-            errorWidget: (context, url, error) {
-              return Icon(Icons.error);
-            },
-            imageUrl: itemImage,
-            height: 60,
-            width: 60,
-          ),
+          itemImage.isNotEmpty
+              ? CachedNetworkImage(
+                  errorWidget: (context, url, error) {
+                    return Icon(Icons.error);
+                  },
+                  imageUrl: itemImage,
+                  height: 60,
+                  width: 60,
+                )
+              : SizedBox(height: 60, width: 60),
         ],
       ),
     );

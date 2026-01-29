@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
@@ -10,12 +11,15 @@ import 'package:yumm_ai/core/widgets/custom_snack_bar.dart';
 import 'package:yumm_ai/core/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
-import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
+import 'package:yumm_ai/features/chef/presentation/state/chef_state.dart';
+import 'package:yumm_ai/features/chef/presentation/view_model/active_chef_provider.dart';
 import 'package:yumm_ai/features/chef/presentation/view_model/pantry_chef_view_model.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/add_ingredients_bottom_sheet.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/available_time_selector.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_chip.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_wrap_container.dart';
+import 'package:yumm_ai/features/chef/presentation/widgets/visibility_selector.dart';
 
 class PantryChefScreen extends ConsumerStatefulWidget {
   const PantryChefScreen({super.key});
@@ -26,9 +30,10 @@ class PantryChefScreen extends ConsumerStatefulWidget {
 
 class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
   Duration _selectedDuration = const Duration(minutes: 30);
-  CookingExpertise _selectedCookingExpertise = CookingExpertise.newbie;
+  CookingExpertise _selectedCookingExpertise = CookingExpertise.newBie;
   Meal _selectedMeal = Meal.anything;
   List<IngredientModel> selectedIngredients = [];
+  bool _isPublic = true;
 
   void onAddItem() {
     showModalBottomSheet(
@@ -53,32 +58,15 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
     final state = ref.watch(pantryChefViewModelProvider);
     final userAsync = ref.watch(currentUserProvider);
 
-    // Listen for errors
+    // Listen for loading state to navigate to loading screen
     ref.listen(pantryChefViewModelProvider, (previous, next) {
-      if (next.error != null && next.error != previous?.error) {
-        CustomSnackBar.showErrorSnackBar(context, next.error!);
+      if (next.status == ChefStatus.error &&
+          next.errorMessage != null &&
+          next.errorMessage != previous?.errorMessage) {
+        CustomSnackBar.showErrorSnackBar(context, next.errorMessage!);
       }
-      if (next.generatedRecipe != null &&
-          next.generatedRecipe != previous?.generatedRecipe) {
-        CustomSnackBar.showSuccessSnackBar(
-          context,
-          "Recipe generated successfully!",
-        );
-        // TODO: Navigate to recipe detail screen
-        // Navigator.push(context, MaterialPageRoute(builder: (_) => RecipeDetailScreen(recipe: next.generatedRecipe!)));
-        // For now, just print or show dialog?
-        showDialog(
-          context: context,
-          builder: (c) => AlertDialog(
-            title: Text("Recipe Generated!"),
-            content: Text(
-              "Recipe: ${next.generatedRecipe?.recipeName}\nImages generated: ${next.generatedRecipe?.images.length}",
-            ),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(c), child: Text("OK")),
-            ],
-          ),
-        );
+      if (next.isLoading && previous?.isLoading != true) {
+        context.pushNamed('generating_recipe');
       }
     });
 
@@ -118,12 +106,13 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
                             onTap: () {
                               setState(() {
                                 selectedIngredients.removeWhere(
-                                  (item) => item.id == ing.id,
+                                  (item) =>
+                                      item.ingredientId == ing.ingredientId,
                                 );
                               });
                             },
-                            text: ing.ingredientName,
-                            image: ing.prefixImage,
+                            text: ing.name,
+                            image: ing.imageUrl,
                           ),
                         )
                         .toList(),
@@ -159,7 +148,7 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
                   InputWidgetTitle(title: "Select your expertise in cooking."),
                   CustomTabBar(
                     tabItems: [
-                      CookingExpertise.newbie.text,
+                      CookingExpertise.newBie.text,
                       CookingExpertise.canCook.text,
                       CookingExpertise.expert.text,
                     ],
@@ -169,77 +158,62 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
                       });
                     },
                     values: [
-                      CookingExpertise.newbie,
+                      CookingExpertise.newBie,
                       CookingExpertise.canCook,
                       CookingExpertise.expert,
                     ],
                   ),
                   SizedBox(height: 6),
 
-                  SecondaryButton(
-                    borderRadius: 40,
-                    text: state.isLoading
-                        ? (state.loadingMessage ?? "Generating...")
-                        : "Generate Meal",
-                    onTap: state.isLoading
-                        ? () {}
-                        : () {
-                            if (selectedIngredients.isEmpty) {
-                              CustomSnackBar.showErrorSnackBar(
-                                context,
-                                "No Ingredients Selected !",
-                              );
-                            } else {
-                              final userId = userAsync.value?.uid;
-                              if (userId == null) {
-                                CustomSnackBar.showErrorSnackBar(
-                                  context,
-                                  "User not authenticated",
-                                );
-                                return;
-                              }
+                  // Recipe Visibility Toggle
+                  InputWidgetTitle(title: "Recipe Visibility"),
+                  VisibilitySelector(
+                    isPublic: _isPublic,
+                    onChanged: (value) => setState(() => _isPublic = value),
+                  ),
+                  SizedBox(height: 6),
 
-                              ref
-                                  .read(pantryChefViewModelProvider.notifier)
-                                  .generateMeal(
-                                    ingredients: selectedIngredients,
-                                    mealType: _selectedMeal,
-                                    availableTime: _selectedDuration,
-                                    expertise: _selectedCookingExpertise,
-                                    currentUserId: userId,
-                                  );
-                            }
-                          },
+                  SecondaryButton(
+                    isLoading: state.isLoading,
+                    borderRadius: 40,
+                    text: "Generate Meal",
+                    onTap: () {
+                      if (selectedIngredients.isEmpty) {
+                        CustomSnackBar.showErrorSnackBar(
+                          context,
+                          "No Ingredients Selected !",
+                        );
+                      } else {
+                        final userId = userAsync.value?.uid;
+                        if (userId == null) {
+                          CustomSnackBar.showErrorSnackBar(
+                            context,
+                            "User not authenticated",
+                          );
+                          return;
+                        }
+
+                        ref.read(activeChefTypeProvider.notifier).state =
+                            ActiveChefType.pantry;
+                        ref
+                            .read(pantryChefViewModelProvider.notifier)
+                            .generateMeal(
+                              ingredients: selectedIngredients,
+                              mealType: _selectedMeal,
+                              availableTime: _selectedDuration,
+                              expertise: _selectedCookingExpertise,
+                              currentUserId: userId,
+                              isPublic: _isPublic,
+                            );
+                      }
+                    },
                     backgroundColor: AppColors.blackColor,
-                    haveHatIcon: !state.isLoading,
+                    haveHatIcon: true,
                   ),
                   SizedBox(height: 40),
                 ],
               ),
             ),
-
-            if (state.isLoading)
-              Container(
-                color: Colors.black.withOpacity(0.3),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      CircularProgressIndicator(color: AppColors.primaryColor),
-                      SizedBox(height: 20),
-                      Text(
-                        state.loadingMessage ??
-                            "Cooking up something special...",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
           ],
         ),
       ),

@@ -4,10 +4,12 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/widgets/primary_icon_button.dart';
+import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.dart';
 
 class KitchenToolsCard extends StatelessWidget {
   final int index;
-  const KitchenToolsCard({super.key, required this.index});
+  final KitchenToolModel kitchenTool;
+  const KitchenToolsCard({super.key, required this.index, required this.kitchenTool});
 
   @override
   Widget build(BuildContext context) {
@@ -33,13 +35,14 @@ class KitchenToolsCard extends StatelessWidget {
                 Center(
                   child: Padding(
                     padding: EdgeInsetsGeometry.all(12),
-                    child: CachedNetworkImage(
-                      imageUrl:
-                          "https://assets.stickpng.com/images/580b57fcd9996e24bc43c551.png",
-                      errorWidget: (context, url, error) {
-                        return Icon(LucideIcons.camera_off);
-                      },
-                    ),
+                    child: kitchenTool.imageUrl.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: kitchenTool.imageUrl,
+                            errorWidget: (context, url, error) {
+                              return Icon(LucideIcons.camera_off);
+                            },
+                          )
+                        : Icon(LucideIcons.camera_off),
                   ),
                 ),
                 Align(
@@ -65,7 +68,9 @@ class KitchenToolsCard extends StatelessWidget {
             "Kitchen Tool name sak djak asdk ka sdka ",
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: AppTextStyles.normalText.copyWith(fontWeight: FontWeight.w700),
+            style: AppTextStyles.normalText.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ],

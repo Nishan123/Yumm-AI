@@ -1,22 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yumm_ai/core/api/api_client.dart';
-import 'package:yumm_ai/features/chef/data/datasource/recipe_remote_datasource.dart';
+import 'package:yumm_ai/features/chef/data/datasource/recipe_datasource.dart';
+import 'package:yumm_ai/features/chef/data/datasource/remote/recipe_remote_datasource.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:yumm_ai/features/chef/domain/repositories/recipe_repository.dart';
 
-// Providers
-final recipeRemoteDataSourceProvider = Provider<RecipeRemoteDataSource>((ref) {
-  return RecipeRemoteDataSourceImpl(ref.read(apiClientProvider));
-});
 
 final recipeRepositoryProvider = Provider<RecipeRepository>((ref) {
   return RecipeRepositoryImpl(ref.read(recipeRemoteDataSourceProvider));
 });
 
 class RecipeRepositoryImpl implements RecipeRepository {
-  final RecipeRemoteDataSource _remoteDataSource;
+  final IRecipeRemoteDataSource _remoteDataSource;
 
   RecipeRepositoryImpl(this._remoteDataSource);
 

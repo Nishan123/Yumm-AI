@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:yumm_ai/core/enums/cooking_expertise.dart';
+import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
@@ -10,12 +12,24 @@ class HomeFoodRecommendations extends StatelessWidget {
   final double mainFontSize;
   final double iconsSize;
   final double normalFontSize;
+  final RecipeEntity recipe;
+
   const HomeFoodRecommendations({
     super.key,
     required this.mainFontSize,
     required this.iconsSize,
     required this.normalFontSize,
+    required this.recipe,
   });
+
+  CookingExpertise get _expertiseEnum {
+    return CookingExpertise.values.firstWhere(
+      (e) => e.value == recipe.experienceLevel,
+      orElse: () {
+        return CookingExpertise.newBie;
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +39,7 @@ class HomeFoodRecommendations extends StatelessWidget {
       builder: (context, constraints) {
         return GestureDetector(
           onTap: () {
-            context.pushNamed("cooking");
+            context.pushNamed("cooking", extra: recipe);
           },
           child: Container(
             width: mq.width * 0.90,
@@ -38,10 +52,21 @@ class HomeFoodRecommendations extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: Image.asset(
-                      "assets/images/salad.png",
-                      fit: BoxFit.cover,
-                    ),
+                    child: recipe.images.isNotEmpty
+                        ? Image.network(
+                            recipe.images.first,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                "assets/images/salad.png",
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
+                        : Image.asset(
+                            "assets/images/salad.png",
+                            fit: BoxFit.cover,
+                          ),
                   ),
                   Align(
                     alignment: Alignment.topRight,
@@ -82,7 +107,7 @@ class HomeFoodRecommendations extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "Name of the Dish and some random descriptions",
+                                  recipe.recipeName,
                                   softWrap: true,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
@@ -95,13 +120,13 @@ class HomeFoodRecommendations extends StatelessWidget {
                                 Row(
                                   children: [
                                     _buildInfoBox(
-                                      info: "25 min",
+                                      info: recipe.estCookingTime,
                                       icon: LucideIcons.clock,
                                       fontSize: normalFontSize,
                                     ),
                                     const SizedBox(width: 12),
                                     _buildInfoBox(
-                                      info: "Intermediate",
+                                      info: _expertiseEnum.text,
                                       icon: LucideIcons.brain,
                                       fontSize: normalFontSize,
                                     ),

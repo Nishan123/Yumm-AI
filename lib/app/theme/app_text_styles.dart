@@ -9,7 +9,7 @@ class AppTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.w500,
   );
-  static  TextStyle descriptionText = TextStyle(
+  static TextStyle descriptionText = TextStyle(
     fontSize: 13,
     fontWeight: FontWeight.w400,
   );

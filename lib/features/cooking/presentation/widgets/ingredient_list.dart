@@ -1,16 +1,21 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
-import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
+import 'package:yumm_ai/features/chef/domain/entities/ingredient_entity.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/ingredients_list_tile.dart';
 
 class IngredientList extends StatelessWidget {
   final ScrollController? scrollController;
   final bool isActive;
+  final List<IngredientEntity> ingredients;
+  final Function(int index, bool value) onToggle;
   const IngredientList({
     super.key,
     this.scrollController,
     required this.isActive,
+    required this.ingredients,
+    required this.onToggle,
   });
 
   @override
@@ -24,7 +29,7 @@ class IngredientList extends StatelessWidget {
     }
 
     return ListView.builder(
-      itemCount: 20,
+      itemCount: ingredients.length + 1,
       primary: false,
       shrinkWrap: true,
       physics: isActive
@@ -42,17 +47,11 @@ class IngredientList extends StatelessWidget {
             ),
           );
         }
+        final ingredient = ingredients[index - 1];
         return IngredientsListTile(
-          ingredient: IngredientModel(
-            id: "32",
-            prefixImage:
-                "https://www.themealdb.com/images/ingredients/Tomato.png",
-            ingredientName: "Tomato",
-            quantity: '',
-            unit: '',
-          ),
-          quantity: "x3",
+          ingredient: IngredientModel.fromEntity(ingredient),
           textColor: textColor(index),
+          onChecked: (value) => onToggle(index - 1, value ?? false),
         );
       },
     );

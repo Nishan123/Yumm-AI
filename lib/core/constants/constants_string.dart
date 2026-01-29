@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class ConstantsString {
   static const assetImage = "assets/images";
   static const assetSvg = "assets/svgs";
+  static const assetGif = "assets/gif";
   static const EdgeInsets commonPadding = EdgeInsets.only(
     left: 16,
     right: 16,

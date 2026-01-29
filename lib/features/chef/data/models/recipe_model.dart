@@ -1,6 +1,8 @@
 import '../../../kitchen_tool/data/models/kitchen_tools_model.dart';
 import '../../domain/entities/recipe_entity.dart';
-import 'Ingrident_model.dart';
+import 'ingredient_model.dart';
+import 'initial_preparation_model.dart';
+import 'instruction_model.dart';
 import 'nutrition_model.dart';
 
 class RecipeModel {
@@ -8,8 +10,8 @@ class RecipeModel {
   final String generatedBy;
   final String recipeName;
   final List<IngredientModel> ingredients;
-  final List<String> steps;
-  final List<String> initialPreparation;
+  final List<InstructionModel> steps;
+  final List<InitialPreparationModel> initialPreparation;
   final List<KitchenToolModel> kitchenTools;
   final String experienceLevel;
   final String estCookingTime;
@@ -21,6 +23,7 @@ class RecipeModel {
   final NutritionModel? nutrition;
   final int servings;
   final List<String> likes;
+  final bool isPublic;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -42,6 +45,7 @@ class RecipeModel {
     this.nutrition,
     required this.servings,
     required this.likes,
+    this.isPublic = true,
     this.createdAt,
     this.updatedAt,
   });
@@ -51,8 +55,8 @@ class RecipeModel {
     String? generatedBy,
     String? recipeName,
     List<IngredientModel>? ingredients,
-    List<String>? steps,
-    List<String>? initialPreparation,
+    List<InstructionModel>? steps,
+    List<InitialPreparationModel>? initialPreparation,
     List<KitchenToolModel>? kitchenTools,
     String? experienceLevel,
     String? estCookingTime,
@@ -64,6 +68,7 @@ class RecipeModel {
     NutritionModel? nutrition,
     int? servings,
     List<String>? likes,
+    bool? isPublic,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -85,6 +90,7 @@ class RecipeModel {
       nutrition: nutrition ?? this.nutrition,
       servings: servings ?? this.servings,
       likes: likes ?? this.likes,
+      isPublic: isPublic ?? this.isPublic,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -96,20 +102,21 @@ class RecipeModel {
       'recipeId': recipeId,
       'generatedBy': generatedBy,
       'recipeName': recipeName,
-      'ingridents': ingredients.map((e) => e.toJson()).toList(),
-      'steps': steps,
-      'initialPrepration': initialPreparation,
+      'ingredients': ingredients.map((e) => e.toJson()).toList(),
+      'steps': steps.map((e) => e.toJson()).toList(),
+      'initialPreparation': initialPreparation.map((e) => e.toJson()).toList(),
       'kitchenTools': kitchenTools.map((e) => e.toJson()).toList(),
       'experienceLevel': experienceLevel,
       'estCookingTime': estCookingTime,
       'description': description,
       'mealType': mealType,
-      'cusine': cuisine,
+      'cuisine': cuisine,
       'calorie': calorie,
       'images': images,
       'nutrition': nutrition?.toJson(),
       'servings': servings,
       'likes': likes,
+      'isPublic': isPublic,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
     };
@@ -121,14 +128,16 @@ class RecipeModel {
       recipeId: json['recipeId'] as String? ?? '',
       generatedBy: json['generatedBy'] as String? ?? '',
       recipeName: json['recipeName'] as String? ?? '',
-      ingredients: json['ingridents'] != null
-          ? IngredientModel.fromJsonList(json['ingridents'] as List<dynamic>)
+      ingredients: json['ingredients'] != null
+          ? IngredientModel.fromJsonList(json['ingredients'] as List<dynamic>)
           : [],
       steps: json['steps'] != null
-          ? List<String>.from(json['steps'] as List<dynamic>)
+          ? InstructionModel.fromJsonList(json['steps'] as List<dynamic>)
           : [],
-      initialPreparation: json['initialPrepration'] != null
-          ? List<String>.from(json['initialPrepration'] as List<dynamic>)
+      initialPreparation: json['initialPreparation'] != null
+          ? InitialPreparationModel.fromJsonList(
+              json['initialPreparation'] as List<dynamic>,
+            )
           : [],
       kitchenTools: json['kitchenTools'] != null
           ? KitchenToolModel.fromJsonList(json['kitchenTools'] as List<dynamic>)
@@ -137,7 +146,7 @@ class RecipeModel {
       estCookingTime: json['estCookingTime'] as String? ?? '',
       description: json['description'] as String? ?? '',
       mealType: json['mealType'] as String? ?? '',
-      cuisine: json['cusine'] as String? ?? '',
+      cuisine: json['cuisine'] as String? ?? '',
       calorie: (json['calorie'] as num?)?.toInt() ?? 0,
       images: json['images'] != null
           ? List<String>.from(json['images'] as List<dynamic>)
@@ -149,6 +158,7 @@ class RecipeModel {
       likes: json['likes'] != null
           ? List<String>.from(json['likes'] as List<dynamic>)
           : [],
+      isPublic: json['isPublic'] as bool? ?? true,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String)
           : null,
@@ -166,22 +176,26 @@ class RecipeModel {
   factory RecipeModel.fromAiJson(
     Map<String, dynamic> json,
     List<IngredientModel> referenceIngredients,
+    List<IngredientModel> masterIngredients,
   ) {
     return RecipeModel(
       recipeId: json['recipeId'] as String? ?? '',
       generatedBy: json['generatedBy'] as String? ?? '',
       recipeName: json['recipeName'] as String? ?? '',
-      ingredients: json['ingridents'] != null
+      ingredients: json['ingredients'] != null
           ? IngredientModel.fromAiResponseList(
-              json['ingridents'] as List<dynamic>,
+              json['ingredients'] as List<dynamic>,
               referenceIngredients,
+              masterIngredients,
             )
           : [],
       steps: json['steps'] != null
-          ? List<String>.from(json['steps'] as List<dynamic>)
+          ? InstructionModel.fromJsonList(json['steps'] as List<dynamic>)
           : [],
-      initialPreparation: json['initialPrepration'] != null
-          ? List<String>.from(json['initialPrepration'] as List<dynamic>)
+      initialPreparation: json['initialPreparation'] != null
+          ? InitialPreparationModel.fromJsonList(
+              json['initialPreparation'] as List<dynamic>,
+            )
           : [],
       kitchenTools: json['kitchenTools'] != null
           ? KitchenToolModel.fromJsonList(json['kitchenTools'] as List<dynamic>)
@@ -190,7 +204,7 @@ class RecipeModel {
       estCookingTime: json['estCookingTime'] as String? ?? '',
       description: json['description'] as String? ?? '',
       mealType: json['mealType'] as String? ?? '',
-      cuisine: json['cusine'] as String? ?? '',
+      cuisine: json['cuisine'] as String? ?? '',
       calorie: (json['calorie'] as num?)?.toInt() ?? 0,
       images: json['images'] != null
           ? List<String>.from(json['images'] as List<dynamic>)
@@ -202,6 +216,7 @@ class RecipeModel {
       likes: json['likes'] != null
           ? List<String>.from(json['likes'] as List<dynamic>)
           : [],
+      isPublic: json['isPublic'] as bool? ?? true,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String)
           : null,
@@ -218,8 +233,8 @@ class RecipeModel {
       generatedBy: generatedBy,
       recipeName: recipeName,
       ingredients: IngredientModel.toEntityList(ingredients),
-      steps: steps,
-      initialPreparation: initialPreparation,
+      steps: steps, // Already extending Entity
+      initialPreparation: initialPreparation, // Already extending Entity
       kitchenTools: KitchenToolModel.toEntityList(kitchenTools),
       experienceLevel: experienceLevel,
       estCookingTime: estCookingTime,
@@ -231,6 +246,7 @@ class RecipeModel {
       nutrition: nutrition?.toEntity(),
       servings: servings,
       likes: likes,
+      isPublic: isPublic,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );
@@ -245,8 +261,10 @@ class RecipeModel {
       ingredients: entity.ingredients
           .map((e) => IngredientModel.fromEntity(e))
           .toList(),
-      steps: entity.steps,
-      initialPreparation: entity.initialPreparation,
+      steps: entity.steps.map((e) => InstructionModel.fromEntity(e)).toList(),
+      initialPreparation: entity.initialPreparation
+          .map((e) => InitialPreparationModel.fromEntity(e))
+          .toList(),
       kitchenTools: entity.kitchenTools
           .map((e) => KitchenToolModel.fromEntity(e))
           .toList(),
@@ -262,6 +280,7 @@ class RecipeModel {
           : null,
       servings: entity.servings,
       likes: entity.likes,
+      isPublic: entity.isPublic,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     );

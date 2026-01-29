@@ -36,7 +36,12 @@ class IngredientsChip extends StatelessWidget {
           SizedBox(
             height: 20,
             width: 20,
-            child: CachedNetworkImage(imageUrl: image),
+            child: image.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: image,
+                    errorWidget: (context, url, error) => const SizedBox(),
+                  )
+                : const SizedBox(),
           ),
           Text(
             text,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yumm_ai/core/constants/constants_string.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/services/storage/user_session_service.dart';
 
@@ -17,13 +18,11 @@ class _SplashPageState extends ConsumerState<SplashScreen>
   late AnimationController _slideController;
   late AnimationController _scaleController;
 
-
   @override
   void initState() {
     super.initState();
     _navigateToNext();
   }
-
 
   Future<void> _navigateToNext() async {
     await Future.delayed(const Duration(seconds: 5));
@@ -53,7 +52,7 @@ class _SplashPageState extends ConsumerState<SplashScreen>
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: Center(
-        child: Image.asset("assets/gif/animated_text_logo.gif",width: 200,)
+        child: Image.asset("${ConstantsString.assetGif}/animated_text_logo.gif", width: 200),
       ),
     );
   }

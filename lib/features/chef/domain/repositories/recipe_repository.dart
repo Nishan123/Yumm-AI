@@ -10,7 +10,4 @@ abstract class RecipeRepository {
     required List<Uint8List> images,
   });
 
-  // Optional: If we want to expose generation via repository, but it's a service.
-  // We can keep it simple: Repository handles data persistence.
-  // Generation service handles AI. ViewModel coordinates.
 }

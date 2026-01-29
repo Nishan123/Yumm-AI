@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/error/failure.dart';
 import 'package:yumm_ai/core/usecases/app_usecases.dart';
-import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/data/repositories/ingredient_repository.dart';
 import 'package:yumm_ai/features/chef/domain/repositories/ingredient_repository.dart';
 

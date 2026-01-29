@@ -44,10 +44,13 @@ class ChefCardWidget extends StatelessWidget {
           child: Stack(
             children: [
               Positioned.fill(
-                child: CachedNetworkImage(
-                  imageUrl: backgroundImage,
-                  fit: BoxFit.cover,
-                ),
+                child: backgroundImage.isNotEmpty
+                    ? CachedNetworkImage(
+                        imageUrl: backgroundImage,
+                        fit: BoxFit.cover,
+                        errorWidget: (context, url, error) => const SizedBox(),
+                      )
+                    : const SizedBox(),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -110,10 +113,14 @@ class ChefCardWidget extends StatelessWidget {
                       left: 8,
                       bottom: isSuffixCropped ? 0 : 8,
                     ),
-                    child: CachedNetworkImage(
-                      imageUrl: suffixImage,
-                      width: 110,
-                    ),
+                    child: suffixImage.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: suffixImage,
+                            width: 110,
+                            errorWidget: (context, url, error) =>
+                                const SizedBox(width: 110),
+                          )
+                        : const SizedBox(width: 110),
                   ),
                 ],
               ),

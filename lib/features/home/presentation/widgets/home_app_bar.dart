@@ -16,7 +16,17 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         spacing: 6,
         children: [
-          CircleAvatar(radius: 23, backgroundColor: AppColors.lightBlackColor, backgroundImage: NetworkImage(profilePic),),
+          CircleAvatar(
+            radius: 23,
+            backgroundColor: AppColors.lightBlackColor,
+            backgroundImage: profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
+            child: profilePic.isEmpty
+                ? Text(
+                    userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+                    style: AppTextStyles.h5.copyWith(color: AppColors.whiteColor),
+                  )
+                : null,
+          ),
           Column(
             spacing: 2.6,
             mainAxisSize: MainAxisSize.min,

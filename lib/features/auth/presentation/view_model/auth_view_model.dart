@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:yumm_ai/core/services/app_state_reset_service.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/get_current_user_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/login_usercase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/logout_usecase.dart';
@@ -17,6 +18,7 @@ class AuthViewModel extends Notifier<AuthState> {
   late final LogoutUsecase _logoutUsecase;
   late final GetCurrentUserUsecase _getCurrentUserUsecase;
   late final GoogleSigninUsecase _googleSignInUsecase;
+  late final AppStateResetService _appStateResetService;
 
   @override
   AuthState build() {
@@ -25,6 +27,7 @@ class AuthViewModel extends Notifier<AuthState> {
     _logoutUsecase = ref.read(logoutUsercaseProvider);
     _getCurrentUserUsecase = ref.read(getCurrentUserUsecaseProvider);
     _googleSignInUsecase = ref.read(googleSignInUsecaseProvider);
+    _appStateResetService = ref.read(appStateResetServiceProvider);
     return const AuthState();
   }
 
@@ -63,6 +66,9 @@ class AuthViewModel extends Notifier<AuthState> {
   }
 
   Future<void> login({required String email, required String password}) async {
+    // Clear any previously cached state before login
+    _appStateResetService.resetAllState();
+
     state = state.copyWith(status: AuthStatus.emailPasswordLoading);
     final result = await _loginUsecase.call(
       LoginUsecaseParam(email: email, password: password),
@@ -92,6 +98,8 @@ class AuthViewModel extends Notifier<AuthState> {
       },
       (isLoggedOut) {
         if (isLoggedOut) {
+          // Reset all app state providers to clear previous user's data
+          _appStateResetService.resetAllState();
           state = state.copyWith(
             status: AuthStatus.unauthenticated,
             user: null,
@@ -123,6 +131,9 @@ class AuthViewModel extends Notifier<AuthState> {
   }
 
   Future<void> signInWithGoogle() async {
+    // Clear any previously cached state before login
+    _appStateResetService.resetAllState();
+
     state = state.copyWith(status: AuthStatus.googleAuthLoading);
     final result = await _googleSignInUsecase.call();
     result.fold(

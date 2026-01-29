@@ -6,6 +6,7 @@ import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/premium_ad_banner.dart';
+import 'package:yumm_ai/features/chef/data/datasource/remote/recipe_remote_datasource.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_search_bar.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/recommended_food_scroll_snap.dart';
@@ -34,67 +35,73 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         loading: () {
           return HomeAppBar(userName: "", profilePic: "");
         },
-        error: (_, __) => HomeAppBar(userName: 'Guest', profilePic: ''),
+        error: (_, __) => HomeAppBar(userName: 'N/A', profilePic: ''),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 12),
-              // Custom Search Bar
-              HomeSearchBar(
-                onTap: () {
-                  Navigator.of(context).push(SearchScreen.route());
-                },
-              ),
+        child: RefreshIndicator(
+          onRefresh: () async{
+            ref.invalidate(recipeRemoteDataSourceProvider);
+            ref.invalidate(currentUserProvider);
+          },
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 12),
+                // Custom Search Bar
+                HomeSearchBar(
+                  onTap: () {
+                    Navigator.of(context).push(SearchScreen.route());
+                  },
+                ),
 
-              SizedBox(height: 18),
-              //Premium Card
-              PremiumAdBanner(
-                text: 'Unlock\nUnlimited Recipes',
-                backgroundImage: '${ConstantsString.assetSvg}/ad_banner.svg',
-                buttonText: 'Go Premium',
-              ),
+                SizedBox(height: 18),
+                //Premium Card
+                PremiumAdBanner(
+                  text: 'Unlock\nUnlimited Recipes',
+                  backgroundImage: '${ConstantsString.assetSvg}/ad_banner.svg',
+                  buttonText: 'Go Premium',
+                ),
 
-              SizedBox(height: 12),
+                SizedBox(height: 12),
 
-              //Choice Chips
-              CustomChoiceChip<Meal>(
-                values: Meal.values,
-                onSelected: (value) {
-                  setState(() {
-                    _selectedMealType = value;
-                    debugPrint(_selectedMealType.text);
-                  });
-                },
-                labelBuilder: (meal) => meal.text,
-                iconBuilder: (meal) => meal.icon,
-              ),
-              SizedBox(height: 8),
+                //Choice Chips
+                CustomChoiceChip<Meal>(
+                  values: Meal.values,
+                  onSelected: (value) {
+                    setState(() {
+                      _selectedMealType = value;
+                      debugPrint(_selectedMealType.text);
+                    });
+                  },
+                  labelBuilder: (meal) => meal.text,
+                  iconBuilder: (meal) => meal.icon,
+                ),
+                SizedBox(height: 8),
 
-              //Recommendations Card
-              RecommendedFoodScrollSnap(),
+                //Recommendations Card
+                RecommendedFoodScrollSnap(),
 
-              Padding(
-                padding: const EdgeInsets.only(left: 18, top: 18, bottom: 18),
-                child: Text("Top Recipes", style: AppTextStyles.title),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 18, top: 18, bottom: 18),
+                  child: Text("Top Recipes", style: AppTextStyles.title),
+                ),
 
-              //Top Recipes
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: 8,
-                itemBuilder: (context, index) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [TopRecipeCard()],
-                  );
-                },
-              ),
-              SizedBox(height: 80),
-            ],
+                //Top Recipes
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: 8,
+                  itemBuilder: (context, index) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [TopRecipeCard()],
+                    );
+                  },
+                ),
+                SizedBox(height: 80),
+              ],
+            ),
           ),
         ),
       ),

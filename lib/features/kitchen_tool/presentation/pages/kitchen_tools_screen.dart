@@ -60,7 +60,7 @@ class _KitchenToolsScreenState extends State<KitchenToolsScreen> {
               crossAxisSpacing: 8,
             ),
             itemBuilder: (context, index) {
-              return KitchenToolsCard(index: index);
+              return KitchenToolsCard(index: index, kitchenTool: KitchenToolModel(toolId: '001', toolName: "Microwave", imageUrl: ""),);
             },
           ),
         ),

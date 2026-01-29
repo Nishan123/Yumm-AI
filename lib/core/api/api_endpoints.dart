@@ -20,6 +20,27 @@ class ApiEndpoints {
 
   // ================ Recipe Endpoints ================
   static const String saveRecipe = "/saveRecipe";
+  static const String getAllRecipes = "/allRecipes";
+  static const String getPublicRecipes = "/publicRecipes";
   static String uploadRecipeImages(String recipeId) =>
       "/recipe/$recipeId/images";
+  static const String updateRecipe = "/recipe";
+
+  // ================ Cookbook Endpoints ================
+  static const String addToCookbook = "/cookbook/add";
+  static String getUserCookbook(String userId) => "/cookbook/$userId";
+  static String getUserRecipe(String userRecipeId) =>
+      "/cookbook/recipe/$userRecipeId";
+  static String getUserRecipeByOriginal(
+    String userId,
+    String originalRecipeId,
+  ) => "/cookbook/$userId/original/$originalRecipeId";
+  static String isRecipeInCookbook(String userId, String originalRecipeId) =>
+      "/cookbook/$userId/check/$originalRecipeId";
+  static String updateUserRecipe(String userRecipeId) =>
+      "/cookbook/recipe/$userRecipeId";
+  static String removeFromCookbook(String userRecipeId) =>
+      "/cookbook/recipe/$userRecipeId";
+  static String resetRecipeProgress(String userRecipeId) =>
+      "/cookbook/recipe/$userRecipeId/reset";
 }

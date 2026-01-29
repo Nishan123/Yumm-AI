@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/app/theme/container_property.dart';
@@ -7,16 +9,20 @@ import 'package:yumm_ai/core/widgets/read_more_widget.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/ingredient_list.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/instructions_list.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_info_card.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/tools_list.dart';
+import 'package:yumm_ai/features/cooking/presentation/providers/recipe_state_provider.dart';
 
-class RecipeDetailsWidget extends StatefulWidget {
-  const RecipeDetailsWidget({super.key});
+class RecipeDetailsWidget extends ConsumerStatefulWidget {
+  final RecipeEntity recipe;
+  const RecipeDetailsWidget({super.key, required this.recipe});
 
   @override
-  State<RecipeDetailsWidget> createState() => _RecipeDetailsWidgetState();
+  ConsumerState<RecipeDetailsWidget> createState() =>
+      _RecipeDetailsWidgetState();
 }
 
-class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
+class _RecipeDetailsWidgetState extends ConsumerState<RecipeDetailsWidget>
     with SingleTickerProviderStateMixin {
   static const double _collapsedFraction = 0.64;
   static const double _expandedFraction = 0.9;
@@ -26,6 +32,24 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
   int _currentTabIndex = 0;
 
   bool get _isSheetAttached => _draggableController.isAttached;
+
+  void _toggleIngredient(int index, bool value) {
+    ref
+        .read(recipeStateCacheProvider.notifier)
+        .toggleIngredient(widget.recipe.recipeId, index, value);
+  }
+
+  void _toggleInstruction(int index, bool value) {
+    ref
+        .read(recipeStateCacheProvider.notifier)
+        .toggleInstruction(widget.recipe.recipeId, index, value);
+  }
+
+  void _toggleTool(int index, bool value) {
+    ref
+        .read(recipeStateCacheProvider.notifier)
+        .toggleKitchenTool(widget.recipe.recipeId, index, value);
+  }
 
   void _handleDragUpdate(DragUpdateDetails details, double parentHeight) {
     final delta = details.primaryDelta;
@@ -67,6 +91,13 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
     _draggableController = DraggableScrollableController();
     _tabController = TabController(length: 3, vsync: this);
     _tabController.addListener(_handleTabChange);
+
+    // Initialize the recipe state provider with the passed recipe
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref
+          .read(recipeStateCacheProvider.notifier)
+          .initializeIfNeeded(widget.recipe.recipeId, widget.recipe);
+    });
   }
 
   @override
@@ -80,6 +111,12 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    // Watch the recipe state from the provider
+    final recipeSnapshot = ref.watch(
+      recipeStateProvider(widget.recipe.recipeId),
+    );
+    final currentRecipe = recipeSnapshot.recipe ?? widget.recipe;
+
     return Align(
       alignment: Alignment.bottomCenter,
       child: DraggableScrollableSheet(
@@ -126,7 +163,7 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          "AI Generated Recipe Title or Name",
+                          widget.recipe.recipeName,
                           style: AppTextStyles.h2.copyWith(
                             fontWeight: FontWeight.w700,
                             height: 1.4,
@@ -136,18 +173,24 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
                       const SizedBox(height: 6),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: const ReadMoreWidget(
-                          text:
-                              "Savor the zest of hot chicken legs enhanced with a citrus shower of lemon, combining spicy warmth with a refreshing tang. Short description of the Food with some rich  laskdl lkas dlaks d history of origin of the food kdsnjfk sdkfj sa flkasd kla slkdc sald c.jkas dkcs kldj ",
+                        child: ReadMoreWidget(
+                          text: widget.recipe.description,
                           trimLine: 3,
                         ),
                       ),
-                      const RecipeInfoCard(
+
+                      // Recipe Info
+                      RecipeInfoCard(
                         margin: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 14,
                         ),
+                        duration: currentRecipe.estCookingTime,
+                        steps: currentRecipe.steps.length,
+                        expertise: currentRecipe.experienceLevel,
                       ),
+
+                      // Tab Bar
                       CustomTabBar(
                         externalController: _tabController,
                         tabItems: const [
@@ -160,8 +203,9 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
                           fontWeight: FontWeight.w700,
                           color: AppColors.blackColor,
                         ),
-                        onTabChanged: (value) {},
+                        // onTabChanged: (value) {},
                       ),
+
                       Expanded(
                         child: TabBarView(
                           controller: _tabController,
@@ -169,14 +213,20 @@ class _RecipeDetailsWidgetState extends State<RecipeDetailsWidget>
                             IngredientList(
                               isActive: _currentTabIndex == 0,
                               scrollController: scrollController,
+                              ingredients: currentRecipe.ingredients,
+                              onToggle: _toggleIngredient,
                             ),
                             InstructionsList(
                               scrollController: scrollController,
                               isActive: _currentTabIndex == 1,
+                              instruction: currentRecipe.steps,
+                              onToggle: _toggleInstruction,
                             ),
                             ToolsList(
+                              kitchenTool: currentRecipe.kitchenTools,
                               isActive: _currentTabIndex == 2,
                               scrollController: scrollController,
+                              onToggle: _toggleTool,
                             ),
                           ],
                         ),

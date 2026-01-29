@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
+import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/core/widgets/custom_divider.dart';
 import 'package:yumm_ai/core/widgets/custom_snack_bar.dart';
 import 'package:yumm_ai/core/widgets/custom_text_button.dart';
@@ -22,12 +23,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController(
-    text: "jamal@gmail.com",
-  );
-  final TextEditingController _passwordController = TextEditingController(
-    text: "Nishan@123",
-  );
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isPasswordObscure = true;
 
@@ -131,6 +128,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               authState.status == AuthStatus.googleAuthLoading
                                   ? null
                                   : _onLogin();
+                              ref.invalidate(currentUserProvider);
                             },
                             isLoading:
                                 authState.status ==
@@ -146,6 +144,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       AuthStatus.emailPasswordLoading
                                   ? null
                                   : _signinWithGoogle();
+                              ref.invalidate(currentUserProvider);
                             },
                             text: "Continue With Google",
                           ),

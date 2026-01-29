@@ -29,7 +29,7 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _selectedIds = widget.selectedTools.map((e) => e.id).toSet();
+    _selectedIds = widget.selectedTools.map((e) => e.toolId).toSet();
   }
 
   @override
@@ -58,7 +58,7 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
                 onActionTap: () {
                   widget.onSubmit(
                     _tools
-                        .where((tool) => _selectedIds.contains(tool.id))
+                        .where((tool) => _selectedIds.contains(tool.toolId))
                         .toList(),
                   );
                   Navigator.of(context).pop();
@@ -94,9 +94,9 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
                             ? tools
                             : tools
                                   .where(
-                                    (tool) => tool.name.toLowerCase().contains(
-                                      query.toLowerCase(),
-                                    ),
+                                    (tool) => tool.toolName
+                                        .toLowerCase()
+                                        .contains(query.toLowerCase()),
                                   )
                                   .toList();
                         return ListView.builder(
@@ -104,7 +104,9 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
                           itemCount: filtered.length,
                           itemBuilder: (context, index) {
                             final tool = filtered[index];
-                            final isSelected = _selectedIds.contains(tool.id);
+                            final isSelected = _selectedIds.contains(
+                              tool.toolId,
+                            );
                             return Container(
                               margin: EdgeInsets.only(top: 8),
                               padding: EdgeInsets.only(
@@ -122,25 +124,27 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
                                   SizedBox(
                                     width: 30,
                                     height: 30,
-                                    child: CachedNetworkImage(
-                                      imageUrl: tool.prefixImage,
-                                      fit: BoxFit.contain,
-                                      placeholder: (c, s) => Center(
-                                        child: SizedBox(
-                                          width: 16,
-                                          height: 16,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        ),
-                                      ),
-                                      errorWidget: (c, s, e) =>
-                                          Icon(Icons.kitchen),
-                                    ),
+                                    child: tool.imageUrl.isNotEmpty
+                                        ? CachedNetworkImage(
+                                            imageUrl: tool.imageUrl,
+                                            fit: BoxFit.contain,
+                                            placeholder: (c, s) => Center(
+                                              child: SizedBox(
+                                                width: 16,
+                                                height: 16,
+                                                child: CircularProgressIndicator(
+                                                  strokeWidth: 2,
+                                                ),
+                                              ),
+                                            ),
+                                            errorWidget: (c, s, e) =>
+                                                Icon(Icons.kitchen),
+                                          )
+                                        : Icon(Icons.kitchen),
                                   ),
                                   SizedBox(width: 12),
                                   Text(
-                                    tool.name,
+                                    tool.toolName,
                                     style: AppTextStyles.normalText.copyWith(
                                       fontWeight: FontWeight.w700,
                                     ),
@@ -151,9 +155,9 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
                                     onChanged: (value) {
                                       setState(() {
                                         if (isSelected) {
-                                          _selectedIds.remove(tool.id);
+                                          _selectedIds.remove(tool.toolId);
                                         } else {
-                                          _selectedIds.add(tool.id);
+                                          _selectedIds.add(tool.toolId);
                                         }
                                       });
                                     },
@@ -165,7 +169,9 @@ class _AddToolBottomSheetState extends State<AddToolBottomSheet> {
                         );
                       },
                       error: (error, stack) {
-                        return Center(child: Text("Failed to load tools: $error"));
+                        return Center(
+                          child: Text("Failed to load tools: $error"),
+                        );
                       },
                       loading: () {
                         return Center(child: CircularProgressIndicator());

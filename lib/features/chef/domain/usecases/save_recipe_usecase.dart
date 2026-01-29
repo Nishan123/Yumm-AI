@@ -14,15 +14,22 @@ class SaveRecipeParams extends Equatable {
   final RecipeModel recipeModel;
   final List<Uint8List> generatedImages;
   final String currentUserId;
+  final bool isPublic;
 
   const SaveRecipeParams({
     required this.recipeModel,
     required this.generatedImages,
     required this.currentUserId,
+    this.isPublic = true,
   });
 
   @override
-  List<Object?> get props => [recipeModel, generatedImages, currentUserId];
+  List<Object?> get props => [
+    recipeModel,
+    generatedImages,
+    currentUserId,
+    isPublic,
+  ];
 }
 
 final saveRecipeUsecaseProvider = Provider((ref) {
@@ -54,6 +61,7 @@ class SaveRecipeUsecase
         generatedBy: params.currentUserId,
         images: imageUrls,
         likes: [],
+        isPublic: params.isPublic,
         createdAt: DateTime.now(),
         updatedAt: DateTime.now(),
       );

@@ -6,7 +6,7 @@ import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/primary_text_field.dart';
-import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/presentation/providers/get_ingredients_provider.dart';
 
 class AddIngredientsBottomSheet extends StatefulWidget {
@@ -35,7 +35,9 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _selectedIds = widget.selectedIngredients.map((e) => e.id).toSet();
+    _selectedIds = widget.selectedIngredients
+        .map((e) => e.ingredientId)
+        .toSet();
   }
 
   @override
@@ -61,7 +63,7 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
             onActionTap: () {
               widget.onSubmit(
                 _ingredients
-                    .where((ing) => _selectedIds.contains(ing.id))
+                    .where((ing) => _selectedIds.contains(ing.ingredientId))
                     .toList(),
               );
               Navigator.of(context).pop();
@@ -98,9 +100,9 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
                           ? ingredient
                           : ingredient
                                 .where(
-                                  (ing) => ing.ingredientName
-                                      .toLowerCase()
-                                      .contains(query.toLowerCase()),
+                                  (ing) => ing.name.toLowerCase().contains(
+                                    query.toLowerCase(),
+                                  ),
                                 )
                                 .toList();
                       return ListView.builder(
@@ -108,7 +110,9 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
                         itemCount: filtered.length,
                         itemBuilder: (context, index) {
                           final data = filtered[index];
-                          final isSelected = _selectedIds.contains(data.id);
+                          final isSelected = _selectedIds.contains(
+                            data.ingredientId,
+                          );
                           return Container(
                             margin: EdgeInsets.only(top: 8),
                             padding: EdgeInsets.only(
@@ -126,16 +130,18 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
                                 SizedBox(
                                   height: 36,
                                   width: 36,
-                                  child: CachedNetworkImage(
-                                    errorWidget: (context, url, error) {
-                                      return Text("N/A");
-                                    },
-                                    imageUrl: data.prefixImage,
-                                  ),
+                                  child: data.imageUrl.isNotEmpty
+                                      ? CachedNetworkImage(
+                                          errorWidget: (context, url, error) {
+                                            return Text("N/A");
+                                          },
+                                          imageUrl: data.imageUrl,
+                                        )
+                                      : Center(child: Text("N/A")),
                                 ),
                                 SizedBox(width: 6),
                                 Text(
-                                  data.ingredientName,
+                                  data.name,
                                   style: AppTextStyles.normalText.copyWith(
                                     fontWeight: FontWeight.w700,
                                   ),
@@ -146,9 +152,9 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
                                   onChanged: (value) {
                                     setState(() {
                                       if (isSelected) {
-                                        _selectedIds.remove(data.id);
+                                        _selectedIds.remove(data.ingredientId);
                                       } else {
-                                        _selectedIds.add(data.id);
+                                        _selectedIds.add(data.ingredientId);
                                       }
                                     });
                                   },

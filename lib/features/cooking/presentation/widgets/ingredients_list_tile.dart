@@ -2,17 +2,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
-import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 
 class IngredientsListTile extends StatelessWidget {
   final IngredientModel ingredient;
-  final String quantity;
   final Color textColor;
+  final Function(bool?)? onChecked;
+
   const IngredientsListTile({
     super.key,
     required this.ingredient,
-    required this.quantity,
     required this.textColor,
+    required this.onChecked,
   });
 
   @override
@@ -28,42 +29,59 @@ class IngredientsListTile extends StatelessWidget {
       child: Row(
         children: [
           SizedBox(
-            height: 35,
-            width: 35,
-            child: CachedNetworkImage(
-              imageUrl: ingredient.prefixImage,
-              errorWidget: (context, url, error) {
-                return SizedBox(height: 35, width: 35, child: Text("N/A"));
-              },
-            ),
+            height: 40,
+            width: 40,
+            child: ingredient.imageUrl.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: ingredient.imageUrl,
+                    errorWidget: (context, url, error) {
+                      return SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: Center(child: Text("N/A")),
+                      );
+                    },
+                  )
+                : const Center(child: Text("N/A")),
           ),
           SizedBox(width: 8),
 
-          Text(
-            ingredient.ingredientName,
-            style: AppTextStyles.normalText.copyWith(
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+          Column(
+            spacing: 3,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                ingredient.name,
+                style: AppTextStyles.normalText.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+
+              RichText(
+                text: TextSpan(
+                  style: AppTextStyles.descriptionText.copyWith(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 12,
+                    color: AppColors.descriptionTextColor,
+                  ),
+                  children: [
+                    TextSpan(
+                      text:
+                          "${ingredient.quantity} ${ingredient.unit.toUpperCase()}",
+                      style: AppTextStyles.descriptionText.copyWith(
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                        color: AppColors.descriptionTextColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           Spacer(),
-          RichText(
-            text: TextSpan(
-              style: AppTextStyles.descriptionText.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.descriptionTextColor,
-              ),
-              children: [
-                TextSpan(text: "QTY: "),
-                TextSpan(
-                  text: "2",
-                  style: AppTextStyles.descriptionText.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          Checkbox(value: ingredient.isReady, onChanged: onChecked),
         ],
       ),
     );

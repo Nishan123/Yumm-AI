@@ -2,13 +2,27 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
-import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.dart';
 
 class Propmpts {
   // Static cache for kitchen tools - loaded once, reused everywhere
   static List<KitchenToolModel>? _cachedKitchenTools;
   static String? _cachedKitchenToolsFormatted;
+  // Static cache for ingredients
+  static List<IngredientModel>? _cachedIngredients;
+
+  // Load ingredients from JSON (cached after first load)
+  static Future<List<IngredientModel>> loadIngredients() async {
+    if (_cachedIngredients != null) return _cachedIngredients!;
+
+    final String jsonString = await rootBundle.loadString(
+      'assets/json/ingridents.json',
+    );
+    final List<dynamic> jsonList = jsonDecode(jsonString) as List<dynamic>;
+    _cachedIngredients = IngredientModel.fromJsonList(jsonList);
+    return _cachedIngredients!;
+  }
 
   // Load kitchen tools from JSON (cached after first load)
   static Future<List<KitchenToolModel>> _loadKitchenTools() async {
@@ -26,7 +40,7 @@ class Propmpts {
         final name = item['name'].toString();
         final prefixImage = item['prefixImage'].toString();
         tools.add(
-          KitchenToolModel(id: id, name: name, prefixImage: prefixImage),
+          KitchenToolModel(toolId: id, toolName: name, imageUrl: prefixImage),
         );
       }
     }
@@ -44,7 +58,7 @@ class Propmpts {
     _cachedKitchenToolsFormatted = tools
         .map(
           (t) =>
-              '- id="${t.id}" | toolName="${t.name}" | imageUrl="${t.prefixImage}"',
+              '- id="${t.toolId}" | toolName="${t.toolName}" | imageUrl="${t.imageUrl}"',
         )
         .join('\n');
     return _cachedKitchenToolsFormatted!;
@@ -59,7 +73,7 @@ class Propmpts {
           final quantityInfo = (i.quantity.isNotEmpty || i.unit.isNotEmpty)
               ? ' | ${i.quantity} ${i.unit}'.trim()
               : '';
-          return '- id="${i.id}" | ingredientName="${i.ingredientName}"$quantityInfo';
+          return '- id="${i.ingredientId}" | ingredientName="${i.name}"$quantityInfo';
         })
         .join('\n');
   }
@@ -88,24 +102,38 @@ class Propmpts {
 {
   "recipeId": "<generate a unique UUID>",
   "recipeName": "<creative and descriptive recipe name>",
-  "ingridents": [
+  "ingredients": [
     {
       "id": "<MUST use the exact id from the Available Ingredients list>",
       "ingredientName": "<MUST use the exact ingredientName from the Available Ingredients list>",
       "quantity": "<amount needed for this recipe>",
-      "unit": "<measurement unit like 'cups', 'tbsp', 'pieces', etc.>"
+      "unit": "<measurement unit like 'cups', 'tbsp', 'pieces', etc.>",
+      "isReady": false
     }
   ],
   "steps": [
-    "<Step 1: Be VERY detailed - include specific temperatures, timing, techniques, and sensory cues. Example: 'Heat a large non-stick skillet over medium-high heat (around 375°F/190°C) for 2 minutes until you see slight heat shimmer. Add 2 tablespoons of olive oil and swirl to coat the pan evenly. Wait 30 seconds until the oil begins to shimmer but not smoke.'>",
-    "<Step 2: Continue with same level of detail for each cooking action>",
-    "<Include ALL steps from start to plating>"
+    {
+      "id": "<unique step id>",
+      "instruction": "<Step 1: Be VERY detailed...>",
+      "isDone": false
+    },
+    {
+       "id": "<unique step id>",
+      "instruction": "<Step 2: Continue with same level of detail...>",
+      "isDone": false
+    }
   ],
-  "initialPrepration": [
-    "<Prep 1: Be VERY detailed - Example: 'Rinse the chicken breast under cold running water and pat completely dry with paper towels. This ensures proper browning. Place on a clean cutting board.'>",
-    "<Prep 2: Example: 'Dice the onion into 1/4-inch (6mm) uniform cubes: First cut off the root and stem ends, peel the outer layer, cut in half from root to stem, make horizontal cuts parallel to the cutting board, then vertical cuts, finally slice across to create even dice.'>",
-    "<Prep 3: Example: 'Measure out all spices into a small bowl and mix together to create a spice blend. This mise en place ensures smooth cooking.'>",
-    "<Include ALL preparation before cooking begins>"
+  "initialPreparation": [
+    {
+       "id": "<unique prep id>",
+      "instruction": "<Prep 1: Be VERY detailed...>",
+      "isDone": false
+    },
+    {
+       "id": "<unique prep id>",
+      "instruction": "<Prep 2: Example...>",
+      "isDone": false
+    }
   ],
   "kitchenTools": [
     {
@@ -115,10 +143,10 @@ class Propmpts {
     }
   ],
   "experienceLevel": "$expertiseLevel",
-  "estCookingTime": "<estimated time in format like '30 mins' or '1 hour 15 mins'>",
+  "estCookingTime": "<estimated time in format like '30min' or '1h 15min'>",
   "description": "<A compelling 2-3 sentence description of the dish, its flavors, and what makes it special>",
   "mealType": "$mealType",
-  "cusine": "<cuisine type like 'Italian', 'Asian', 'American', 'Mediterranean', etc.>",
+  "cuisine": "<cuisine type like 'Italian', 'Asian', 'American', 'Mediterranean', etc.>",
   "calorie": <estimated calories per serving as a number>,
   "images": [],
   "nutrition": {
@@ -135,7 +163,7 @@ class Propmpts {
   String _getRecipeReminders() {
     return '''
 Remember:
-- Steps should be numbered implicitly by array order, not in the text
+- Steps and Initial Preparation must be arrays of OBJECTS, not strings.
 - Each step should be 2-4 sentences with specific details
 - Initial preparation should cover ALL mise en place before any heat is applied
 - Include at least 5-10 detailed cooking steps
@@ -177,7 +205,7 @@ $kitchenToolsList
 3. Adjust complexity based on the cook's experience level.
 4. Provide VERY DETAILED cooking steps - explain techniques, temperatures, visual/audio cues, and timing for each step.
 5. Provide VERY DETAILED initial preparation steps - explain how to wash, cut, measure, and organize ingredients before cooking begins.
-6. CRITICAL: In the "ingridents" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
+6. CRITICAL: In the "ingredients" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
 7. CRITICAL: In the "kitchenTools" array, the "toolId", "toolName", and "imageUrl" fields MUST match EXACTLY with values from the "Available Kitchen Tools" list above. Do not include any tools not in this list. Only use tools from the provided list.
 
 **IMPORTANT: Return ONLY a valid JSON object with NO additional text, markdown, or explanation. The response must be parseable JSON.**
@@ -236,7 +264,7 @@ $kitchenToolsList
    - For "expert": Advanced techniques, complex flavor layering, precise timing
 6. Provide VERY DETAILED cooking steps - explain techniques, temperatures, visual/audio cues, and timing for each step.
 7. Provide VERY DETAILED initial preparation steps - explain how to wash, cut, measure, and organize ingredients before cooking begins.
-8. CRITICAL: In the "ingridents" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
+8. CRITICAL: In the "ingredients" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
 9. CRITICAL: In the "kitchenTools" array, the "toolId", "toolName", and "imageUrl" fields MUST match EXACTLY with values from the "Available Kitchen Tools" list above. Do not include any tools not in this list. Only use tools from the provided list.
 
 **IMPORTANT: Return ONLY a valid JSON object with NO additional text, markdown, or explanation. The response must be parseable JSON.**
@@ -310,7 +338,7 @@ $kitchenToolsList
    - For "expert": Advanced techniques, complex flavor layering, precise timing
 8. Provide VERY DETAILED cooking steps - explain techniques, temperatures, visual/audio cues, and timing for each step.
 9. Provide VERY DETAILED initial preparation steps - explain how to wash, cut, measure, and organize ingredients before cooking begins.
-10. CRITICAL: In the "ingridents" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
+10. CRITICAL: In the "ingredients" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
 11. CRITICAL: In the "kitchenTools" array, the "toolId", "toolName", and "imageUrl" fields MUST match EXACTLY with values from the "Available Kitchen Tools" list above. Do not include any tools not in this list. Only use tools from the provided list.
 
 **CRITICAL: The nutrition object in the JSON response MUST closely match these targets:**

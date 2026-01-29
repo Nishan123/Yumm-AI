@@ -1,41 +1,55 @@
 import '../../domain/entities/kitchen_tool_entity.dart';
 
 class KitchenToolModel {
-  final String id;
-  final String name;
-  final String prefixImage;
+  final String toolId;
+  final String toolName;
+  final String imageUrl;
+  final bool isReady;
 
   const KitchenToolModel({
-    required this.id,
-    required this.name,
-    required this.prefixImage,
+    required this.toolId,
+    required this.toolName,
+    required this.imageUrl,
+    this.isReady = false,
   });
 
   // toJson - converts model to JSON map
   Map<String, dynamic> toJson() {
-    return {'toolId': id, 'toolName': name, 'imageUrl': prefixImage};
+    return {
+      'toolId': toolId,
+      'toolName': toolName,
+      'imageUrl': imageUrl,
+      'isReady': isReady,
+    };
   }
 
   // fromJson - creates model from JSON map
   factory KitchenToolModel.fromJson(Map<String, dynamic> json) {
     return KitchenToolModel(
-      id: json['toolId'] as String? ?? '',
-      name: json['toolName'] as String? ?? '',
-      prefixImage: json['imageUrl'] as String? ?? '',
+      toolId: json['toolId'] as String? ?? '',
+      toolName: json['toolName'] as String? ?? '',
+      imageUrl: json['imageUrl'] as String? ?? '',
+      isReady: json['isReady'] as bool? ?? false,
     );
   }
 
   // toEntity - converts model to entity
   KitchenToolEntity toEntity() {
-    return KitchenToolEntity(toolId: id, toolName: name, imageUrl: prefixImage);
+    return KitchenToolEntity(
+      toolId: toolId,
+      toolName: toolName,
+      imageUrl: imageUrl,
+      isReady: isReady,
+    );
   }
 
   // fromEntity - creates model from entity
   factory KitchenToolModel.fromEntity(KitchenToolEntity entity) {
     return KitchenToolModel(
-      id: entity.toolId,
-      name: entity.toolName,
-      prefixImage: entity.imageUrl,
+      toolId: entity.toolId,
+      toolName: entity.toolName,
+      imageUrl: entity.imageUrl,
+      isReady: entity.isReady,
     );
   }
 

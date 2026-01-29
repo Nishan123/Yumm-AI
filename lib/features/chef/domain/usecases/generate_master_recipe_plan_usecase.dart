@@ -8,52 +8,59 @@ import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/error/failure.dart';
 import 'package:yumm_ai/core/usecases/app_usecases.dart';
-import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 
-class GenerateRecipePlanParams extends Equatable {
-  final List<IngredientModel> ingredients;
+class GenerateMasterRecipePlanParams extends Equatable {
+  final List<IngredientModel> ingridents;
   final Meal mealType;
   final Duration availableTime;
   final CookingExpertise expertise;
-  final String currentUserId;
+  final int noOfServes;
+  final List<String> dietaryRestrictions;
+  final String mealPreferences;
 
-  const GenerateRecipePlanParams({
-    required this.ingredients,
+  const GenerateMasterRecipePlanParams({
+    required this.ingridents,
     required this.mealType,
     required this.availableTime,
     required this.expertise,
-    required this.currentUserId,
+    required this.noOfServes,
+    required this.dietaryRestrictions,
+    required this.mealPreferences,
   });
 
   @override
   List<Object?> get props => [
-    ingredients,
+    ingridents,
     mealType,
     availableTime,
     expertise,
-    currentUserId,
+    noOfServes,
+    dietaryRestrictions,
+    mealPreferences,
   ];
 }
 
-final generateRecipePlanUsecaseProvider = Provider((ref) {
-  return GenerateRecipePlanUsecase();
+final generateMasterRecipePlanUsecaseProvider = Provider((ref) {
+  return GenerateMasterRecipePlanUsecase();
 });
 
-class GenerateRecipePlanUsecase
-    implements UsecaseWithParms<RecipeModel, GenerateRecipePlanParams> {
+class GenerateMasterRecipePlanUsecase implements UsecaseWithParms<RecipeModel, GenerateMasterRecipePlanParams> {
   @override
   Future<Either<Failure, RecipeModel>> call(
-    GenerateRecipePlanParams params,
+    GenerateMasterRecipePlanParams params,
   ) async {
     try {
-      final prompt = await Propmpts().getPantryChefMealPrompt(
-        availableIngridents: params.ingredients,
+      final prompt = await Propmpts().getMasterChefPrompt(
+        availableIngridents: params.ingridents,
         mealType: params.mealType,
+        dietaryRestrictions: params.dietaryRestrictions,
+        noOfServes: params.noOfServes,
+        mealPreferences: params.mealPreferences,
         availableTime: params.availableTime,
         cookingExperties: params.expertise,
       );
-
       final response = await Gemini.instance.prompt(parts: [Part.text(prompt)]);
 
       if (response?.output == null) {
@@ -67,12 +74,16 @@ class GenerateRecipePlanUsecase
         jsonString = jsonString.replaceAll('```', '');
       }
 
+      final masterIngridents = await Propmpts.loadIngredients();
       final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
-      final tempRecipe = RecipeModel.fromAiJson(jsonMap, params.ingredients);
-
+      final tempRecipe = RecipeModel.fromAiJson(
+        jsonMap,
+        params.ingridents,
+        masterIngridents,
+      );
       return Right(tempRecipe);
     } catch (e) {
-      return Left(GeneralFailure(e.toString()));
+      return Left((GeneralFailure(e.toString())));
     }
   }
 }

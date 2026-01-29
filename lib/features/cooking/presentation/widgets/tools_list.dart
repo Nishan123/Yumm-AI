@@ -2,12 +2,22 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/tools_list_tile.dart';
+import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.dart';
+import 'package:yumm_ai/features/kitchen_tool/domain/entities/kitchen_tool_entity.dart';
 
 class ToolsList extends StatelessWidget {
   final bool isActive;
+  final List<KitchenToolEntity> kitchenTool;
   final ScrollController? scrollController;
+  final Function(int index, bool value) onToggle;
 
-  const ToolsList({super.key, required this.isActive, this.scrollController});
+  const ToolsList({
+    super.key,
+    required this.isActive,
+    this.scrollController,
+    required this.kitchenTool,
+    required this.onToggle,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +36,7 @@ class ToolsList extends StatelessWidget {
           ? BouncingScrollPhysics()
           : NeverScrollableScrollPhysics(),
       controller: isActive ? scrollController : null,
-      itemCount: 20,
+      itemCount: kitchenTool.length,
       itemBuilder: (context, index) {
         if (index == 0) {
           return Padding(
@@ -37,10 +47,10 @@ class ToolsList extends StatelessWidget {
             ),
           );
         }
+        final kitchenTools = kitchenTool[index - 1];
         return ToolsListTile(
-          toolName: "Microwave",
-          image:
-              "https://assets.stickpng.com/images/5b51f104c051e602a568ce69.png",
+          onChecked: (value) => onToggle(index - 1, value ?? false),
+          kitchenTool: KitchenToolModel.fromEntity(kitchenTools),
           textColor: colorForIndex(index),
         );
       },

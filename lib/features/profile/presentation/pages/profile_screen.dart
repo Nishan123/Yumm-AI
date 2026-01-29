@@ -12,7 +12,7 @@ import 'package:yumm_ai/core/widgets/custom_dialogue_box.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
 import 'package:yumm_ai/core/widgets/secondary_icon_button.dart';
-import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/add_ingredients_bottom_sheet.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_wrap_container.dart';
 import 'package:yumm_ai/features/profile/presentation/view_model/profile_view_model.dart';
@@ -199,11 +199,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                     onTap: () {
                                       setState(() {
                                         selectedIngredients.removeWhere(
-                                          (item) => item.id == ing.id,
+                                          (item) =>
+                                              item.ingredientId ==
+                                              ing.ingredientId,
                                         );
                                       });
                                     },
-                                    text: ing.id,
+                                    text: ing.ingredientId,
                                   ),
                                 )
                                 .toList(),

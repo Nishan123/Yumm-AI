@@ -6,7 +6,7 @@ import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/custom_drop_down.dart';
 import 'package:yumm_ai/core/widgets/primary_text_field.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
-import 'package:yumm_ai/features/chef/data/models/Ingrident_model.dart';
+import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/presentation/providers/get_ingredients_provider.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/item_unit.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/shopping_list_type.dart';
@@ -72,9 +72,8 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
           ? _ingredients
           : _ingredients
                 .where(
-                  (item) => item.ingredientName.toLowerCase().contains(
-                    _query.toLowerCase(),
-                  ),
+                  (item) =>
+                      item.name.toLowerCase().contains(_query.toLowerCase()),
                 )
                 .toList();
     });
@@ -82,9 +81,9 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
 
   void _selectIngredient(IngredientModel item) {
     setState(() {
-      _selectedIngredientId = item.id;
-      itemController.text = item.ingredientName;
-      _query = item.ingredientName;
+      _selectedIngredientId = item.ingredientId;
+      itemController.text = item.name;
+      _query = item.name;
       _filteredIngredients = [item];
     });
     FocusScope.of(context).unfocus();
@@ -172,21 +171,23 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
                               itemBuilder: (context, index) {
                                 final item = _filteredIngredients[index];
                                 final isSelected =
-                                    item.id == _selectedIngredientId;
+                                    item.ingredientId == _selectedIngredientId;
                                 return ListTile(
-                                  leading: CachedNetworkImage(
-                                    height: 30,
-                                    width: 30,
-                                    imageUrl: item.prefixImage,
-                                    errorWidget: (context, url, error) {
-                                      return Icon(
-                                        Icons.error,
-                                        color: AppColors.redColor,
-                                        size: 28,
-                                      );
-                                    },
-                                  ),
-                                  title: Text(item.ingredientName),
+                                  leading: item.imageUrl.isNotEmpty
+                                      ? CachedNetworkImage(
+                                          height: 30,
+                                          width: 30,
+                                          imageUrl: item.imageUrl,
+                                          errorWidget: (context, url, error) {
+                                            return Icon(
+                                              Icons.error,
+                                              color: AppColors.redColor,
+                                              size: 28,
+                                            );
+                                          },
+                                        )
+                                      : SizedBox(height: 30, width: 30),
+                                  title: Text(item.name),
                                   trailing: isSelected
                                       ? Icon(
                                           Icons.check,

@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/login_screen.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/signup_screen.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/splash_screen.dart';
@@ -6,6 +7,7 @@ import 'package:yumm_ai/features/chef/presentation/pages/chefs_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/macro_chef_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/master_chef_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/pantry_chef_screen.dart';
+import 'package:yumm_ai/features/chef/presentation/pages/recipe_generation_loading_screen.dart';
 import 'package:yumm_ai/features/cooking/presentation/pages/cooking_screen.dart';
 import 'package:yumm_ai/features/dashboard/presentation/pages/main_screen.dart';
 import 'package:yumm_ai/features/kitchen_tool/presentation/pages/kitchen_tools_screen.dart';
@@ -21,7 +23,7 @@ import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plan
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
-    initialLocation: "/",
+    initialLocation: "/main",
     routes: [
       GoRoute(
         path: "/",
@@ -37,6 +39,7 @@ class AppRoutes {
           return MainScreen();
         },
       ),
+
       GoRoute(
         path: "/setting",
         name: "setting",
@@ -55,7 +58,15 @@ class AppRoutes {
         path: "/cooking",
         name: "cooking",
         builder: (context, state) {
-          return CookingScreen();
+          final recipe = state.extra as RecipeEntity;
+          return CookingScreen(recipe: recipe);
+        },
+      ),
+      GoRoute(
+        path: "/generating_recipe",
+        name: "generating_recipe",
+        builder: (context, state) {
+          return RecipeGenerationLoadingScreen();
         },
       ),
       GoRoute(

@@ -2,16 +2,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
+import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.dart';
 
 class ToolsListTile extends StatelessWidget {
-  final String toolName;
-  final String image;
+  final KitchenToolModel kitchenTool;
   final Color textColor;
+  final Function(bool?)? onChecked;
   const ToolsListTile({
     super.key,
-    required this.toolName,
-    required this.image,
+    required this.kitchenTool,
     required this.textColor,
+    required this.onChecked,
   });
 
   @override
@@ -29,25 +30,28 @@ class ToolsListTile extends StatelessWidget {
           SizedBox(
             height: 40,
             width: 40,
-            child: CachedNetworkImage(
-              imageUrl: image,
-              height: 40,
-              width: 40,
-              errorWidget: (context, url, error) {
-                return SizedBox(height: 40, width: 40, child: Text("N/A"));
-              },
-            ),
+            child: kitchenTool.imageUrl.isNotEmpty
+                ? CachedNetworkImage(
+                    imageUrl: kitchenTool.imageUrl,
+                    height: 40,
+                    width: 40,
+                    errorWidget: (context, url, error) {
+                      return SizedBox(height: 40, width: 40, child: Text("N/A"));
+                    },
+                  )
+                : const SizedBox(height: 40, width: 40, child: Text("N/A")),
           ),
           SizedBox(width: 8),
 
           Text(
-            toolName,
+            kitchenTool.toolName,
             style: AppTextStyles.normalText.copyWith(
               fontWeight: FontWeight.bold,
-              color: textColor
+              color: textColor,
             ),
           ),
           Spacer(),
+          Checkbox(value: kitchenTool.isReady, onChanged: onChecked),
         ],
       ),
     );
