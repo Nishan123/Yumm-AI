@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/error/failure.dart';
 import 'package:yumm_ai/core/services/connectivity/network_info.dart';
+import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 import 'package:yumm_ai/features/cookbook/data/datasources/cookbook_remote_datasource.dart';
 import 'package:yumm_ai/features/cookbook/data/models/cookbook_recipe_model.dart';
 import 'package:yumm_ai/features/cookbook/domain/entities/cookbook_recipe_entity.dart';
@@ -36,6 +37,33 @@ class CookbookRepositoryImpl implements ICookbookRepository {
         final result = await remoteDataSource.addToCookbook(
           userId: userId,
           recipeId: recipeId,
+        );
+        return Right(result.toEntity());
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data["message"] ?? "Network error",
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      return const Left(ApiFailure(message: "No internet connection"));
+    }
+  }
+
+  @override
+  Future<Either<Failure, CookbookRecipeEntity>> savePrivateRecipe({
+    required RecipeModel recipe,
+    required String userId,
+  }) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.savePrivateRecipe(
+          recipe: recipe,
+          userId: userId,
         );
         return Right(result.toEntity());
       } on DioException catch (e) {

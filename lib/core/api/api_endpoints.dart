@@ -28,6 +28,7 @@ class ApiEndpoints {
 
   // ================ Cookbook Endpoints ================
   static const String addToCookbook = "/cookbook/add";
+  static const String savePrivateRecipe = "/cookbook/private";
   static String getUserCookbook(String userId) => "/cookbook/$userId";
   static String getUserRecipe(String userRecipeId) =>
       "/cookbook/recipe/$userRecipeId";

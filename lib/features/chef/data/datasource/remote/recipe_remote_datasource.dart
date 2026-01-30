@@ -24,9 +24,6 @@ class RecipeRemoteDataSource implements IRecipeRemoteDataSource {
         ApiEndpoints.saveRecipe,
         data: recipe.toJson(),
       );
-
-      // key might be 'data' or direct based on response util
-      // Server sends: sendSuccess(res, recipe, 201) -> { success: true, data: recipe, ... }
       final data = response.data['data'];
       return RecipeModel.fromJson(data);
     } catch (e) {

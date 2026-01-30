@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:yumm_ai/core/error/failure.dart';
+import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 import 'package:yumm_ai/features/cookbook/domain/entities/cookbook_recipe_entity.dart';
 
 /// Repository interface for cookbook operations.
@@ -10,6 +11,13 @@ abstract class ICookbookRepository {
   Future<Either<Failure, CookbookRecipeEntity>> addToCookbook({
     required String userId,
     required String recipeId,
+  });
+
+  /// Save a private recipe directly to user's cookbook
+  /// Private recipes are NOT saved to the public Recipe collection
+  Future<Either<Failure, CookbookRecipeEntity>> savePrivateRecipe({
+    required RecipeModel recipe,
+    required String userId,
   });
 
   /// Get all recipes in user's cookbook

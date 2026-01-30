@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/services/app_state_reset_service.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/get_current_user_usecase.dart';
-import 'package:yumm_ai/features/auth/domin/usecases/login_usercase.dart';
+import 'package:yumm_ai/features/auth/domin/usecases/login_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/logout_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/signup_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/google_signin_usecase.dart';

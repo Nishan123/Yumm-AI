@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/api/api_client.dart';
 import 'package:yumm_ai/core/api/api_endpoints.dart';
+import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 import 'package:yumm_ai/features/cookbook/data/models/cookbook_recipe_model.dart';
 
 final cookbookRemoteDataSourceProvider = Provider((ref) {
@@ -12,6 +13,13 @@ abstract class ICookbookRemoteDataSource {
   Future<CookbookRecipeModel> addToCookbook({
     required String userId,
     required String recipeId,
+  });
+
+  /// Save a private recipe directly to user's cookbook
+  /// Private recipes are NOT saved to the public Recipe collection
+  Future<CookbookRecipeModel> savePrivateRecipe({
+    required RecipeModel recipe,
+    required String userId,
   });
 
   Future<List<CookbookRecipeModel>> getUserCookbook(String userId);
@@ -56,6 +64,28 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
       );
     }
     throw Exception(response.data['message'] ?? 'Failed to add to cookbook');
+  }
+
+  @override
+  Future<CookbookRecipeModel> savePrivateRecipe({
+    required RecipeModel recipe,
+    required String userId,
+  }) async {
+    final recipeJson = recipe.toJson();
+    recipeJson['userId'] = userId;
+
+    final response = await _apiClient.post(
+      ApiEndpoints.savePrivateRecipe,
+      data: recipeJson,
+    );
+    if (response.data["success"]) {
+      return CookbookRecipeModel.fromJson(
+        response.data["data"] as Map<String, dynamic>,
+      );
+    }
+    throw Exception(
+      response.data['message'] ?? 'Failed to save private recipe',
+    );
   }
 
   @override
