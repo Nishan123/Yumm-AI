@@ -8,7 +8,11 @@ import 'package:yumm_ai/core/widgets/primary_icon_button.dart';
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String userName;
   final String profilePic;
-  const HomeAppBar({super.key, required this.userName, required this.profilePic});
+  const HomeAppBar({
+    super.key,
+    required this.userName,
+    required this.profilePic,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +21,18 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         spacing: 6,
         children: [
           CircleAvatar(
+
             radius: 23,
             backgroundColor: AppColors.lightBlackColor,
-            backgroundImage: profilePic.isNotEmpty ? NetworkImage(profilePic) : null,
+            backgroundImage: profilePic.isNotEmpty
+                ? NetworkImage(profilePic)
+                : null,
             child: profilePic.isEmpty
                 ? Text(
                     userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-                    style: AppTextStyles.h5.copyWith(color: AppColors.whiteColor),
+                    style: AppTextStyles.h5.copyWith(
+                      color: AppColors.whiteColor,
+                    ),
                   )
                 : null,
           ),

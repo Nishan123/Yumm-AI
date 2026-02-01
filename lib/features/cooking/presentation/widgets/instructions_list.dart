@@ -8,13 +8,11 @@ import 'package:yumm_ai/features/cooking/presentation/widgets/instruction_list_t
 class InstructionsList extends StatelessWidget {
   const InstructionsList({
     super.key,
-    this.scrollController,
     this.isActive = true,
     required this.instruction,
     required this.onToggle,
   });
 
-  final ScrollController? scrollController;
   final bool isActive;
   final List<InstructionEntity> instruction;
   final Function(int index, bool value) onToggle;
@@ -38,12 +36,10 @@ class InstructionsList extends StatelessWidget {
     }
 
     return ListView.builder(
-      controller: isActive ? scrollController : null,
+      padding: EdgeInsets.zero,
       physics: isActive
-          ? BouncingScrollPhysics()
-          : NeverScrollableScrollPhysics(),
-      primary: false,
-      shrinkWrap: true,
+          ? const ClampingScrollPhysics()
+          : const NeverScrollableScrollPhysics(),
       itemCount: instruction.length,
       itemBuilder: (context, index) {
         if (index == 0) {

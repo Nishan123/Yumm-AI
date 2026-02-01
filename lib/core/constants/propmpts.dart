@@ -108,25 +108,25 @@ class Propmpts {
       "ingredientName": "<MUST use the exact ingredientName from the Available Ingredients list>",
       "quantity": "<amount needed for this recipe>",
       "unit": "<measurement unit like 'cups', 'tbsp', 'pieces', etc.>",
-      "isReady": false
+      "isReady": falsek
     }
   ],
   "steps": [
     {
       "id": "<unique step id>",
-      "instruction": "<Step 1: Be VERY detailed...>",
+      "instruction": "<Step 1: Be VERY detailed...dont add any kitchen tools ids or ingredient ids>",
       "isDone": false
     },
     {
        "id": "<unique step id>",
-      "instruction": "<Step 2: Continue with same level of detail...>",
+      "instruction": "<Step 2: Continue with same level of detail...dont add any kitchen tools ids or ingredient ids>",
       "isDone": false
     }
   ],
   "initialPreparation": [
     {
        "id": "<unique prep id>",
-      "instruction": "<Prep 1: Be VERY detailed...>",
+      "instruction": "<Prep 1: Be VERY detailed...dont add any kitchen tools ids or ingredient ids>",
       "isDone": false
     },
     {

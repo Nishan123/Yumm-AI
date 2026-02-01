@@ -9,7 +9,6 @@ final recipeRemoteDataSourceProvider = Provider((ref) {
 });
 
 abstract class IRecipeRemoteDataSource {
-  Future<List<RecipeModel>> getAllRecipes();
   Future<List<RecipeModel>> getPublicRecipes();
   Future<RecipeModel> updateRecipe(RecipeModel recipe);
 }
@@ -20,17 +19,7 @@ class RecipeRemoteDataSource implements IRecipeRemoteDataSource {
   RecipeRemoteDataSource({required ApiClient apiClient})
     : _apiClient = apiClient;
 
-  @override
-  Future<List<RecipeModel>> getAllRecipes() async {
-    final response = await _apiClient.get(ApiEndpoints.getAllRecipes);
-    if (response.data["success"]) {
-      final recipesData = response.data["data"] as List<dynamic>;
-      return recipesData
-          .map((e) => RecipeModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-    }
-    throw Exception(response.data['message'] ?? 'Failed to fetch recipes');
-  }
+
 
   @override
   Future<List<RecipeModel>> getPublicRecipes() async {

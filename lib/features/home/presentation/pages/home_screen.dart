@@ -39,7 +39,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ),
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () async{
+          onRefresh: () async {
             ref.invalidate(recipeRemoteDataSourceProvider);
             ref.invalidate(currentUserProvider);
           },

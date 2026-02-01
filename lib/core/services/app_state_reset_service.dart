@@ -51,7 +51,6 @@ class AppStateResetService {
     _ref.invalidate(pantryChefViewModelProvider);
 
     // Reset recipe providers
-    _ref.invalidate(allRecipesProvider);
     _ref.invalidate(publicRecipesProvider);
 
     // Reset recipe state cache (owner's recipe checkbox states)

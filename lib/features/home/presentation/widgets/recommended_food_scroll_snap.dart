@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/features/cooking/presentation/providers/recipe_provider.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_food_recommendations.dart';
+import 'package:yumm_ai/features/home/presentation/widgets/recommended_food_snap_loading_skelaton.dart';
 
 class RecommendedFoodScrollSnap extends ConsumerStatefulWidget {
   const RecommendedFoodScrollSnap({super.key});
@@ -61,7 +62,7 @@ class _RecommendedFoodScrollSnapState
           );
         },
         error: (error, stack) => Center(child: Text('Error: $error')),
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => const RecommendedFoodSnapLoadingSkelaton(),
       ),
     );
   }

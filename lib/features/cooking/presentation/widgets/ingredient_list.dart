@@ -6,13 +6,11 @@ import 'package:yumm_ai/features/chef/domain/entities/ingredient_entity.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/ingredients_list_tile.dart';
 
 class IngredientList extends StatelessWidget {
-  final ScrollController? scrollController;
   final bool isActive;
   final List<IngredientEntity> ingredients;
   final Function(int index, bool value) onToggle;
   const IngredientList({
     super.key,
-    this.scrollController,
     required this.isActive,
     required this.ingredients,
     required this.onToggle,
@@ -30,12 +28,10 @@ class IngredientList extends StatelessWidget {
 
     return ListView.builder(
       itemCount: ingredients.length + 1,
-      primary: false,
-      shrinkWrap: true,
+      padding: EdgeInsets.zero,
       physics: isActive
-          ? BouncingScrollPhysics()
-          : NeverScrollableScrollPhysics(),
-      controller: isActive ? scrollController : null,
+          ? const ClampingScrollPhysics()
+          : const NeverScrollableScrollPhysics(),
 
       itemBuilder: (context, index) {
         if (index == 0) {

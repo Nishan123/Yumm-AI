@@ -7,6 +7,7 @@ import 'package:yumm_ai/core/widgets/primary_button.dart';
 import 'package:yumm_ai/core/widgets/read_more_widget.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_info_card.dart';
+import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_title_widget.dart';
 
 /// A read-only view of recipe details for users who haven't added the recipe
 /// to their cookbook. Shows recipe information without interactive checkboxes.
@@ -30,6 +31,7 @@ class _ReadOnlyRecipeViewState extends State<ReadOnlyRecipeView>
     with SingleTickerProviderStateMixin {
   static const double _collapsedFraction = 0.64;
   static const double _expandedFraction = 0.9;
+  bool _isTitleExpanded = false;
 
   late final DraggableScrollableController _draggableController;
   late TabController _tabController;
@@ -133,15 +135,14 @@ class _ReadOnlyRecipeViewState extends State<ReadOnlyRecipeView>
                         ),
                       ),
                       const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          widget.recipe.recipeName,
-                          style: AppTextStyles.h2.copyWith(
-                            fontWeight: FontWeight.w700,
-                            height: 1.4,
-                          ),
-                        ),
+                      RecipeTitleWidget(
+                        recipeName: widget.recipe.recipeName,
+                        onTap: () {
+                          setState(() {
+                            _isTitleExpanded = !_isTitleExpanded;
+                          });
+                        },
+                        isTitleExpanded: _isTitleExpanded,
                       ),
                       const SizedBox(height: 6),
                       Padding(
@@ -260,10 +261,6 @@ class _ReadOnlyRecipeViewState extends State<ReadOnlyRecipeView>
                   ],
                 ),
               ),
-              Icon(
-                Icons.check_circle_outline,
-                color: AppColors.descriptionTextColor.withOpacity(0.5),
-              ),
             ],
           ),
         );
@@ -308,10 +305,6 @@ class _ReadOnlyRecipeViewState extends State<ReadOnlyRecipeView>
               const SizedBox(width: 12),
               Expanded(
                 child: Text(step.instruction, style: AppTextStyles.normalText),
-              ),
-              Icon(
-                Icons.check_circle_outline,
-                color: AppColors.descriptionTextColor.withOpacity(0.5),
               ),
             ],
           ),
@@ -360,10 +353,6 @@ class _ReadOnlyRecipeViewState extends State<ReadOnlyRecipeView>
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-              ),
-              Icon(
-                Icons.check_circle_outline,
-                color: AppColors.descriptionTextColor.withOpacity(0.5),
               ),
             ],
           ),

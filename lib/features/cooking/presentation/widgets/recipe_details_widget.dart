@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
@@ -8,8 +7,10 @@ import 'package:yumm_ai/core/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/core/widgets/read_more_widget.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/ingredient_list.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/instructions_list.dart';
+import 'package:yumm_ai/features/cooking/presentation/widgets/nutritions_info_card.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_info_card.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_title_widget.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/tools_list.dart';
 import 'package:yumm_ai/features/cooking/presentation/providers/recipe_state_provider.dart';
 
@@ -30,6 +31,7 @@ class _RecipeDetailsWidgetState extends ConsumerState<RecipeDetailsWidget>
   late final DraggableScrollableController _draggableController;
   late TabController _tabController;
   int _currentTabIndex = 0;
+  bool _isTitleExpanded = false;
 
   bool get _isSheetAttached => _draggableController.isAttached;
 
@@ -136,9 +138,8 @@ class _RecipeDetailsWidgetState extends ConsumerState<RecipeDetailsWidget>
                     _handleDragUpdate(details, parentHeight),
                 onVerticalDragEnd: (_) => _snapSheet(),
                 child: Container(
-                  clipBehavior: Clip.none,
+                  clipBehavior: Clip.antiAlias,
                   width: screenWidth,
-                  padding: const EdgeInsets.only(top: 14),
                   decoration: BoxDecoration(
                     color: AppColors.whiteColor,
                     boxShadow: [ContainerProperty.darkerShadow],
@@ -147,91 +148,123 @@ class _RecipeDetailsWidgetState extends ConsumerState<RecipeDetailsWidget>
                       topRight: Radius.circular(40),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: screenWidth * 0.3,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColors.descriptionTextColor,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          widget.recipe.recipeName,
-                          style: AppTextStyles.h2.copyWith(
-                            fontWeight: FontWeight.w700,
-                            height: 1.4,
+                  child: NestedScrollView(
+                    controller: scrollController,
+                    headerSliverBuilder: (context, innerBoxIsScrolled) {
+                      return [
+                        // Header content that scrolls away
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 14),
+                              // Drag handle
+                              Container(
+                                width: screenWidth * 0.3,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: AppColors.descriptionTextColor,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Recipe Title
+                              RecipeTitleWidget(
+                                recipeName: widget.recipe.recipeName,
+                                onTap: () {
+                                  setState(() {
+                                    _isTitleExpanded = !_isTitleExpanded;
+                                  });
+                                },
+                                isTitleExpanded: _isTitleExpanded,
+                              ),
+                              const SizedBox(height: 6),
+
+                              // Recipe Description
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: ReadMoreWidget(
+                                  text: widget.recipe.description,
+                                  trimLine: 3,
+                                ),
+                              ),
+
+                              // Recipe Info
+                              RecipeInfoCard(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                duration: currentRecipe.estCookingTime,
+                                steps: currentRecipe.steps.length,
+                                expertise: currentRecipe.experienceLevel,
+                              ),
+                              const SizedBox(height: 6),
+
+                              // nutritions info
+                              NutritionsInfoCard(
+                                fat: widget.recipe.nutrition!.fat,
+                                carbs: widget.recipe.nutrition!.carbs,
+                                calories: widget.recipe.calorie.toDouble(),
+                                fiber: widget.recipe.nutrition!.fiber,
+                              ),
+                              const SizedBox(height:3),
+                            ],
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ReadMoreWidget(
-                          text: widget.recipe.description,
-                          trimLine: 3,
-                        ),
-                      ),
 
-                      // Recipe Info
-                      RecipeInfoCard(
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        duration: currentRecipe.estCookingTime,
-                        steps: currentRecipe.steps.length,
-                        expertise: currentRecipe.experienceLevel,
-                      ),
-
-                      // Tab Bar
-                      CustomTabBar(
-                        externalController: _tabController,
-                        tabItems: const [
-                          "Ingredients",
-                          "Instructions",
-                          "Tools",
-                        ],
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                        itemTextStyle: AppTextStyles.descriptionText.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.blackColor,
-                        ),
-                        // onTabChanged: (value) {},
-                      ),
-
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            IngredientList(
-                              isActive: _currentTabIndex == 0,
-                              scrollController: scrollController,
-                              ingredients: currentRecipe.ingredients,
-                              onToggle: _toggleIngredient,
+                        // Pinned Tab Bar
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: _StickyTabBarDelegate(
+                            child: Container(
+                              color: AppColors.whiteColor,
+                              padding: const EdgeInsets.only(top: 14,bottom: 3),
+                              child: CustomTabBar(
+                                externalController: _tabController,
+                                tabItems: const [
+                                  "Ingredients",
+                                  "Instructions",
+                                  "Tools",
+                                ],
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                itemTextStyle: AppTextStyles.descriptionText
+                                    .copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.blackColor,
+                                    ),
+                                onTabChanged: (value) {},
+                              ),
                             ),
-                            InstructionsList(
-                              scrollController: scrollController,
-                              isActive: _currentTabIndex == 1,
-                              instruction: currentRecipe.steps,
-                              onToggle: _toggleInstruction,
-                            ),
-                            ToolsList(
-                              kitchenTool: currentRecipe.kitchenTools,
-                              isActive: _currentTabIndex == 2,
-                              scrollController: scrollController,
-                              onToggle: _toggleTool,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ];
+                    },
+                    body: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        IngredientList(
+                          isActive: _currentTabIndex == 0,
+                          ingredients: currentRecipe.ingredients,
+                          onToggle: _toggleIngredient,
+                        ),
+                        InstructionsList(
+                          isActive: _currentTabIndex == 1,
+                          instruction: currentRecipe.steps,
+                          onToggle: _toggleInstruction,
+                        ),
+                        ToolsList(
+                          kitchenTool: currentRecipe.kitchenTools,
+                          isActive: _currentTabIndex == 2,
+                          onToggle: _toggleTool,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -240,5 +273,32 @@ class _RecipeDetailsWidgetState extends ConsumerState<RecipeDetailsWidget>
         },
       ),
     );
+  }
+}
+
+/// Delegate for the sticky tab bar that pins at the top when scrolling.
+class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+
+  _StickyTabBarDelegate({required this.child});
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => 68.0;
+
+  @override
+  double get minExtent => 68.0;
+
+  @override
+  bool shouldRebuild(_StickyTabBarDelegate oldDelegate) {
+    return child != oldDelegate.child;
   }
 }

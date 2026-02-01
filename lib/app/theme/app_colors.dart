@@ -18,5 +18,11 @@ class AppColors {
   static Color redColor = const Color.fromARGB(255, 228, 0, 19);
   static Color borderColor = const Color.fromARGB(255, 211, 211, 211);
   static Color grayColor = const Color.fromARGB(255, 0, 151, 53);
-
+  static Color skeletonBaseColor = const Color.fromARGB(255, 219, 219, 219);
+  static Color skeletonHighlightColor = const Color.fromARGB(
+    255,
+    243,
+    243,
+    243,
+  );
 }

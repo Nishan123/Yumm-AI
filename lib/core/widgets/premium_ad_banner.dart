@@ -26,7 +26,7 @@ class PremiumAdBanner extends StatelessWidget {
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.2,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(32),
           border: ContainerProperty.mainBorder,
           boxShadow: [ContainerProperty.mainShadow],
         ),
@@ -34,7 +34,7 @@ class PremiumAdBanner extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             ClipRRect(
-              borderRadius: BorderRadiusGeometry.circular(25),
+              borderRadius: BorderRadiusGeometry.circular(28),
               child: SvgPicture.asset(backgroundImage, fit: BoxFit.cover),
             ),
             Center(

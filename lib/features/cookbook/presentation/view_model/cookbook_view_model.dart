@@ -4,6 +4,7 @@ import 'package:yumm_ai/features/chef/domain/entities/initial_preparation_entity
 import 'package:yumm_ai/features/chef/domain/entities/instruction_entity.dart';
 import 'package:yumm_ai/features/cookbook/domain/entities/cookbook_recipe_entity.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/add_to_cookbook_usecase.dart';
+import 'package:yumm_ai/features/cookbook/domain/usecases/check_recipe_with_fallback_usecase.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/get_user_cookbook_usecase.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/get_user_recipe_by_original_usecase.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/is_recipe_in_cookbook_usecase.dart';
@@ -24,6 +25,7 @@ class CookbookViewModel extends Notifier<CookbookState> {
   late final UpdateCookbookRecipeUsecase _updateCookbookRecipeUsecase;
   late final IsRecipeInCookbookUsecase _isRecipeInCookbookUsecase;
   late final RemoveFromCookbookUsecase _removeFromCookbookUsecase;
+  late final CheckRecipeWithFallbackUsecase _checkRecipeWithFallbackUsecase;
 
   @override
   CookbookState build() {
@@ -37,6 +39,9 @@ class CookbookViewModel extends Notifier<CookbookState> {
     );
     _isRecipeInCookbookUsecase = ref.read(isRecipeInCookbookUsecaseProvider);
     _removeFromCookbookUsecase = ref.read(removeFromCookbookUsecaseProvider);
+    _checkRecipeWithFallbackUsecase = ref.read(
+      checkRecipeWithFallbackUsecaseProvider,
+    );
     return const CookbookState();
   }
 
@@ -107,10 +112,11 @@ class CookbookViewModel extends Notifier<CookbookState> {
 
     result.fold(
       (failure) {
+        // Don't set isInCookbook to false on fetch failure
+        // The recipe might still be in cookbook, we just failed to fetch it
         state = state.copyWith(
           status: CookbookStatus.error,
           errorMessage: failure.errorMessage,
-          isInCookbook: false,
         );
       },
       (recipe) {
@@ -144,6 +150,68 @@ class CookbookViewModel extends Notifier<CookbookState> {
       },
       (isInCookbook) {
         state = state.copyWith(isInCookbook: isInCookbook);
+      },
+    );
+  }
+
+  /// Check if recipe is in cookbook and fetch user's copy with fallback handling
+  ///
+  /// This is the improved method that combines both checking and fetching into one
+  /// operation with graceful error handling. It's recommended over calling
+  /// checkIsInCookbook() followed by getUserRecipeByOriginal() separately.
+  ///
+  /// Returns a result indicating:
+  /// - Whether the recipe is in the cookbook
+  /// - The user's recipe copy (if available)
+  /// - Whether to fallback to showing the original recipe
+  Future<void> checkRecipeWithFallback({
+    required String userId,
+    required String originalRecipeId,
+  }) async {
+    state = state.copyWith(status: CookbookStatus.checking);
+
+    final result = await _checkRecipeWithFallbackUsecase.call(
+      CheckRecipeWithFallbackParams(
+        userId: userId,
+        originalRecipeId: originalRecipeId,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        // Complete failure - couldn't even check if recipe is in cookbook
+        state = state.copyWith(
+          status: CookbookStatus.error,
+          isInCookbook: false,
+          errorMessage: failure.errorMessage,
+        );
+      },
+      (checkResult) {
+        if (checkResult.shouldFallback) {
+          // Recipe is in cookbook but we couldn't fetch it - maintain isInCookbook=true
+          // UI can show original recipe with "Already in cookbook" disabled state
+          state = state.copyWith(
+            status: CookbookStatus.error,
+            isInCookbook: true,
+            currentRecipe: null,
+            errorMessage:
+                checkResult.errorMessage ?? 'Failed to fetch your recipe copy',
+          );
+        } else if (checkResult.isInCookbook && checkResult.userRecipe != null) {
+          // Success - recipe is in cookbook and we fetched it
+          state = state.copyWith(
+            status: CookbookStatus.loaded,
+            isInCookbook: true,
+            currentRecipe: checkResult.userRecipe,
+          );
+        } else {
+          // Recipe is not in cookbook
+          state = state.copyWith(
+            status: CookbookStatus.loaded,
+            isInCookbook: false,
+            currentRecipe: null,
+          );
+        }
       },
     );
   }

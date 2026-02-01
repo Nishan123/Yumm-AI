@@ -42,6 +42,7 @@ dependencies:
   permission_handler: ^12.0.1
   image_picker: ^1.2.1
   google_generative_ai: ^0.4.7
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:

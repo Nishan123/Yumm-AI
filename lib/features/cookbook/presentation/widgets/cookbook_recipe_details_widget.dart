@@ -199,12 +199,10 @@ class _CookbookRecipeDetailsWidgetState
                           children: [
                             IngredientList(
                               isActive: _currentTabIndex == 0,
-                              scrollController: scrollController,
                               ingredients: currentRecipe.ingredients,
                               onToggle: _toggleIngredient,
                             ),
                             InstructionsList(
-                              scrollController: scrollController,
                               isActive: _currentTabIndex == 1,
                               instruction: currentRecipe.steps,
                               onToggle: _toggleInstruction,
@@ -212,7 +210,6 @@ class _CookbookRecipeDetailsWidgetState
                             ToolsList(
                               kitchenTool: currentRecipe.kitchenTools,
                               isActive: _currentTabIndex == 2,
-                              scrollController: scrollController,
                               onToggle: _toggleTool,
                             ),
                           ],

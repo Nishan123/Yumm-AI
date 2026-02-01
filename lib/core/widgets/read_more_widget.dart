@@ -18,7 +18,7 @@ class ReadMoreWidget extends StatelessWidget {
       trimLines: trimLine??2,
       trimMode: TrimMode.Line,
       trimCollapsedText: "More",
-      trimExpandedText: "Read Less",
+      trimExpandedText: "  Read Less",
       moreStyle: TextStyle(
         fontWeight: FontWeight.bold,
         color: AppColors.blueColor,

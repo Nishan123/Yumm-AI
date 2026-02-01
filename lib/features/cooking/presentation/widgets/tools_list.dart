@@ -8,13 +8,11 @@ import 'package:yumm_ai/features/kitchen_tool/domain/entities/kitchen_tool_entit
 class ToolsList extends StatelessWidget {
   final bool isActive;
   final List<KitchenToolEntity> kitchenTool;
-  final ScrollController? scrollController;
   final Function(int index, bool value) onToggle;
 
   const ToolsList({
     super.key,
     required this.isActive,
-    this.scrollController,
     required this.kitchenTool,
     required this.onToggle,
   });
@@ -30,12 +28,10 @@ class ToolsList extends StatelessWidget {
     }
 
     return ListView.builder(
-      primary: false,
-      shrinkWrap: true,
+      padding: EdgeInsets.zero,
       physics: isActive
-          ? BouncingScrollPhysics()
-          : NeverScrollableScrollPhysics(),
-      controller: isActive ? scrollController : null,
+          ? const ClampingScrollPhysics()
+          : const NeverScrollableScrollPhysics(),
       itemCount: kitchenTool.length,
       itemBuilder: (context, index) {
         if (index == 0) {

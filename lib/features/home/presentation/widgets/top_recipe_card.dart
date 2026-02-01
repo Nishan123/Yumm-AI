@@ -63,7 +63,10 @@ class TopRecipeCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: AppTextStyles.title,
           ),
-          ReadMoreWidget(text: "Short description of the Food with some rich  laskdl lkas dlaks d history of origin of the food kdsnjfk sdkfj sa flkasd kla slkdc sald c.jkas dkcs kldj" ),
+          ReadMoreWidget(
+            text:
+                "Short description of the Food with some rich  laskdl lkas dlaks d history of origin of the food kdsnjfk sdkfj sa flkasd kla slkdc sald c.jkas dkcs kldj",
+          ),
           Row(
             spacing: 6,
             children: [
