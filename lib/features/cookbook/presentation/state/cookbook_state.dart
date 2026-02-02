@@ -12,6 +12,8 @@ enum CookbookStatus {
   removing,
   removed,
   checking,
+  deleting,
+  deleted,
   error,
 }
 

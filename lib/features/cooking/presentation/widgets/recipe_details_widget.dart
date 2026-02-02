@@ -205,13 +205,14 @@ class _RecipeDetailsWidgetState extends ConsumerState<RecipeDetailsWidget>
                               const SizedBox(height: 6),
 
                               // nutritions info
-                              NutritionsInfoCard(
-                                fat: widget.recipe.nutrition!.fat,
-                                carbs: widget.recipe.nutrition!.carbs,
-                                calories: widget.recipe.calorie.toDouble(),
-                                fiber: widget.recipe.nutrition!.fiber,
-                              ),
-                              const SizedBox(height:3),
+                              if (widget.recipe.nutrition != null)
+                                NutritionsInfoCard(
+                                  fat: widget.recipe.nutrition!.fat,
+                                  carbs: widget.recipe.nutrition!.carbs,
+                                  calories: widget.recipe.calorie.toDouble(),
+                                  fiber: widget.recipe.nutrition!.fiber,
+                                ),
+                              const SizedBox(height: 3),
                             ],
                           ),
                         ),
@@ -222,7 +223,10 @@ class _RecipeDetailsWidgetState extends ConsumerState<RecipeDetailsWidget>
                           delegate: _StickyTabBarDelegate(
                             child: Container(
                               color: AppColors.whiteColor,
-                              padding: const EdgeInsets.only(top: 14,bottom: 3),
+                              padding: const EdgeInsets.only(
+                                top: 14,
+                                bottom: 3,
+                              ),
                               child: CustomTabBar(
                                 externalController: _tabController,
                                 tabItems: const [

@@ -31,6 +31,8 @@ abstract class ICookbookRemoteDataSource {
 
   Future<CookbookRecipeModel> updateUserRecipe(CookbookRecipeModel recipe);
 
+  Future<CookbookRecipeModel> fullUpdateUserRecipe(CookbookRecipeModel recipe);
+
   Future<bool> removeFromCookbook(String userRecipeId);
 
   Future<bool> isRecipeInCookbook({

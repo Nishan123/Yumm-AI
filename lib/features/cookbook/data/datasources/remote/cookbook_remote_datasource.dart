@@ -1,4 +1,3 @@
-
 import 'package:yumm_ai/core/api/api_client.dart';
 import 'package:yumm_ai/core/api/api_endpoints.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
@@ -97,6 +96,22 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
   ) async {
     final response = await _apiClient.put(
       ApiEndpoints.updateUserRecipe(recipe.userRecipeId),
+      data: recipe.toJson(),
+    );
+    if (response.data["success"]) {
+      return CookbookRecipeModel.fromJson(
+        response.data["data"] as Map<String, dynamic>,
+      );
+    }
+    throw Exception(response.data['message'] ?? 'Failed to update user recipe');
+  }
+
+  @override
+  Future<CookbookRecipeModel> fullUpdateUserRecipe(
+    CookbookRecipeModel recipe,
+  ) async {
+    final response = await _apiClient.put(
+      ApiEndpoints.fullUpdateUserRecipe(recipe.userRecipeId),
       data: recipe.toJson(),
     );
     if (response.data["success"]) {

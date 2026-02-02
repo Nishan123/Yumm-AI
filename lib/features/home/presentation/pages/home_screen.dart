@@ -6,7 +6,9 @@ import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/premium_ad_banner.dart';
-import 'package:yumm_ai/features/chef/data/datasource/remote/recipe_remote_datasource.dart';
+import 'package:yumm_ai/features/cooking/data/datasource/remote/recipe_remote_datasource.dart';
+import 'package:yumm_ai/features/cooking/presentation/providers/recipe_state_provider.dart';
+import 'package:yumm_ai/features/cooking/presentation/providers/recipe_provider.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_search_bar.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/recommended_food_scroll_snap.dart';
@@ -40,8 +42,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
+            ref.invalidate(recipeStateCacheProvider);
+            ref.invalidate(recipeStateProvider);
             ref.invalidate(recipeRemoteDataSourceProvider);
             ref.invalidate(currentUserProvider);
+            ref.invalidate(publicRecipesProvider);
           },
           child: SingleChildScrollView(
             child: Column(

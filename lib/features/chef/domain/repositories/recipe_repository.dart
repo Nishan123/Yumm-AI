@@ -10,4 +10,9 @@ abstract class RecipeRepository {
     required List<Uint8List> images,
   });
 
+  Future<RecipeEntity> updateRecipe(RecipeModel recipe);
+
+  Future<bool> deleteRecipe(String recipeId);
+
+  Future<bool> deleteRecipeWithCascade(String recipeId);
 }

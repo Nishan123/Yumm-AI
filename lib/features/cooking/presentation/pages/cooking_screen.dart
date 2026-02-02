@@ -4,6 +4,7 @@ import 'package:yumm_ai/core/widgets/custom_snack_bar.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:ui';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/core/constants/constants_string.dart';
 import 'package:yumm_ai/core/providers/current_user_provider.dart';
@@ -55,6 +56,143 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
     }
   }
 
+  /// Show confirmation dialog for delete action
+  Future<void> _showDeleteConfirmation({
+    required bool isOwner,
+    required String? userRecipeId,
+  }) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Recipe'),
+        content: Text(
+          isOwner
+              ? 'Are you sure you want to delete this recipe? This will also remove it from all users\' cookbooks.'
+              : 'Are you sure you want to remove this recipe from your cookbook?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.redColor),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      bool success;
+      if (isOwner) {
+        // Owner deletes the original recipe (cascade delete)
+        success = await ref
+            .read(cookbookViewModelProvider.notifier)
+            .deleteOriginalRecipe(widget.recipe.recipeId);
+      } else {
+        // User deletes their cookbook copy
+        if (userRecipeId != null) {
+          success = await ref
+              .read(cookbookViewModelProvider.notifier)
+              .deleteCookbookRecipe(userRecipeId);
+        } else {
+          success = false;
+        }
+      }
+
+      if (success && mounted) {
+        CustomSnackBar.showSuccessSnackBar(
+          context,
+          isOwner
+              ? 'Recipe deleted successfully'
+              : 'Recipe removed from cookbook',
+        );
+        context.pop();
+      }
+    }
+  }
+
+  /// Handle edit action
+  void _handleEdit({required bool isOwner, required String? userRecipeId}) {
+    // Navigate to edit screen with appropriate data
+    context.pushNamed(
+      'edit_recipe',
+      extra: {
+        'recipe': widget.recipe,
+        'isOwner': isOwner,
+        'userRecipeId': userRecipeId,
+        'cookbookRecipe': ref.read(cookbookViewModelProvider).currentRecipe,
+      },
+    );
+  }
+
+  /// Build the popup menu for edit/delete actions
+  Widget _buildPopupMenu({
+    required bool isOwner,
+    required bool isInCookbook,
+    required String? userRecipeId,
+  }) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(120),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+        child: Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.lightBlackColor,
+          ),
+          child: PopupMenuButton<String>(
+            offset: const Offset(0, 60),
+            icon: Icon(LucideIcons.menu, color: AppColors.whiteColor),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            onSelected: (value) {
+              if (value == 'edit') {
+                _handleEdit(isOwner: isOwner, userRecipeId: userRecipeId);
+              } else if (value == 'delete') {
+                _showDeleteConfirmation(
+                  isOwner: isOwner,
+                  userRecipeId: userRecipeId,
+                );
+              }
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'edit',
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(LucideIcons.pen, size: 20, color: AppColors.blueColor),
+                    const SizedBox(width: 12),
+                    const Text('Edit'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      LucideIcons.trash,
+                      size: 20,
+                      color: AppColors.redColor,
+                    ),
+                    const SizedBox(width: 12),
+                    const Text('Delete'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
@@ -69,6 +207,13 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
           context,
           "Recipe Added in your Cookbook",
         );
+      } else if (next.status == CookbookStatus.removed) {
+        CustomSnackBar.showSuccessSnackBar(
+          context,
+          "Recipe Removed from Cookbook",
+        );
+      } else if (next.status == CookbookStatus.deleted) {
+        // Handled in _showDeleteConfirmation
       }
     });
 
@@ -103,22 +248,80 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
                       horizontal: 12,
                       vertical: 8,
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        PrimaryIconButton(
-                          iconColor: AppColors.whiteColor,
-                          icon: LucideIcons.chevron_left,
-                          onTap: () {
-                            context.pop();
-                          },
-                        ),
-                        PrimaryIconButton(
-                          iconColor: AppColors.whiteColor,
-                          icon: LucideIcons.heart,
-                          onTap: () {},
-                        ),
-                      ],
+                    child: userAsync.when(
+                      data: (user) {
+                        final currentUserId = user?.uid;
+                        final isOwner =
+                            currentUserId != null &&
+                            widget.recipe.generatedBy == currentUserId;
+                        final isInCookbook = cookbookState.isInCookbook == true;
+                        final userRecipeId =
+                            cookbookState.currentRecipe?.userRecipeId;
+
+                        // Show menu only if user is owner OR recipe is in cookbook
+                        final shouldShowMenu = isOwner || isInCookbook;
+
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            PrimaryIconButton(
+                              iconColor: AppColors.whiteColor,
+                              icon: LucideIcons.chevron_left,
+                              onTap: () {
+                                context.pop();
+                              },
+                            ),
+                            const Spacer(),
+                            PrimaryIconButton(
+                              iconColor: AppColors.whiteColor,
+                              icon: LucideIcons.heart,
+                              onTap: () {},
+                            ),
+                            if (shouldShowMenu) ...[
+                              const SizedBox(width: 8),
+                              _buildPopupMenu(
+                                isOwner: isOwner,
+                                isInCookbook: isInCookbook,
+                                userRecipeId: userRecipeId,
+                              ),
+                            ],
+                          ],
+                        );
+                      },
+                      loading: () => Row(
+                        children: [
+                          PrimaryIconButton(
+                            iconColor: AppColors.whiteColor,
+                            icon: LucideIcons.chevron_left,
+                            onTap: () {
+                              context.pop();
+                            },
+                          ),
+                          const Spacer(),
+                          PrimaryIconButton(
+                            iconColor: AppColors.whiteColor,
+                            icon: LucideIcons.heart,
+                            onTap: () {},
+                          ),
+                        ],
+                      ),
+                      error: (_, __) => Row(
+                        children: [
+                          PrimaryIconButton(
+                            iconColor: AppColors.whiteColor,
+                            icon: LucideIcons.chevron_left,
+                            onTap: () {
+                              context.pop();
+                            },
+                          ),
+                          const Spacer(),
+                          PrimaryIconButton(
+                            iconColor: AppColors.whiteColor,
+                            icon: LucideIcons.heart,
+                            onTap: () {},
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -149,9 +352,7 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
                 // This happens when checkRecipeWithFallback found it in cookbook but fetch failed
                 // Show original recipe but disable "Add to Cookbook" since it's already added
                 if (isInCookbook && cookbookState.currentRecipe == null) {
-                  return RecipeDetailsWidget(
-                    recipe: widget.recipe,
-                  );
+                  return RecipeDetailsWidget(recipe: widget.recipe);
                 }
 
                 // Case 3: Recipe is not in cookbook - show read-only view with add button

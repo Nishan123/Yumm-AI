@@ -184,6 +184,7 @@ class _MasterChefScreenState extends ConsumerState<MasterChefScreen> {
               ),
               SizedBox(height: 6),
 
+              // Cooking experties selector
               InputWidgetTitle(title: "Select your expertise in cooking."),
               CustomTabBar(
                 tabItems: [
@@ -244,7 +245,7 @@ class _MasterChefScreenState extends ConsumerState<MasterChefScreen> {
                         dietaryRestrictions: _selectedDietaryRestrictions,
                         mealPreferences: mealTypeController.text.toLowerCase(),
                         currentUserId: userId,
-                        isPublic: _isPublic
+                        isPublic: _isPublic,
                       );
                 },
                 backgroundColor: AppColors.blackColor,

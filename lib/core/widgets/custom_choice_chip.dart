@@ -7,6 +7,7 @@ class CustomChoiceChip<T> extends StatefulWidget {
   final IconData? Function(T)? iconBuilder;
   final void Function(T)? onSelected;
   final EdgeInsetsGeometry padding;
+  final T? selectedValue;
 
   const CustomChoiceChip({
     super.key,
@@ -15,6 +16,7 @@ class CustomChoiceChip<T> extends StatefulWidget {
     required this.iconBuilder,
     this.onSelected,
     this.padding = const EdgeInsets.only(right: 16),
+    this.selectedValue,
   });
 
   @override
@@ -22,7 +24,30 @@ class CustomChoiceChip<T> extends StatefulWidget {
 }
 
 class _CustomChoiceChipState<T> extends State<CustomChoiceChip<T>> {
-  int _selectedIndex = 0;
+  late int _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeSelectedIndex();
+  }
+
+  @override
+  void didUpdateWidget(CustomChoiceChip<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedValue != oldWidget.selectedValue) {
+      _initializeSelectedIndex();
+    }
+  }
+
+  void _initializeSelectedIndex() {
+    if (widget.selectedValue != null) {
+      final index = widget.values.indexOf(widget.selectedValue as T);
+      _selectedIndex = index >= 0 ? index : 0;
+    } else {
+      _selectedIndex = 0;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,17 +65,19 @@ class _CustomChoiceChipState<T> extends State<CustomChoiceChip<T>> {
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
           showCheckmark: false,
           label: Row(
-            spacing: icon == null?0:8,
+            spacing: icon == null ? 0 : 8,
             mainAxisSize: MainAxisSize.min,
-             mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              icon == null?SizedBox():Icon(
-                icon,
-                size: 20,
-                color: _selectedIndex == index
-                    ? AppColors.whiteColor
-                    : AppColors.blackColor,
-              ),
+              icon == null
+                  ? SizedBox()
+                  : Icon(
+                      icon,
+                      size: 20,
+                      color: _selectedIndex == index
+                          ? AppColors.whiteColor
+                          : AppColors.blackColor,
+                    ),
               Text(label),
             ],
           ),

@@ -7,4 +7,7 @@ abstract interface class IRecipeRemoteDataSource {
     String recipeId,
     List<Uint8List> images,
   );
+  Future<RecipeModel> updateRecipe(RecipeModel recipe);
+  Future<bool> deleteRecipe(String recipeId);
+  Future<bool> deleteRecipeWithCascade(String recipeId);
 }

@@ -25,6 +25,10 @@ class ApiEndpoints {
   static String uploadRecipeImages(String recipeId) =>
       "/recipe/$recipeId/images";
   static const String updateRecipe = "/recipe";
+  static String deleteRecipe(String recipeId) => "/recipe/$recipeId";
+  static String deleteRecipeWithCascade(String recipeId) =>
+      "/recipe/$recipeId/cascade";
+  static String updateRecipeById(String recipeId) => "/recipe/$recipeId";
 
   // ================ Cookbook Endpoints ================
   static const String addToCookbook = "/cookbook/add";
@@ -40,6 +44,8 @@ class ApiEndpoints {
       "/cookbook/$userId/check/$originalRecipeId";
   static String updateUserRecipe(String userRecipeId) =>
       "/cookbook/recipe/$userRecipeId";
+  static String fullUpdateUserRecipe(String userRecipeId) =>
+      "/cookbook/recipe/$userRecipeId/full";
   static String removeFromCookbook(String userRecipeId) =>
       "/cookbook/recipe/$userRecipeId";
   static String resetRecipeProgress(String userRecipeId) =>

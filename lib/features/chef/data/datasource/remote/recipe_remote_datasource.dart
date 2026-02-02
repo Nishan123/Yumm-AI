@@ -59,4 +59,42 @@ class RecipeRemoteDataSource implements IRecipeRemoteDataSource {
       rethrow;
     }
   }
+
+  @override
+  Future<RecipeModel> updateRecipe(RecipeModel recipe) async {
+    try {
+      final response = await _apiClient.put(
+        ApiEndpoints.updateRecipeById(recipe.recipeId),
+        data: recipe.toJson(),
+      );
+      final data = response.data['data'];
+      return RecipeModel.fromJson(data);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> deleteRecipe(String recipeId) async {
+    try {
+      final response = await _apiClient.delete(
+        ApiEndpoints.deleteRecipe(recipeId),
+      );
+      return response.data['success'] == true;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> deleteRecipeWithCascade(String recipeId) async {
+    try {
+      final response = await _apiClient.delete(
+        ApiEndpoints.deleteRecipeWithCascade(recipeId),
+      );
+      return response.data['success'] == true;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

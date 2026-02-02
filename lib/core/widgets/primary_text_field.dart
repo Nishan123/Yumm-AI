@@ -9,6 +9,7 @@ class PrimaryTextField extends StatelessWidget {
   final Function(String)? onChange;
   final TextInputType? keyboardType;
   final EdgeInsets? margin;
+  final int? maxLines;
   final String? Function(String?)? validator;
   const PrimaryTextField({
     super.key,
@@ -20,6 +21,7 @@ class PrimaryTextField extends StatelessWidget {
     this.keyboardType,
     this.margin,
     this.validator,
+    this.maxLines = 1,
   });
 
   @override
@@ -27,6 +29,7 @@ class PrimaryTextField extends StatelessWidget {
     return Padding(
       padding: margin ?? EdgeInsets.symmetric(horizontal: 0, vertical: 0),
       child: TextFormField(
+        maxLines: maxLines,
         validator: validator,
         keyboardType: keyboardType ?? TextInputType.text,
         onChanged: onChange,
@@ -59,7 +62,7 @@ class PrimaryTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             borderSide: BorderSide(
               width: 4,
-              color: defaultBorderColor ?? AppColors.lightPrimaryColor,
+              color: defaultBorderColor ?? AppColors.lightBlackColor,
             ),
           ),
         ),

@@ -2,9 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/features/chef/domain/entities/ingredient_entity.dart';
 import 'package:yumm_ai/features/chef/domain/entities/initial_preparation_entity.dart';
 import 'package:yumm_ai/features/chef/domain/entities/instruction_entity.dart';
+import 'package:yumm_ai/features/chef/domain/usecases/delete_recipe_usecase.dart';
+import 'package:yumm_ai/features/chef/domain/usecases/update_recipe_usecase.dart';
+import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 import 'package:yumm_ai/features/cookbook/domain/entities/cookbook_recipe_entity.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/add_to_cookbook_usecase.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/check_recipe_with_fallback_usecase.dart';
+import 'package:yumm_ai/features/cookbook/domain/usecases/full_update_cookbook_recipe_usecase.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/get_user_cookbook_usecase.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/get_user_recipe_by_original_usecase.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/is_recipe_in_cookbook_usecase.dart';
@@ -26,6 +30,9 @@ class CookbookViewModel extends Notifier<CookbookState> {
   late final IsRecipeInCookbookUsecase _isRecipeInCookbookUsecase;
   late final RemoveFromCookbookUsecase _removeFromCookbookUsecase;
   late final CheckRecipeWithFallbackUsecase _checkRecipeWithFallbackUsecase;
+  late final DeleteRecipeUsecase _deleteRecipeUsecase;
+  late final UpdateRecipeUsecase _updateRecipeUsecase;
+  late final FullUpdateCookbookRecipeUsecase _fullUpdateCookbookRecipeUsecase;
 
   @override
   CookbookState build() {
@@ -41,6 +48,11 @@ class CookbookViewModel extends Notifier<CookbookState> {
     _removeFromCookbookUsecase = ref.read(removeFromCookbookUsecaseProvider);
     _checkRecipeWithFallbackUsecase = ref.read(
       checkRecipeWithFallbackUsecaseProvider,
+    );
+    _deleteRecipeUsecase = ref.read(deleteRecipeUsecaseProvider);
+    _updateRecipeUsecase = ref.read(updateRecipeUsecaseProvider);
+    _fullUpdateCookbookRecipeUsecase = ref.read(
+      fullUpdateCookbookRecipeUsecaseProvider,
     );
     return const CookbookState();
   }
@@ -364,5 +376,117 @@ class CookbookViewModel extends Notifier<CookbookState> {
   /// Reset state
   void reset() {
     state = const CookbookState();
+  }
+
+  /// Delete the original recipe (owner only)
+  /// This will also delete all user cookbook copies via cascade
+  Future<bool> deleteOriginalRecipe(String recipeId) async {
+    state = state.copyWith(status: CookbookStatus.deleting);
+
+    final result = await _deleteRecipeUsecase.call(
+      DeleteRecipeParams(recipeId: recipeId, cascade: true),
+    );
+
+    return result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: CookbookStatus.error,
+          errorMessage: failure.errorMessage,
+        );
+        return false;
+      },
+      (success) {
+        state = state
+            .copyWith(status: CookbookStatus.deleted, isInCookbook: false)
+            .clearCurrentRecipe();
+        return true;
+      },
+    );
+  }
+
+  /// Delete a user's cookbook recipe copy
+  /// This is for when a user removes their copy from their cookbook
+  Future<bool> deleteCookbookRecipe(String userRecipeId) async {
+    state = state.copyWith(status: CookbookStatus.deleting);
+
+    final result = await _removeFromCookbookUsecase.call(
+      RemoveFromCookbookParams(userRecipeId: userRecipeId),
+    );
+
+    return result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: CookbookStatus.error,
+          errorMessage: failure.errorMessage,
+        );
+        return false;
+      },
+      (success) {
+        final updatedRecipes = state.recipes
+            .where((r) => r.userRecipeId != userRecipeId)
+            .toList();
+        state = state
+            .copyWith(
+              status: CookbookStatus.deleted,
+              recipes: updatedRecipes,
+              isInCookbook: false,
+            )
+            .clearCurrentRecipe();
+        return true;
+      },
+    );
+  }
+
+  /// Update the original recipe (owner only)
+  Future<bool> updateOriginalRecipe(RecipeModel recipe) async {
+    state = state.copyWith(status: CookbookStatus.updating);
+
+    final result = await _updateRecipeUsecase.call(recipe);
+
+    return result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: CookbookStatus.error,
+          errorMessage: failure.errorMessage,
+        );
+        return false;
+      },
+      (updatedRecipe) {
+        state = state.copyWith(status: CookbookStatus.updated);
+        return true;
+      },
+    );
+  }
+
+  /// Full update of a cookbook recipe (content, not just progress)
+  Future<bool> fullUpdateCookbookRecipe(CookbookRecipeEntity recipe) async {
+    state = state.copyWith(status: CookbookStatus.updating);
+
+    final result = await _fullUpdateCookbookRecipeUsecase.call(recipe);
+
+    return result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: CookbookStatus.error,
+          errorMessage: failure.errorMessage,
+        );
+        return false;
+      },
+      (updatedRecipe) {
+        // Update the recipe in the list
+        final updatedRecipes = state.recipes.map((r) {
+          return r.userRecipeId == updatedRecipe.userRecipeId
+              ? updatedRecipe
+              : r;
+        }).toList();
+
+        state = state.copyWith(
+          status: CookbookStatus.updated,
+          recipes: updatedRecipes,
+          currentRecipe: updatedRecipe,
+        );
+        return true;
+      },
+    );
   }
 }

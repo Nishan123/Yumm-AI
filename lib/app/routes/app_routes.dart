@@ -8,6 +8,8 @@ import 'package:yumm_ai/features/chef/presentation/pages/macro_chef_screen.dart'
 import 'package:yumm_ai/features/chef/presentation/pages/master_chef_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/pantry_chef_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/recipe_generation_loading_screen.dart';
+import 'package:yumm_ai/features/cookbook/domain/entities/cookbook_recipe_entity.dart';
+import 'package:yumm_ai/features/cookbook/presentation/pages/edit_recipe_screen.dart';
 import 'package:yumm_ai/features/cooking/presentation/pages/cooking_screen.dart';
 import 'package:yumm_ai/features/dashboard/presentation/pages/main_screen.dart';
 import 'package:yumm_ai/features/kitchen_tool/presentation/pages/kitchen_tools_screen.dart';
@@ -60,6 +62,29 @@ class AppRoutes {
         builder: (context, state) {
           final recipe = state.extra as RecipeEntity;
           return CookingScreen(recipe: recipe);
+        },
+      ),
+      GoRoute(
+        path: "/edit_recipe",
+        name: "edit_recipe",
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            final recipe = extra['recipe'] as RecipeEntity;
+            final isOwner = extra['isOwner'] as bool? ?? false;
+            final userRecipeId = extra['userRecipeId'] as String?;
+            final cookbookRecipe =
+                extra['cookbookRecipe'] as CookbookRecipeEntity?;
+            return EditRecipeScreen(
+              params: EditRecipeParams(
+                recipe: recipe,
+                isOwner: isOwner,
+                userRecipeId: userRecipeId,
+                cookbookRecipe: cookbookRecipe,
+              ),
+            );
+          }
+          return const EditRecipeScreen();
         },
       ),
       GoRoute(

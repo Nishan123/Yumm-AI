@@ -289,6 +289,7 @@ ${_getRecipeReminders()}
     required List<String> dietaryRestrictions,
     required Duration availableTime,
     required CookingExpertise cookingExperties,
+    required double calories
   }) async {
     final ingredientsList = _formatIngredients(availableIngridents);
     final kitchenToolsList = await _getFormattedKitchenTools();
@@ -312,7 +313,9 @@ You are a nutrition-focused chef and sports dietitian. Create a recipe that prec
 - Protein: ${proteins}g
 - Fats: ${fats}g
 - Fiber: ${fiber}g
+- Calories: ${calories}kcal
 - Estimated Calories: ${estimatedCalories.toStringAsFixed(0)} kcal
+try ignoring unrealstic macronutrients target value if possible but try your best to comeup if matching nutrients if possible.
 
 **Available Ingredients:**
 $ingredientsList

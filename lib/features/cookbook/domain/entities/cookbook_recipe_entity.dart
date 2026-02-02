@@ -175,6 +175,7 @@ class CookbookRecipeEntity {
       nutrition: nutrition,
       servings: servings,
       likes: [],
+      isPublic: false,
       createdAt: createdAt,
       updatedAt: updatedAt,
     );

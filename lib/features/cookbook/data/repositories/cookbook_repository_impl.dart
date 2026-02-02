@@ -180,6 +180,30 @@ class CookbookRepositoryImpl implements ICookbookRepository {
   }
 
   @override
+  Future<Either<Failure, CookbookRecipeEntity>> fullUpdateUserRecipe(
+    CookbookRecipeEntity recipe,
+  ) async {
+    if (await networkInfo.isConnected) {
+      try {
+        final model = CookbookRecipeModel.fromEntity(recipe);
+        final result = await remoteDataSource.fullUpdateUserRecipe(model);
+        return Right(result.toEntity());
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data["message"] ?? "Network error",
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      return const Left(ApiFailure(message: "No internet connection"));
+    }
+  }
+
+  @override
   Future<Either<Failure, bool>> removeFromCookbook(String userRecipeId) async {
     if (await networkInfo.isConnected) {
       try {

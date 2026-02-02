@@ -41,6 +41,11 @@ abstract class ICookbookRepository {
     CookbookRecipeEntity recipe,
   );
 
+  /// Full update of user's recipe content (not just progress)
+  Future<Either<Failure, CookbookRecipeEntity>> fullUpdateUserRecipe(
+    CookbookRecipeEntity recipe,
+  );
+
   /// Remove a recipe from user's cookbook
   Future<Either<Failure, bool>> removeFromCookbook(String userRecipeId);
 

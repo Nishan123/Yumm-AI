@@ -6,7 +6,6 @@ import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:yumm_ai/features/chef/domain/repositories/recipe_repository.dart';
 
-
 final recipeRepositoryProvider = Provider<RecipeRepository>((ref) {
   return RecipeRepositoryImpl(ref.read(recipeRemoteDataSourceProvider));
 });
@@ -34,6 +33,34 @@ class RecipeRepositoryImpl implements RecipeRepository {
     try {
       if (images.isEmpty) return [];
       return await _remoteDataSource.uploadRecipeImages(recipeId, images);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<RecipeEntity> updateRecipe(RecipeModel recipe) async {
+    try {
+      final updatedModel = await _remoteDataSource.updateRecipe(recipe);
+      return updatedModel.toEntity();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> deleteRecipe(String recipeId) async {
+    try {
+      return await _remoteDataSource.deleteRecipe(recipeId);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> deleteRecipeWithCascade(String recipeId) async {
+    try {
+      return await _remoteDataSource.deleteRecipeWithCascade(recipeId);
     } catch (e) {
       rethrow;
     }
