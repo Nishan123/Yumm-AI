@@ -52,18 +52,47 @@ class ProfileRemoteDatasource implements IProfileRemoteDatasource {
 
     debugPrint('ProfileRemoteDatasource: Response data: ${response.data}');
 
-    // Server returns the updated user object, extract profilePic from it
+    // Server returns the profile pic URL string directly in the data field
     final data = response.data["data"];
+
+    if (data is String) {
+      debugPrint('ProfileRemoteDatasource: Profile pic URL: $data');
+      return data;
+    }
+
+    // Fallback if it returns a Map (legacy behavior or changed server)
     if (data is Map<String, dynamic>) {
       final profilePicUrl = data["profilePic"] as String?;
       if (profilePicUrl != null) {
         debugPrint('ProfileRemoteDatasource: Profile pic URL: $profilePicUrl');
         return profilePicUrl;
       }
-      throw Exception('Profile pic URL not found in response');
-    } else if (data is String) {
-      return data;
+      throw Exception('Profile pic URL not found in response map');
     }
-    throw Exception('Unexpected response format');
+
+    throw Exception('Unexpected response format: ${data.runtimeType}');
+  }
+
+  @override
+  Future<void> updateProfile(
+    String fullName,
+    String profilePic,
+    List<String> allergicIng,
+    bool isSubscribed,
+    String uid,
+  ) async {
+    final token = await _tokenStorageService.getToken();
+    await _apiClient.put(
+      ApiEndpoints.updateUser(uid),
+      data: {
+        'fullName': fullName,
+        'profilePic': profilePic,
+        'allergenicIngredients': allergicIng,
+        'isSubscribedUser': isSubscribed,
+      },
+      options: Options(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
+      ),
+    );
   }
 }

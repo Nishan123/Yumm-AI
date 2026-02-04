@@ -152,11 +152,47 @@ class _EditRecipeScreenState extends ConsumerState<EditRecipeScreen> {
       orElse: () => CookingExpertise.newBie,
     );
 
-    // Parse duration
-    final durationMatch = RegExp(r'(\d+)').firstMatch(estCookingTime);
-    if (durationMatch != null) {
-      final minutes = int.tryParse(durationMatch.group(1) ?? '30') ?? 30;
-      _selectedDuration = Duration(minutes: minutes);
+    // Parse duration logic
+    int minutes = 30; // Default
+    final lowerTime = estCookingTime.toLowerCase();
+
+    if (lowerTime.contains('hr') || lowerTime.contains('hour')) {
+      final hourMatch = RegExp(r'(\d+)\s*(?:h|hour)').firstMatch(lowerTime);
+      final minMatch = RegExp(r'(\d+)\s*(?:min|min)').firstMatch(lowerTime);
+
+      int hours = 0;
+      int mins = 0;
+
+      if (hourMatch != null) {
+        hours = int.tryParse(hourMatch.group(1) ?? '0') ?? 0;
+      }
+
+      if (minMatch != null) {
+        mins = int.tryParse(minMatch.group(1) ?? '0') ?? 0;
+      }
+
+      minutes = (hours * 60) + mins;
+    } else {
+      // Fallback for simple "90 mins" format
+      final match = RegExp(r'(\d+)').firstMatch(lowerTime);
+      if (match != null) {
+        minutes = int.tryParse(match.group(1) ?? '30') ?? 30;
+      }
+    }
+    _selectedDuration = Duration(minutes: minutes);
+  }
+
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    if (minutes < 60) {
+      return '$minutes min';
+    } else {
+      final hours = minutes ~/ 60;
+      final remainingMinutes = minutes % 60;
+      if (remainingMinutes == 0) {
+        return '${hours}h';
+      }
+      return '${hours}h ${remainingMinutes}min';
     }
   }
 
@@ -249,7 +285,7 @@ class _EditRecipeScreenState extends ConsumerState<EditRecipeScreen> {
           servings: int.tryParse(_servingsController.text) ?? 1,
           mealType: _selectedMeal.text,
           experienceLevel: _selectedCookingExpertise.value,
-          estCookingTime: '${_selectedDuration.inMinutes} mins',
+          estCookingTime: _formatDuration(_selectedDuration),
           ingredients: ingredients,
           steps: instructions
               .asMap()
@@ -309,7 +345,7 @@ class _EditRecipeScreenState extends ConsumerState<EditRecipeScreen> {
           servings: int.tryParse(_servingsController.text) ?? 1,
           mealType: _selectedMeal.text,
           experienceLevel: _selectedCookingExpertise.text,
-          estCookingTime: '${_selectedDuration.inMinutes} mins',
+          estCookingTime: _formatDuration(_selectedDuration),
           ingredients: ingredients.map((e) => e.toEntity()).toList(),
           steps: instructions
               .asMap()

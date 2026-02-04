@@ -34,7 +34,7 @@ class UserApiModel {
       "role": role,
       "fullName": fullName,
       "profilePic": profilePic,
-      "allergicTo": allergicTo,
+      "allergenicIngredients": allergicTo,
       "authProvider": authProvider,
       "isSubscribedUser": isSubscribedUser,
       "createdAt": createdAt?.toIso8601String(),
@@ -59,7 +59,7 @@ class UserApiModel {
       role: json["role"] as String?,
       fullName: (json["fullName"] ?? "") as String,
       profilePic: json["profilePic"] as String?,
-      allergicTo: (json["allergicTo"] as List?)
+      allergicTo: (json["allergenicIngredients"] as List?)
           ?.map((e) => e.toString())
           .toList(),
       authProvider: (json["authProvider"] ?? "") as String,

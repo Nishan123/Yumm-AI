@@ -9,12 +9,14 @@ import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/core/providers/user_selectors.dart';
 import 'package:yumm_ai/core/widgets/custom_dialogue_box.dart';
+import 'package:yumm_ai/core/widgets/custom_snack_bar.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
 import 'package:yumm_ai/core/widgets/secondary_icon_button.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/add_ingredients_bottom_sheet.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_wrap_container.dart';
+import 'package:yumm_ai/features/profile/presentation/state/profile_screen_state.dart';
 import 'package:yumm_ai/features/profile/presentation/view_model/profile_view_model.dart';
 import 'package:yumm_ai/features/profile/presentation/widgets/profile_card.dart';
 import 'package:yumm_ai/features/profile/presentation/widgets/profile_pic_source_bottom_sheet.dart';
@@ -28,9 +30,11 @@ class ProfileScreen extends ConsumerStatefulWidget {
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final userNameController = TextEditingController();
-  List<IngredientModel> selectedIngredients = [];
+  List<IngredientModel> _selectedIngredients = [];
   bool _isInitialized = false;
+  bool _areAllergiesInitialized = false;
   final ImagePicker _imagePicker = ImagePicker();
+  File? _selectedProfilePic;
 
   void _showPermissionDeniedDailog() {
     CustomDialogueBox.show(
@@ -69,9 +73,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       imageQuality: 80,
     );
     if (photo != null) {
-      ref
-          .read(profileViewModelProvider.notifier)
-          .updateProfilePic(File(photo.path));
+      setState(() {
+        _selectedProfilePic = File(photo.path);
+      });
     }
   }
 
@@ -82,13 +86,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         imageQuality: 80,
       );
       if (image != null) {
-        ref
-            .read(profileViewModelProvider.notifier)
-            .updateProfilePic(File(image.path));
+        setState(() {
+          _selectedProfilePic = File(image.path);
+        });
       }
     } catch (e) {
       debugPrint("Failed to update profile pic");
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    userNameController.addListener(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -100,6 +112,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         userNameController.text = userName;
       }
       _isInitialized = true;
+    }
+
+    if (!_areAllergiesInitialized) {
+      final userAsync = ref.read(currentUserProvider);
+      userAsync.whenData((user) {
+        if (user != null) {
+          _selectedIngredients = (user.allergicTo ?? [])
+              .map(
+                (name) => IngredientModel(
+                  ingredientId: name,
+                  name: name,
+                  imageUrl: '',
+                  quantity: '',
+                  unit: '',
+                  isReady: false,
+                ),
+              )
+              .toList();
+          _areAllergiesInitialized = true;
+        }
+      });
     }
   }
 
@@ -113,6 +146,46 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     // Check if user is logged in
     final isLoggedIn = ref.watch(isUserLoggedInProvider);
+    final existingUser = ref.watch(currentUserProvider);
+    final state = ref.watch(profileViewModelProvider);
+
+    ref.listen(currentUserProvider, (previous, next) {
+      next.whenData((user) {
+        if (user != null && !_areAllergiesInitialized) {
+          setState(() {
+            _selectedIngredients = (user.allergicTo ?? [])
+                .map(
+                  (name) => IngredientModel(
+                    ingredientId: name,
+                    name: name,
+                    imageUrl: '',
+                    quantity: '',
+                    unit: '',
+                    isReady: false,
+                  ),
+                )
+                .toList();
+            _areAllergiesInitialized = true;
+          });
+        }
+      });
+    });
+
+    ref.listen(profileViewModelProvider, (previous, next) {
+      if (next.profileState == ProfileStates.error &&
+          next.errorMsg != null &&
+          next.errorMsg != previous?.errorMsg) {
+        CustomSnackBar.showErrorSnackBar(context, next.errorMsg!);
+      }
+      if (next.profileState == ProfileStates.success &&
+          next.message != null &&
+          next.message != previous?.message) {
+        CustomSnackBar.showSuccessSnackBar(context, next.message!);
+        setState(() {
+          _selectedProfilePic = null;
+        });
+      }
+    });
 
     if (!isLoggedIn) {
       return Scaffold(
@@ -151,6 +224,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           // ProfileCard now fetches its own data using userProfileCardDataProvider
                           ProfileCard(
                             userNameController: userNameController,
+                            selectedImage: _selectedProfilePic,
                             onProfileIconTap: () {
                               showModalBottomSheet(
                                 context: context,
@@ -165,11 +239,31 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           ),
                           const SizedBox(height: 20),
                           InputWidgetTitle(
+                            haveActionButton: true,
                             title: "You are allergic to :",
+                            actionButtonText: "Add Item",
                             padding: const EdgeInsets.symmetric(horizontal: 0),
-                            onActionTap: () {},
+                            onActionTap: () {
+                              showModalBottomSheet(
+                                isScrollControlled: true,
+                                context: context,
+                                builder: (context) {
+                                  return AddIngredientsBottomSheet(
+                                    title: "Search ingredients",
+                                    selectedIngredients: _selectedIngredients,
+                                    onSubmit:
+                                        (List<IngredientModel> newSelection) {
+                                          setState(() {
+                                            _selectedIngredients = newSelection;
+                                          });
+                                        },
+                                  );
+                                },
+                              );
+                            },
                           ),
                           const SizedBox(height: 12),
+
                           // allergic items container
                           IngredientsWrapContainer(
                             haveAddIngredientButton: true,
@@ -180,11 +274,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 builder: (context) {
                                   return AddIngredientsBottomSheet(
                                     title: "Search ingredients",
-                                    selectedIngredients: selectedIngredients,
+                                    selectedIngredients: _selectedIngredients,
                                     onSubmit:
                                         (List<IngredientModel> newSelection) {
                                           setState(() {
-                                            selectedIngredients = newSelection;
+                                            _selectedIngredients = newSelection;
                                           });
                                         },
                                   );
@@ -193,34 +287,107 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             },
                             emptyText: "No Allergic Ingredients",
                             margin: const EdgeInsets.all(0),
-                            items: selectedIngredients
+                            items: _selectedIngredients
                                 .map(
                                   (ing) => AllergicItemChips(
                                     onTap: () {
                                       setState(() {
-                                        selectedIngredients.removeWhere(
+                                        _selectedIngredients.removeWhere(
                                           (item) =>
                                               item.ingredientId ==
                                               ing.ingredientId,
                                         );
                                       });
                                     },
-                                    text: ing.ingredientId,
+                                    text: ing.name,
                                   ),
                                 )
                                 .toList(),
                           ),
                           Spacer(),
-                          SecondaryButton(
-                            margin: const EdgeInsets.symmetric(
-                              horizontal: 0,
-                              vertical: 4,
-                            ),
-                            borderRadius: 40,
-                            backgroundColor: AppColors.lightBlueColor,
-                            onTap: null,
-                            text: "Update Profile",
+
+                          // Update Profile button
+                          Builder(
+                            builder: (context) {
+                              bool hasChanges = false;
+                              existingUser.whenData((data) {
+                                if (data != null) {
+                                  final currentName = userNameController.text
+                                      .trim();
+                                  final oldName = data.fullName;
+                                  final currentAllergies = _selectedIngredients
+                                      .map((e) => e.name)
+                                      .toSet();
+                                  final oldAllergies = (data.allergicTo ?? [])
+                                      .toSet();
+
+                                  if (currentName != oldName ||
+                                      !currentAllergies.containsAll(
+                                        oldAllergies,
+                                      ) ||
+                                      !oldAllergies.containsAll(
+                                        currentAllergies,
+                                      ) ||
+                                      _selectedProfilePic != null) {
+                                    hasChanges = true;
+                                  }
+                                }
+                              });
+
+                              return SecondaryButton(
+                                isLoading: state == ProfileStates.loading,
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 0,
+                                  vertical: 4,
+                                ),
+                                borderRadius: 40,
+                                backgroundColor: AppColors.lightBlueColor,
+                                onTap: hasChanges
+                                    ? () {
+                                        existingUser.when(
+                                          data: (data) {
+                                            if (data == null) {
+                                              return CustomSnackBar.showErrorSnackBar(
+                                                context,
+                                                "Error loading existing user",
+                                              );
+                                            }
+                                            ref
+                                                .read(
+                                                  profileViewModelProvider
+                                                      .notifier,
+                                                )
+                                                .updateProfile(
+                                                  fullName: userNameController
+                                                      .text
+                                                      .trim(),
+                                                  allergicIng:
+                                                      _selectedIngredients
+                                                          .map((e) => e.name)
+                                                          .toList(),
+                                                  isSubscribed:
+                                                      data.isSubscribedUser!,
+                                                  profilePic: data.profilePic!,
+                                                  imageFile:
+                                                      _selectedProfilePic,
+                                                );
+                                          },
+                                          error: (error, state) {
+                                            CustomSnackBar.showErrorSnackBar(
+                                              context,
+                                              "Error loading existing user",
+                                            );
+                                          },
+                                          loading: () {},
+                                        );
+                                      }
+                                    : null,
+                                text: "Update Profile",
+                              );
+                            },
                           ),
+
+                          // Delete profile Button
                           SecondaryButton(
                             margin: const EdgeInsets.symmetric(
                               horizontal: 0,
@@ -229,7 +396,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             borderRadius: 40,
                             backgroundColor: AppColors.redColor,
                             onTap: () {},
-                            text: "Log Out",
+                            text: "Delete Profile",
                           ),
                           const SizedBox(height: 12),
                         ],

@@ -40,4 +40,20 @@ class ProfileRepository implements IProfileRepository {
       return Left(ApiFailure(message: 'An unexpected error occurred'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateProfile(
+    String fullName,
+    bool isSubscriberd,
+    List<String> allergicIngridents,
+    String profilePic,
+    String uid
+  ) async {
+    try {
+      await _remoteDatasource.updateProfile(fullName,profilePic,allergicIngridents,isSubscriberd, uid);
+      return const Right(null);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
 }

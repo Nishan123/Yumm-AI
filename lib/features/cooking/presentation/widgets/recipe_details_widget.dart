@@ -220,7 +220,7 @@ class _RecipeDetailsWidgetState extends ConsumerState<RecipeDetailsWidget>
                         // Pinned Tab Bar
                         SliverPersistentHeader(
                           pinned: true,
-                          delegate: _StickyTabBarDelegate(
+                          delegate: StickyTabBarDelegate(
                             child: Container(
                               color: AppColors.whiteColor,
                               padding: const EdgeInsets.only(
@@ -281,10 +281,10 @@ class _RecipeDetailsWidgetState extends ConsumerState<RecipeDetailsWidget>
 }
 
 /// Delegate for the sticky tab bar that pins at the top when scrolling.
-class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
+class StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   final Widget child;
 
-  _StickyTabBarDelegate({required this.child});
+  StickyTabBarDelegate({required this.child});
 
   @override
   Widget build(
@@ -302,7 +302,7 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => 68.0;
 
   @override
-  bool shouldRebuild(_StickyTabBarDelegate oldDelegate) {
+  bool shouldRebuild(StickyTabBarDelegate oldDelegate) {
     return child != oldDelegate.child;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:yumm_ai/core/services/storage/user_session_service.dart';
-
 
 // Basic user identification providers
 final userUidProvider = Provider<String?>((ref) {
@@ -39,6 +39,11 @@ final userAuthProviderProvider = Provider<String?>((ref) {
 // Check if user is logged in
 final isUserLoggedInProvider = Provider<bool>((ref) {
   return ref.watch(userSessionServiceProvider).isLoggedIn();
+});
+
+/// Provider to track profile picture cache key for cache busting
+final profilePicCacheKeyProvider = StateProvider<int>((ref) {
+  return DateTime.now().millisecondsSinceEpoch;
 });
 
 /// Combined selectors for common use cases

@@ -1,7 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
+
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/app/theme/container_property.dart';
@@ -9,18 +10,17 @@ import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/core/widgets/primary_button.dart';
 import 'package:yumm_ai/features/profile/presentation/widgets/change_username_text_filed.dart';
 
-/// Provider to track profile picture cache key for cache busting
-final profilePicCacheKeyProvider = StateProvider<int>((ref) {
-  return DateTime.now().millisecondsSinceEpoch;
-});
+import 'package:yumm_ai/core/providers/user_selectors.dart';
 
 class ProfileCard extends ConsumerWidget {
   final TextEditingController userNameController;
+  final File? selectedImage;
   final VoidCallback onProfileIconTap;
   const ProfileCard({
     super.key,
     required this.userNameController,
     required this.onProfileIconTap,
+    this.selectedImage,
   });
 
   @override
@@ -53,6 +53,7 @@ class ProfileCard extends ConsumerWidget {
           displayEmail: displayEmail,
           profilePicUrl: cacheBustedUrl,
           isSubscribed: isSubscribedUser ?? false,
+          selectedImage: selectedImage,
         );
       },
       loading: () => _buildLoadingCard(mq),
@@ -63,6 +64,7 @@ class ProfileCard extends ConsumerWidget {
         displayEmail: 'user@example.com',
         profilePicUrl: null,
         isSubscribed: false,
+        selectedImage: selectedImage,
       ),
     );
   }
@@ -74,6 +76,7 @@ class ProfileCard extends ConsumerWidget {
     required String displayEmail,
     required String? profilePicUrl,
     required bool isSubscribed,
+    File? selectedImage,
   }) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
@@ -97,11 +100,15 @@ class ProfileCard extends ConsumerWidget {
                     CircleAvatar(
                       radius: 30,
                       backgroundColor: AppColors.lightBlackColor,
-                      backgroundImage:
-                          profilePicUrl != null && profilePicUrl.isNotEmpty
-                          ? NetworkImage(profilePicUrl)
-                          : null,
-                      child: profilePicUrl == null || profilePicUrl.isEmpty
+                      backgroundImage: selectedImage != null
+                          ? FileImage(selectedImage)
+                          : (profilePicUrl != null && profilePicUrl.isNotEmpty
+                                    ? NetworkImage(profilePicUrl)
+                                    : null)
+                                as ImageProvider?,
+                      child:
+                          selectedImage == null &&
+                              (profilePicUrl == null || profilePicUrl.isEmpty)
                           ? Text(
                               displayName.isNotEmpty
                                   ? displayName[0].toUpperCase()

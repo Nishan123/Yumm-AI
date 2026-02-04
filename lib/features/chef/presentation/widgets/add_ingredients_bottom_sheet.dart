@@ -110,9 +110,9 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
                         itemCount: filtered.length,
                         itemBuilder: (context, index) {
                           final data = filtered[index];
-                          final isSelected = _selectedIds.contains(
-                            data.ingredientId,
-                          );
+                          final isSelected =
+                              _selectedIds.contains(data.ingredientId) ||
+                              _selectedIds.contains(data.name);
                           return Container(
                             margin: EdgeInsets.only(top: 8),
                             padding: EdgeInsets.only(

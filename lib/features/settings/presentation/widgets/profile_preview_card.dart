@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/providers/current_user_provider.dart';
+import 'package:yumm_ai/core/providers/user_selectors.dart';
 
 class ProfilePreviewCard extends ConsumerWidget {
   final VoidCallback onTap;
@@ -14,6 +15,7 @@ class ProfilePreviewCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Watch user data from the database
     final userAsync = ref.watch(currentUserProvider);
+    final cacheKey = ref.watch(profilePicCacheKeyProvider);
 
     return GestureDetector(
       onTap: onTap,
@@ -25,50 +27,57 @@ class ProfilePreviewCard extends ConsumerWidget {
           border: Border.all(width: 1, color: AppColors.lightBlackColor),
         ),
         child: userAsync.when(
-          data: (user) => Row(
-            spacing: 8,
-            children: [
-              CircleAvatar(
-                radius: 26,
-                backgroundColor: AppColors.lightBlackColor,
-                backgroundImage:
-                    user?.profilePic != null && user!.profilePic!.isNotEmpty
-                    ? NetworkImage(user.profilePic!)
-                    : null,
-                child: user?.profilePic == null || user!.profilePic!.isEmpty
-                    ? Text(
-                        user?.fullName.isNotEmpty == true
-                            ? user!.fullName[0].toUpperCase()
-                            : 'U',
-                        style: AppTextStyles.h2.copyWith(
-                          color: AppColors.whiteColor,
-                        ),
-                      )
-                    : null,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user?.fullName ?? 'Username',
-                      style: AppTextStyles.title.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    Text(
-                      user?.email ?? 'email@example.com',
-                      style: AppTextStyles.normalText.copyWith(
-                        color: AppColors.descriptionTextColor,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+          data: (user) {
+            String? profilePicUrl = user?.profilePic;
+            if (profilePicUrl != null && profilePicUrl.isNotEmpty) {
+              final separator = profilePicUrl.contains('?') ? '&' : '?';
+              profilePicUrl = '$profilePicUrl${separator}v=$cacheKey';
+            }
+            return Row(
+              spacing: 8,
+              children: [
+                CircleAvatar(
+                  radius: 26,
+                  backgroundColor: AppColors.lightBlackColor,
+                  backgroundImage:
+                      profilePicUrl != null && profilePicUrl.isNotEmpty
+                      ? NetworkImage(profilePicUrl)
+                      : null,
+                  child: user?.profilePic == null || user!.profilePic!.isEmpty
+                      ? Text(
+                          user?.fullName.isNotEmpty == true
+                              ? user!.fullName[0].toUpperCase()
+                              : 'U',
+                          style: AppTextStyles.h2.copyWith(
+                            color: AppColors.whiteColor,
+                          ),
+                        )
+                      : null,
                 ),
-              ),
-              Icon(LucideIcons.chevron_right, size: 30),
-            ],
-          ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user?.fullName ?? 'Username',
+                        style: AppTextStyles.title.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        user?.email ?? 'email@example.com',
+                        style: AppTextStyles.normalText.copyWith(
+                          color: AppColors.descriptionTextColor,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(LucideIcons.chevron_right, size: 30),
+              ],
+            );
+          },
           loading: () => Row(
             spacing: 8,
             children: [

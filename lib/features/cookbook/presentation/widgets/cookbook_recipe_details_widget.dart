@@ -9,7 +9,10 @@ import 'package:yumm_ai/features/cookbook/domain/entities/cookbook_recipe_entity
 import 'package:yumm_ai/features/cookbook/presentation/view_model/cookbook_view_model.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/ingredient_list.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/instructions_list.dart';
+import 'package:yumm_ai/features/cooking/presentation/widgets/nutritions_info_card.dart';
+import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_details_widget.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_info_card.dart';
+import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_title_widget.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/tools_list.dart';
 
 /// Interactive recipe details widget for recipes that are in the user's cookbook.
@@ -29,6 +32,7 @@ class _CookbookRecipeDetailsWidgetState
     with SingleTickerProviderStateMixin {
   static const double _collapsedFraction = 0.64;
   static const double _expandedFraction = 0.9;
+  bool _isTitleExpanded = false;
 
   late final DraggableScrollableController _draggableController;
   late TabController _tabController;
@@ -127,9 +131,8 @@ class _CookbookRecipeDetailsWidgetState
                     _handleDragUpdate(details, parentHeight),
                 onVerticalDragEnd: (_) => _snapSheet(),
                 child: Container(
-                  clipBehavior: Clip.none,
+                  clipBehavior: Clip.antiAlias,
                   width: screenWidth,
-                  padding: const EdgeInsets.only(top: 14),
                   decoration: BoxDecoration(
                     color: AppColors.whiteColor,
                     boxShadow: [ContainerProperty.darkerShadow],
@@ -138,84 +141,127 @@ class _CookbookRecipeDetailsWidgetState
                       topRight: Radius.circular(40),
                     ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: screenWidth * 0.3,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColors.descriptionTextColor,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          currentRecipe.recipeName,
-                          style: AppTextStyles.h2.copyWith(
-                            fontWeight: FontWeight.w700,
-                            height: 1.4,
+                  child: NestedScrollView(
+                    controller: scrollController,
+                    headerSliverBuilder: (context, innerBoxIsScrolled) {
+                      return [
+                        // Header content that scrolls away
+                        SliverToBoxAdapter(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 14),
+                              // Drag handle
+                              Container(
+                                width: screenWidth * 0.3,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: AppColors.descriptionTextColor,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Recipe Title
+                              RecipeTitleWidget(
+                                recipeName: widget.recipe.recipeName,
+                                onTap: () {
+                                  setState(() {
+                                    _isTitleExpanded = !_isTitleExpanded;
+                                  });
+                                },
+                                isTitleExpanded: _isTitleExpanded,
+                              ),
+                              const SizedBox(height: 6),
+
+                              // Recipe Description
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                child: ReadMoreWidget(
+                                  text: widget.recipe.description,
+                                  trimLine: 3,
+                                ),
+                              ),
+
+                              // Recipe Info
+                              RecipeInfoCard(
+                                margin: EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
+                                duration: currentRecipe.estCookingTime,
+                                steps: currentRecipe.steps.length,
+                                expertise: currentRecipe.experienceLevel,
+                              ),
+                              const SizedBox(height: 6),
+
+                              // nutritions info
+                              if (widget.recipe.nutrition != null)
+                                NutritionsInfoCard(
+                                  fat: widget.recipe.nutrition!.fat,
+                                  carbs: widget.recipe.nutrition!.carbs,
+                                  calories: widget.recipe.calorie.toDouble(),
+                                  fiber: widget.recipe.nutrition!.fiber,
+                                ),
+                              const SizedBox(height: 3),
+                            ],
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 6),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ReadMoreWidget(
-                          text: currentRecipe.description,
-                          trimLine: 3,
-                        ),
-                      ),
-                      RecipeInfoCard(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        duration: currentRecipe.estCookingTime,
-                        steps: currentRecipe.steps.length,
-                        expertise: currentRecipe.experienceLevel,
-                      ),
-                      // Tab Bar
-                      CustomTabBar(
-                        externalController: _tabController,
-                        tabItems: const [
-                          "Ingredients",
-                          "Instructions",
-                          "Tools",
-                        ],
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                        itemTextStyle: AppTextStyles.descriptionText.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.blackColor,
-                        ),
-                        onTabChanged: (value) {},
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            IngredientList(
-                              isActive: _currentTabIndex == 0,
-                              ingredients: currentRecipe.ingredients,
-                              onToggle: _toggleIngredient,
+
+                        // Pinned Tab Bar
+                        SliverPersistentHeader(
+                          pinned: true,
+                          delegate: StickyTabBarDelegate(
+                            child: Container(
+                              color: AppColors.whiteColor,
+                              padding: const EdgeInsets.only(
+                                top: 14,
+                                bottom: 3,
+                              ),
+                              child: CustomTabBar(
+                                externalController: _tabController,
+                                tabItems: const [
+                                  "Ingredients",
+                                  "Instructions",
+                                  "Tools",
+                                ],
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                itemTextStyle: AppTextStyles.descriptionText
+                                    .copyWith(
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.blackColor,
+                                    ),
+                                onTabChanged: (value) {},
+                              ),
                             ),
-                            InstructionsList(
-                              isActive: _currentTabIndex == 1,
-                              instruction: currentRecipe.steps,
-                              onToggle: _toggleInstruction,
-                            ),
-                            ToolsList(
-                              kitchenTool: currentRecipe.kitchenTools,
-                              isActive: _currentTabIndex == 2,
-                              onToggle: _toggleTool,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ];
+                    },
+                    body: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        IngredientList(
+                          isActive: _currentTabIndex == 0,
+                          ingredients: currentRecipe.ingredients,
+                          onToggle: _toggleIngredient,
+                        ),
+                        InstructionsList(
+                          isActive: _currentTabIndex == 1,
+                          instruction: currentRecipe.steps,
+                          onToggle: _toggleInstruction,
+                        ),
+                        ToolsList(
+                          kitchenTool: currentRecipe.kitchenTools,
+                          isActive: _currentTabIndex == 2,
+                          onToggle: _toggleTool,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

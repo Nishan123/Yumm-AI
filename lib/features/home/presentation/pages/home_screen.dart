@@ -14,6 +14,7 @@ import 'package:yumm_ai/features/home/presentation/widgets/home_search_bar.dart'
 import 'package:yumm_ai/features/home/presentation/widgets/recommended_food_scroll_snap.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/top_recipe_card.dart';
 import 'package:yumm_ai/features/search/presentation/pages/search_screen.dart';
+import 'package:yumm_ai/core/providers/user_selectors.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -29,11 +30,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     // Watch user data from the database
     final userAsync = ref.watch(currentUserProvider);
+    final cacheKey = ref.watch(profilePicCacheKeyProvider);
 
     return Scaffold(
       appBar: userAsync.when(
-        data: (user) =>
-            HomeAppBar(userName: user!.fullName, profilePic: user.profilePic!),
+        data: (user) {
+          String profilePicUrl = user!.profilePic!;
+          if (profilePicUrl.isNotEmpty) {
+            final separator = profilePicUrl.contains('?') ? '&' : '?';
+            profilePicUrl = '$profilePicUrl${separator}v=$cacheKey';
+          }
+          return HomeAppBar(userName: user.fullName, profilePic: profilePicUrl);
+        },
         loading: () {
           return HomeAppBar(userName: "", profilePic: "");
         },
