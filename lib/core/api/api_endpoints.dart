@@ -1,5 +1,3 @@
-import 'package:yumm_ai/features/auth/data/model/user_api_model.dart';
-
 class ApiEndpoints {
   ApiEndpoints._();
 
@@ -20,6 +18,11 @@ class ApiEndpoints {
   static String getCurrentUser(String uid) => "/me/$uid";
   static String updateProfilePic(String uid) => "/users/$uid/profile-pic";
   static String updateUser(String uid) => "/users/$uid";
+  static String deleteUser(String uid) => "/users/$uid";
+  static String deleteUserWithPassword(String uid) =>
+      "/users/$uid/delete-with-password";
+  static String deleteUserWithGoogle(String uid) =>
+      "/users/$uid/delete-with-google";
 
   // ================ Recipe Endpoints ================
   static const String saveRecipe = "/saveRecipe";

@@ -50,7 +50,7 @@ class SecondaryButton extends StatelessWidget {
                   SvgPicture.asset("${ConstantsString.assetSvg}/hatIcon.svg"),
                 ],
               )
-            : Text(text),
+            : Text(text,),
       ),
     );
   }

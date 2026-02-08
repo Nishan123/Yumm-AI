@@ -19,6 +19,7 @@ class GenerateMasterRecipePlanParams extends Equatable {
   final int noOfServes;
   final List<String> dietaryRestrictions;
   final String mealPreferences;
+  final List<String> allergicIngridents;
 
   const GenerateMasterRecipePlanParams({
     required this.ingridents,
@@ -28,6 +29,7 @@ class GenerateMasterRecipePlanParams extends Equatable {
     required this.noOfServes,
     required this.dietaryRestrictions,
     required this.mealPreferences,
+    required this.allergicIngridents
   });
 
   @override
@@ -39,6 +41,7 @@ class GenerateMasterRecipePlanParams extends Equatable {
     noOfServes,
     dietaryRestrictions,
     mealPreferences,
+    allergicIngridents
   ];
 }
 
@@ -46,7 +49,8 @@ final generateMasterRecipePlanUsecaseProvider = Provider((ref) {
   return GenerateMasterRecipePlanUsecase();
 });
 
-class GenerateMasterRecipePlanUsecase implements UsecaseWithParms<RecipeModel, GenerateMasterRecipePlanParams> {
+class GenerateMasterRecipePlanUsecase
+    implements UsecaseWithParms<RecipeModel, GenerateMasterRecipePlanParams> {
   @override
   Future<Either<Failure, RecipeModel>> call(
     GenerateMasterRecipePlanParams params,
@@ -60,6 +64,7 @@ class GenerateMasterRecipePlanUsecase implements UsecaseWithParms<RecipeModel, G
         mealPreferences: params.mealPreferences,
         availableTime: params.availableTime,
         cookingExperties: params.expertise,
+        allergicIngridents: params.allergicIngridents,
       );
       final response = await Gemini.instance.prompt(parts: [Part.text(prompt)]);
 

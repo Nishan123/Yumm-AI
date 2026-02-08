@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
+import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/domain/usecases/generate_master_recipe_plan_usecase.dart';
 import 'package:yumm_ai/features/chef/presentation/state/chef_state.dart';
@@ -38,6 +39,8 @@ class MasterChefViewModel extends BaseChefViewModel {
       status: ChefStatus.generatingRecipe,
       loadingMessage: "Master chef is cooking for you",
     );
+    final user = ref.read(currentUserProvider).value;
+    final allergicIngridents = user?.allergicTo ?? [];
     final textResult = await _generateMasterRecipePlanUsecase.call(
       GenerateMasterRecipePlanParams(
         ingridents: ingridents,
@@ -47,6 +50,7 @@ class MasterChefViewModel extends BaseChefViewModel {
         noOfServes: noOfServes,
         dietaryRestrictions: dietaryRestrictions,
         mealPreferences: mealPreferences,
+        allergicIngridents: allergicIngridents
       ),
     );
 

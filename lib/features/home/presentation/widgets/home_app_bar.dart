@@ -20,21 +20,28 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Row(
         spacing: 6,
         children: [
-          CircleAvatar(
+          Container(
+            padding: EdgeInsets.all(1),
 
-            radius: 23,
-            backgroundColor: AppColors.lightBlackColor,
-            backgroundImage: profilePic.isNotEmpty
-                ? NetworkImage(profilePic)
-                : null,
-            child: profilePic.isEmpty
-                ? Text(
-                    userName.isNotEmpty ? userName[0].toUpperCase() : '?',
-                    style: AppTextStyles.h5.copyWith(
-                      color: AppColors.whiteColor,
-                    ),
-                  )
-                : null,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.lightBlackColor
+            ),
+            child: CircleAvatar(
+              radius: 23,
+              backgroundColor: AppColors.lightBlackColor,
+              backgroundImage: profilePic.isNotEmpty
+                  ? NetworkImage(profilePic)
+                  : null,
+              child: profilePic.isEmpty
+                  ? Text(
+                      userName.isNotEmpty ? userName[0].toUpperCase() : '?',
+                      style: AppTextStyles.h5.copyWith(
+                        color: AppColors.whiteColor,
+                      ),
+                    )
+                  : null,
+            ),
           ),
           Column(
             spacing: 2.6,

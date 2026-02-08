@@ -17,6 +17,7 @@ class GeneratePantryRecipePlanParams extends Equatable {
   final Duration availableTime;
   final CookingExpertise expertise;
   final String currentUserId;
+  final List<String> allergicIngridents;
 
   const GeneratePantryRecipePlanParams({
     required this.ingredients,
@@ -24,6 +25,7 @@ class GeneratePantryRecipePlanParams extends Equatable {
     required this.availableTime,
     required this.expertise,
     required this.currentUserId,
+    required this.allergicIngridents
   });
 
   @override
@@ -33,6 +35,7 @@ class GeneratePantryRecipePlanParams extends Equatable {
     availableTime,
     expertise,
     currentUserId,
+    allergicIngridents,
   ];
 }
 
@@ -52,6 +55,7 @@ class GeneratePantryRecipePlanUsecase
         mealType: params.mealType,
         availableTime: params.availableTime,
         cookingExperties: params.expertise,
+        allergicIngridents: params.allergicIngridents
       );
 
       final response = await Gemini.instance.prompt(parts: [Part.text(prompt)]);

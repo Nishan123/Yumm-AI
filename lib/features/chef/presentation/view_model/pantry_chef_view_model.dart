@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
+import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/domain/usecases/generate_pantry_recipe_plan_usecase.dart';
 import 'package:yumm_ai/features/chef/presentation/state/chef_state.dart';
@@ -30,12 +31,15 @@ class PantryChefViewModel extends BaseChefViewModel {
     required CookingExpertise expertise,
     required String currentUserId,
     bool isPublic = true,
+    
   }) async {
     state = state.copyWith(
       status: ChefStatus.generatingRecipe,
       loadingMessage: "Pantry chef is cooking for you",
       errorMessage: null,
     );
+    final user = ref.read(currentUserProvider).value;
+    final allergicIngridents = user?.allergicTo ?? [];
     final textResult = await _generatePantryRecipePlanUsecase.call(
       GeneratePantryRecipePlanParams(
         ingredients: ingredients,
@@ -43,6 +47,7 @@ class PantryChefViewModel extends BaseChefViewModel {
         availableTime: availableTime,
         expertise: expertise,
         currentUserId: currentUserId,
+        allergicIngridents: allergicIngridents
       ),
     );
 

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
@@ -395,7 +396,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                             borderRadius: 40,
                             backgroundColor: AppColors.redColor,
-                            onTap: () {},
+                            onTap: () async {
+                              context.pushNamed("delete_profile");
+                              // final user = existingUser.value;
+                              // if (user != null && user.uid != null) {
+                              //   await ref
+                              //       .read(profileViewModelProvider.notifier)
+                              //       .deleteUserProfile(user.uid!);
+                              // }
+                            },
                             text: "Delete Profile",
                           ),
                           const SizedBox(height: 12),

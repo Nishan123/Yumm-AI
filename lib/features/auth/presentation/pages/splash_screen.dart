@@ -12,12 +12,7 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends ConsumerState<SplashScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _fadeController;
-  late AnimationController _slideController;
-  late AnimationController _scaleController;
-
+class _SplashPageState extends ConsumerState<SplashScreen> {
   @override
   void initState() {
     super.initState();
@@ -41,9 +36,6 @@ class _SplashPageState extends ConsumerState<SplashScreen>
 
   @override
   void dispose() {
-    _fadeController.dispose();
-    _slideController.dispose();
-    _scaleController.dispose();
     super.dispose();
   }
 
@@ -52,7 +44,10 @@ class _SplashPageState extends ConsumerState<SplashScreen>
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: Center(
-        child: Image.asset("${ConstantsString.assetGif}/animated_text_logo.gif", width: 200),
+        child: Image.asset(
+          "${ConstantsString.assetGif}/animated_text_logo.gif",
+          width: 200,
+        ),
       ),
     );
   }

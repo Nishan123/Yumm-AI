@@ -396,8 +396,17 @@ class CookbookViewModel extends Notifier<CookbookState> {
         return false;
       },
       (success) {
+        // Also remove from the list if it's there
+        final updatedRecipes = state.recipes
+            .where((r) => r.originalRecipeId != recipeId)
+            .toList();
+
         state = state
-            .copyWith(status: CookbookStatus.deleted, isInCookbook: false)
+            .copyWith(
+              status: CookbookStatus.deleted,
+              recipes: updatedRecipes,
+              isInCookbook: false,
+            )
             .clearCurrentRecipe();
         return true;
       },

@@ -22,6 +22,7 @@ class RecipeEntity {
   final NutritionEntity? nutrition;
   final int servings;
   final List<String> likes;
+  final List<String> dietaryRestrictions;
   final bool isPublic;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -44,6 +45,7 @@ class RecipeEntity {
     this.nutrition,
     required this.servings,
     required this.likes,
+    this.dietaryRestrictions = const [],
     this.isPublic = true,
     this.createdAt,
     this.updatedAt,
@@ -67,6 +69,7 @@ class RecipeEntity {
     NutritionEntity? nutrition,
     int? servings,
     List<String>? likes,
+    List<String>? dietaryRestrictions,
     bool? isPublic,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -89,6 +92,7 @@ class RecipeEntity {
       nutrition: nutrition ?? this.nutrition,
       servings: servings ?? this.servings,
       likes: likes ?? this.likes,
+      dietaryRestrictions: dietaryRestrictions ?? this.dietaryRestrictions,
       isPublic: isPublic ?? this.isPublic,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,

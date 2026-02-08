@@ -3,8 +3,7 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 
 class CustomDialogueBox {
-  /// Shows a branded alert dialog with an optional secondary action.
-  static Future<void> show(
+  static Future<bool?> show(
     BuildContext context, {
     required String title,
     required String description,
@@ -14,12 +13,12 @@ class CustomDialogueBox {
     String? actionButtonText,
     VoidCallback? onActionButtonTap,
     bool barrierDismissible = true,
-    IconData? icons
+    IconData? icons,
   }) async {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    await showDialog<void>(
+    return await showDialog<bool>(
       context: context,
       barrierDismissible: barrierDismissible,
       builder: (ctx) {
@@ -42,7 +41,7 @@ class CustomDialogueBox {
                   Row(
                     children: [
                       Icon(
-                        icons?? LucideIcons.info,
+                        icons ?? LucideIcons.info,
                         color: colorScheme.primary,
                         size: 28,
                       ),
@@ -53,7 +52,7 @@ class CustomDialogueBox {
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: titleColor ?? colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
-                            fontSize: 22
+                            fontSize: 22,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -75,7 +74,7 @@ class CustomDialogueBox {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.of(ctx).pop();
+                          Navigator.of(ctx).pop(false);
                           onOkTap?.call();
                         },
                         style: ElevatedButton.styleFrom(
@@ -93,7 +92,7 @@ class CustomDialogueBox {
                           padding: const EdgeInsets.only(right: 8),
                           child: OutlinedButton(
                             onPressed: () {
-                              Navigator.of(ctx).pop();
+                              Navigator.of(ctx).pop(true);
                               onActionButtonTap?.call();
                             },
                             style: OutlinedButton.styleFrom(
@@ -104,7 +103,6 @@ class CustomDialogueBox {
                             child: Text(actionButtonText),
                           ),
                         ),
-                      
                     ],
                   ),
                 ],

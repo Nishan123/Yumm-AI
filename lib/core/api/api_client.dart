@@ -172,9 +172,14 @@ class _AuthInterceptor extends Interceptor {
   void onError(DioException err, ErrorInterceptorHandler handler) {
     // Handle 401 Unauthorized - token expired
     if (err.response?.statusCode == 401) {
-      // Clear token and redirect to login
-      _storage.delete(key: _tokenKey);
-      // You can add navigation logic here or use a callback
+      final path = err.requestOptions.path;
+      final isDeleteVerificationEndpoint =
+          path.contains('delete-with-password') ||
+          path.contains('delete-with-google');
+
+      if (!isDeleteVerificationEndpoint) {
+        _storage.delete(key: _tokenKey);
+      }
     }
     handler.next(err);
   }

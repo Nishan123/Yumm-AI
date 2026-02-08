@@ -97,6 +97,8 @@ class Propmpts {
     int servings,
     List<IngredientModel> selectedIngridents,
     List<KitchenToolModel> availableKitchenTools,
+    List<String> dietaryRestrictions,
+    List<String> allergicIngridetns,
   ) {
     return '''
 {
@@ -155,7 +157,8 @@ class Propmpts {
     "fat": <grams of fat as number>,
     "fiber": <grams of fiber as number>
   },
-  "servings": $servings
+  "servings": $servings,
+  "dietaryRestrictions": ${jsonEncode(dietaryRestrictions)}
 }''';
   }
 
@@ -179,6 +182,8 @@ Remember:
     required Meal mealType,
     required Duration availableTime,
     required CookingExpertise cookingExperties,
+    List<String> dietaryRestrictions = const [],
+    required List<String> allergicIngridents,
   }) async {
     final ingredientsList = _formatIngredients(availableIngridents);
     final kitchenToolsList = await _getFormattedKitchenTools();
@@ -186,8 +191,13 @@ Remember:
     final timeString = _formatDuration(availableTime);
     final expertiseLevel = cookingExperties.value;
 
+    final allergicString = allergicIngridents.isEmpty
+        ? 'None'
+        : allergicIngridents.join(', ');
+
     return '''
 You are an expert pantry chef and culinary instructor. Based on the available ingredients, create a delicious and practical recipe.
+
 
 **Available Ingredients:**
 $ingredientsList
@@ -196,22 +206,26 @@ $ingredientsList
 $kitchenToolsList
 
 **Meal Type:** ${mealType.name}
+**Dietary Restrictions:** ${dietaryRestrictions.isEmpty ? 'None' : dietaryRestrictions.join(', ')}
+**Allergic Ingredients:** $allergicString
 **Available Cooking Time:** $timeString
 **Cook's Experience Level:** $expertiseLevel
 
 **Instructions:**
 1. Create a recipe that ONLY uses the provided ingredients (you may assume basic pantry staples like salt, pepper, oil, and water are available).
-2. The recipe must be completable within the available time.
-3. Adjust complexity based on the cook's experience level.
-4. Provide VERY DETAILED cooking steps - explain techniques, temperatures, visual/audio cues, and timing for each step.
-5. Provide VERY DETAILED initial preparation steps - explain how to wash, cut, measure, and organize ingredients before cooking begins.
-6. CRITICAL: In the "ingredients" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
-7. CRITICAL: In the "kitchenTools" array, the "toolId", "toolName", and "imageUrl" fields MUST match EXACTLY with values from the "Available Kitchen Tools" list above. Do not include any tools not in this list. Only use tools from the provided list.
+2. The recipe MUST strictly adhere to ALL dietary restrictions listed above (if any).
+3. CRITICAL: STRICTLY EXCLUDE any ingredients found in "**Allergic Ingredients**". Even if such an ingredient is listed in "**Available Ingredients**", you MUST IGNORE it completely. Do not include it in the recipe ingredients, instructions, or preparation.
+4. The recipe must be completable within the available time.
+5. Adjust complexity based on the cook's experience level.
+6. Provide VERY DETAILED cooking steps - explain techniques, temperatures, visual/audio cues, and timing for each step.
+7. Provide VERY DETAILED initial preparation steps - explain how to wash, cut, measure, and organize ingredients before cooking begins.
+8. CRITICAL: In the "ingredients" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
+9. CRITICAL: In the "kitchenTools" array, the "toolId", "toolName", and "imageUrl" fields MUST match EXACTLY with values from the "Available Kitchen Tools" list above. Do not include any tools not in this list. Only use tools from the provided list.
 
 **IMPORTANT: Return ONLY a valid JSON object with NO additional text, markdown, or explanation. The response must be parseable JSON.**
 
 Return the recipe in the following JSON structure:
-${_getRecipeJsonStructure(expertiseLevel, mealType.name, 1, availableIngridents, kitchenTools)}
+${_getRecipeJsonStructure(expertiseLevel, mealType.name, 1, availableIngridents, kitchenTools, dietaryRestrictions, allergicIngridents)}
 
 ${_getRecipeReminders()}
 ''';
@@ -225,6 +239,7 @@ ${_getRecipeReminders()}
     required String mealPreferences,
     required Duration availableTime,
     required CookingExpertise cookingExperties,
+    required List<String> allergicIngridents,
   }) async {
     final ingredientsList = _formatIngredients(availableIngridents);
     final kitchenToolsList = await _getFormattedKitchenTools();
@@ -236,6 +251,10 @@ ${_getRecipeReminders()}
     final dietaryString = dietaryRestrictions.isEmpty
         ? 'None'
         : dietaryRestrictions.join(', ');
+
+    final allergicString = allergicIngridents.isEmpty
+        ? 'None'
+        : allergicIngridents.join(', ');
 
     return '''
 You are a world-class master chef and culinary expert. Create an exceptional, restaurant-quality recipe tailored to the user's specific preferences and requirements.
@@ -249,6 +268,7 @@ $kitchenToolsList
 **Meal Type:** ${mealType.name}
 **Meal Preferences:** ${mealPreferences.isEmpty ? 'No specific preferences' : mealPreferences}
 **Dietary Restrictions:** $dietaryString
+**Allergic Ingredients:** $allergicString
 **Number of Servings:** $noOfServes
 **Available Cooking Time:** $timeString
 **Cook's Experience Level:** $expertiseLevel
@@ -256,21 +276,22 @@ $kitchenToolsList
 **Instructions:**
 1. Create a recipe that uses the provided ingredients as the primary components. You may add common pantry staples (salt, pepper, oil, butter, common spices, garlic, onion, etc.) to enhance the dish.
 2. The recipe MUST strictly adhere to ALL dietary restrictions listed above. If a restriction is "Vegetarian", do not include any meat. If "Gluten-Free", avoid all gluten-containing ingredients, etc.
-3. The recipe must be completable within the available time and scaled for the specified number of servings.
-4. Consider the meal preferences when designing the dish - match the cuisine style, flavor profile, or specific requests mentioned.
-5. Adjust complexity based on the cook's experience level:
+3. CRITICAL: STRICTLY EXCLUDE any ingredients found in "**Allergic Ingredients**". Even if such an ingredient is listed in "**Available Ingredients**", you MUST IGNORE it completely. Do not include it in the recipe ingredients, instructions, or preparation.
+4. The recipe must be completable within the available time and scaled for the specified number of servings.
+5. Consider the meal preferences when designing the dish - match the cuisine style, flavor profile, or specific requests mentioned.
+6. Adjust complexity based on the cook's experience level:
    - For "newBie": Simple techniques, clear explanations, forgiving recipes
    - For "canCook": Intermediate techniques, some multi-tasking required
    - For "expert": Advanced techniques, complex flavor layering, precise timing
-6. Provide VERY DETAILED cooking steps - explain techniques, temperatures, visual/audio cues, and timing for each step.
-7. Provide VERY DETAILED initial preparation steps - explain how to wash, cut, measure, and organize ingredients before cooking begins.
-8. CRITICAL: In the "ingredients" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
-9. CRITICAL: In the "kitchenTools" array, the "toolId", "toolName", and "imageUrl" fields MUST match EXACTLY with values from the "Available Kitchen Tools" list above. Do not include any tools not in this list. Only use tools from the provided list.
+7. Provide VERY DETAILED cooking steps - explain techniques, temperatures, visual/audio cues, and timing for each step.
+8. Provide VERY DETAILED initial preparation steps - explain how to wash, cut, measure, and organize ingredients before cooking begins.
+9. CRITICAL: In the "ingredients" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
+10. CRITICAL: In the "kitchenTools" array, the "toolId", "toolName", and "imageUrl" fields MUST match EXACTLY with values from the "Available Kitchen Tools" list above. Do not include any tools not in this list. Only use tools from the provided list.
 
 **IMPORTANT: Return ONLY a valid JSON object with NO additional text, markdown, or explanation. The response must be parseable JSON.**
 
 Return the recipe in the following JSON structure:
-${_getRecipeJsonStructure(expertiseLevel, mealType.name, noOfServes, availableIngridents, kitchenTools)}
+${_getRecipeJsonStructure(expertiseLevel, mealType.name, noOfServes, availableIngridents, kitchenTools, dietaryRestrictions, allergicIngridents)}
 
 ${_getRecipeReminders()}
 - STRICTLY follow all dietary restrictions - this is critical for health and safety
@@ -289,7 +310,8 @@ ${_getRecipeReminders()}
     required List<String> dietaryRestrictions,
     required Duration availableTime,
     required CookingExpertise cookingExperties,
-    required double calories
+    required double calories,
+    required List<String> allergicIngridents,
   }) async {
     final ingredientsList = _formatIngredients(availableIngridents);
     final kitchenToolsList = await _getFormattedKitchenTools();
@@ -301,6 +323,10 @@ ${_getRecipeReminders()}
     final dietaryString = dietaryRestrictions.isEmpty
         ? 'None'
         : dietaryRestrictions.join(', ');
+
+    final allergicString = allergicIngridents.isEmpty
+        ? 'None'
+        : allergicIngridents.join(', ');
 
     // Calculate estimated calories from macros (4 cal/g for carbs & protein, 9 cal/g for fat)
     final estimatedCalories = (carbs * 4) + (proteins * 4) + (fats * 9);
@@ -325,6 +351,7 @@ $kitchenToolsList
 
 **Meal Type:** ${mealType.name}
 **Dietary Restrictions:** $dietaryString
+**Allergic Ingredients:** $allergicString
 **Available Cooking Time:** $timeString
 **Cook's Experience Level:** $expertiseLevel
 
@@ -332,17 +359,18 @@ $kitchenToolsList
 1. Create a recipe that CLOSELY matches the target macronutrients above. The nutrition values in your response should be within ±10% of the targets.
 2. Use the provided ingredients as the base, and you may suggest additional ingredients to meet the macro targets.
 3. The recipe MUST strictly adhere to ALL dietary restrictions listed above.
-4. The recipe must be completable within the available time.
-5. Prioritize nutrient-dense, whole food ingredients that support the macro goals.
-6. Calculate and provide ACCURATE nutrition information based on standard nutritional databases.
-7. Adjust complexity based on the cook's experience level:
+4. CRITICAL: STRICTLY EXCLUDE any ingredients found in "**Allergic Ingredients**". Even if such an ingredient is listed in "**Available Ingredients**", you MUST IGNORE it completely. Do not include it in the recipe ingredients, instructions, or preparation.
+5. The recipe must be completable within the available time.
+6. Prioritize nutrient-dense, whole food ingredients that support the macro goals.
+7. Calculate and provide ACCURATE nutrition information based on standard nutritional databases.
+8. Adjust complexity based on the cook's experience level:
    - For "newBie": Simple techniques, clear explanations, forgiving recipes
    - For "canCook": Intermediate techniques, some multi-tasking required
    - For "expert": Advanced techniques, complex flavor layering, precise timing
-8. Provide VERY DETAILED cooking steps - explain techniques, temperatures, visual/audio cues, and timing for each step.
-9. Provide VERY DETAILED initial preparation steps - explain how to wash, cut, measure, and organize ingredients before cooking begins.
-10. CRITICAL: In the "ingredients" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
-11. CRITICAL: In the "kitchenTools" array, the "toolId", "toolName", and "imageUrl" fields MUST match EXACTLY with values from the "Available Kitchen Tools" list above. Do not include any tools not in this list. Only use tools from the provided list.
+9. Provide VERY DETAILED cooking steps - explain techniques, temperatures, visual/audio cues, and timing for each step.
+10. Provide VERY DETAILED initial preparation steps - explain how to wash, cut, measure, and organize ingredients before cooking begins.
+11. CRITICAL: In the "ingredients" array, the "id" and "ingredientName" fields MUST match EXACTLY with values from the "Available Ingredients" list above. Do not modify, abbreviate, or create new names. Only use the exact values provided.
+12. CRITICAL: In the "kitchenTools" array, the "toolId", "toolName", and "imageUrl" fields MUST match EXACTLY with values from the "Available Kitchen Tools" list above. Do not include any tools not in this list. Only use tools from the provided list.
 
 **CRITICAL: The nutrition object in the JSON response MUST closely match these targets:**
 - protein: ~${proteins}g
@@ -353,7 +381,7 @@ $kitchenToolsList
 **IMPORTANT: Return ONLY a valid JSON object with NO additional text, markdown, or explanation. The response must be parseable JSON.**
 
 Return the recipe in the following JSON structure:
-${_getRecipeJsonStructure(expertiseLevel, mealType.name, 1, availableIngridents, kitchenTools)}
+${_getRecipeJsonStructure(expertiseLevel, mealType.name, 1, availableIngridents, kitchenTools, dietaryRestrictions, allergicIngridents)}
 
 ${_getRecipeReminders()}
 - CRITICAL: Match the target macros as closely as possible (within ±10%)

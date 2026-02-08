@@ -23,6 +23,7 @@ class RecipeModel {
   final NutritionModel? nutrition;
   final int servings;
   final List<String> likes;
+  final List<String> dietaryRestrictions;
   final bool isPublic;
   final DateTime? createdAt;
   final DateTime? updatedAt;
@@ -45,6 +46,7 @@ class RecipeModel {
     this.nutrition,
     required this.servings,
     required this.likes,
+    this.dietaryRestrictions = const [],
     this.isPublic = true,
     this.createdAt,
     this.updatedAt,
@@ -68,6 +70,7 @@ class RecipeModel {
     NutritionModel? nutrition,
     int? servings,
     List<String>? likes,
+    List<String>? dietaryRestrictions,
     bool? isPublic,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -90,6 +93,7 @@ class RecipeModel {
       nutrition: nutrition ?? this.nutrition,
       servings: servings ?? this.servings,
       likes: likes ?? this.likes,
+      dietaryRestrictions: dietaryRestrictions ?? this.dietaryRestrictions,
       isPublic: isPublic ?? this.isPublic,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -116,6 +120,7 @@ class RecipeModel {
       'nutrition': nutrition?.toJson(),
       'servings': servings,
       'likes': likes,
+      'dietaryRestrictions': dietaryRestrictions,
       'isPublic': isPublic,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
@@ -157,6 +162,9 @@ class RecipeModel {
       servings: (json['servings'] as num?)?.toInt() ?? 0,
       likes: json['likes'] != null
           ? List<String>.from(json['likes'] as List<dynamic>)
+          : [],
+      dietaryRestrictions: json['dietaryRestrictions'] != null
+          ? List<String>.from(json['dietaryRestrictions'] as List<dynamic>)
           : [],
       isPublic: json['isPublic'] as bool? ?? true,
       createdAt: json['createdAt'] != null
@@ -216,6 +224,9 @@ class RecipeModel {
       likes: json['likes'] != null
           ? List<String>.from(json['likes'] as List<dynamic>)
           : [],
+      dietaryRestrictions: json['dietaryRestrictions'] != null
+          ? List<String>.from(json['dietaryRestrictions'] as List<dynamic>)
+          : [],
       isPublic: json['isPublic'] as bool? ?? true,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String)
@@ -246,6 +257,7 @@ class RecipeModel {
       nutrition: nutrition?.toEntity(),
       servings: servings,
       likes: likes,
+      dietaryRestrictions: dietaryRestrictions,
       isPublic: isPublic,
       createdAt: createdAt,
       updatedAt: updatedAt,
@@ -280,6 +292,7 @@ class RecipeModel {
           : null,
       servings: entity.servings,
       likes: entity.likes,
+      dietaryRestrictions: entity.dietaryRestrictions,
       isPublic: entity.isPublic,
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,

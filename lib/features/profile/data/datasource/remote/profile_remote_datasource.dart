@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as p;
 import 'package:yumm_ai/core/api/api_client.dart';
 import 'package:yumm_ai/core/api/api_endpoints.dart';
+import 'package:yumm_ai/core/error/failure.dart';
 import 'package:yumm_ai/core/services/storage/token_storage_service.dart';
 import 'package:yumm_ai/features/profile/data/datasource/profile_datasource.dart';
 
@@ -29,6 +30,7 @@ class ProfileRemoteDatasource implements IProfileRemoteDatasource {
   }) : _apiClient = apiClient,
        _tokenStorageService = tokenStorageService;
 
+  // Update profile
   @override
   Future<String> updateProfilePic(File image, String uid) async {
     // Use path package for cross-platform filename extraction
@@ -51,16 +53,12 @@ class ProfileRemoteDatasource implements IProfileRemoteDatasource {
     );
 
     debugPrint('ProfileRemoteDatasource: Response data: ${response.data}');
-
-    // Server returns the profile pic URL string directly in the data field
     final data = response.data["data"];
 
     if (data is String) {
-      debugPrint('ProfileRemoteDatasource: Profile pic URL: $data');
       return data;
     }
 
-    // Fallback if it returns a Map (legacy behavior or changed server)
     if (data is Map<String, dynamic>) {
       final profilePicUrl = data["profilePic"] as String?;
       if (profilePicUrl != null) {
@@ -94,5 +92,58 @@ class ProfileRemoteDatasource implements IProfileRemoteDatasource {
         headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
       ),
     );
+  }
+
+  @override
+  Future<bool> deleteProfile(String uid) async {
+    final token = await _tokenStorageService.getToken();
+    final response = await _apiClient.delete(
+      ApiEndpoints.deleteUser(uid),
+      options: Options(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
+      ),
+    );
+
+    final success = response.data["success"] as bool;
+    if (success) {
+      return true;
+    }
+    throw Exception(ApiFailure(message: "${response.data['message']}"));
+  }
+
+  @override
+  Future<bool> deleteProfileWithPassword(String uid, String password) async {
+    final token = await _tokenStorageService.getToken();
+    final response = await _apiClient.delete(
+      ApiEndpoints.deleteUserWithPassword(uid),
+      data: {'password': password},
+      options: Options(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
+      ),
+    );
+
+    final success = response.data["success"] as bool;
+    if (success) {
+      return true;
+    }
+    throw Exception(ApiFailure(message: "${response.data['message']}"));
+  }
+
+  @override
+  Future<bool> deleteProfileWithGoogle(String uid, String idToken) async {
+    final token = await _tokenStorageService.getToken();
+    final response = await _apiClient.delete(
+      ApiEndpoints.deleteUserWithGoogle(uid),
+      data: {'idToken': idToken},
+      options: Options(
+        headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
+      ),
+    );
+
+    final success = response.data["success"] as bool;
+    if (success) {
+      return true;
+    }
+    throw Exception(ApiFailure(message: "${response.data['message']}"));
   }
 }

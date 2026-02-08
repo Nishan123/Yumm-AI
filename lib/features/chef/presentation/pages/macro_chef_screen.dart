@@ -248,6 +248,7 @@ class _MacroChefScreenState extends ConsumerState<MacroChefScreen> {
                       context,
                       "No Ingridents Selected !",
                     );
+                    return;
                   }
                   final userId = userAsync.value?.uid;
                   if (userId == null) {

@@ -47,13 +47,67 @@ class ProfileRepository implements IProfileRepository {
     bool isSubscriberd,
     List<String> allergicIngridents,
     String profilePic,
-    String uid
+    String uid,
   ) async {
     try {
-      await _remoteDatasource.updateProfile(fullName,profilePic,allergicIngridents,isSubscriberd, uid);
+      await _remoteDatasource.updateProfile(
+        fullName,
+        profilePic,
+        allergicIngridents,
+        isSubscriberd,
+        uid,
+      );
       return const Right(null);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> deleteUser(String uid) async {
+    try {
+      await _remoteDatasource.deleteProfile(uid);
+      return Right(true);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> deleteUserWithPassword(
+    String uid,
+    String password,
+  ) async {
+    try {
+      await _remoteDatasource.deleteProfileWithPassword(uid, password);
+      return Right(true);
+    } on DioException catch (e) {
+      debugPrint('ProfileRepository: DioException - ${e.message}');
+      final message =
+          e.response?.data?['message'] ?? 'Failed to delete profile';
+      return Left(ApiFailure(message: message));
+    } catch (e) {
+      debugPrint('ProfileRepository: Exception - $e');
+      return Left(ApiFailure(message: 'An unexpected error occurred'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> deleteUserWithGoogle(
+    String uid,
+    String idToken,
+  ) async {
+    try {
+      await _remoteDatasource.deleteProfileWithGoogle(uid, idToken);
+      return Right(true);
+    } on DioException catch (e) {
+      debugPrint('ProfileRepository: DioException - ${e.message}');
+      final message =
+          e.response?.data?['message'] ?? 'Failed to delete profile';
+      return Left(ApiFailure(message: message));
+    } catch (e) {
+      debugPrint('ProfileRepository: Exception - $e');
+      return Left(ApiFailure(message: 'An unexpected error occurred'));
     }
   }
 }

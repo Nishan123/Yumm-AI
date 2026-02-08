@@ -14,6 +14,7 @@ import 'package:yumm_ai/features/cooking/presentation/pages/cooking_screen.dart'
 import 'package:yumm_ai/features/dashboard/presentation/pages/main_screen.dart';
 import 'package:yumm_ai/features/kitchen_tool/presentation/pages/kitchen_tools_screen.dart';
 import 'package:yumm_ai/features/pantry_inventory/presentation/pages/pantry_inventory_screen.dart';
+import 'package:yumm_ai/features/profile/presentation/pages/delete_profile_screen.dart';
 import 'package:yumm_ai/features/profile/presentation/pages/profile_screen.dart';
 import 'package:yumm_ai/features/save_recipe/presentation/pages/saved_recipe_screen.dart';
 import 'package:yumm_ai/features/scanner/presentation/pages/scanner_screen.dart';
@@ -25,7 +26,7 @@ import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plan
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
-    initialLocation: "/main",
+    initialLocation: "/",
     routes: [
       GoRoute(
         path: "/",
@@ -54,6 +55,13 @@ class AppRoutes {
         name: "chefs",
         builder: (context, state) {
           return ChefsScreen();
+        },
+      ),
+      GoRoute(
+        path: "/delete_profile",
+        name: "delete_profile",
+        builder: (context, state) {
+          return DeleteProfileScreen();
         },
       ),
       GoRoute(

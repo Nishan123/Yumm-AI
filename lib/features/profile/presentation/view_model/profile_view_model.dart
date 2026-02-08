@@ -5,6 +5,7 @@ import 'package:yumm_ai/core/providers/user_selectors.dart';
 import 'package:yumm_ai/core/services/storage/user_session_service.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/get_current_user_from_server_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/get_current_user_usecase.dart';
+import 'package:yumm_ai/features/profile/domain/usecases/delete_user_usecase.dart';
 import 'package:yumm_ai/features/profile/domain/usecases/update_profile_pic_usecase.dart';
 import 'package:yumm_ai/features/profile/domain/usecases/update_profile_usecase.dart';
 import 'package:yumm_ai/features/profile/presentation/state/profile_screen_state.dart';
@@ -18,6 +19,7 @@ class ProfileViewModel extends Notifier<ProfileScreenState> {
   late GetCurrentUserUsecase _currentUserUsecase;
   late UpdateProfilePicUsecase _updateProfilePicUsecase;
   late UpdateProfileUsecase _updateProfileUsecase;
+  late DeleteUserUsecase _deleteUserUsecase;
   late GetCurrentUserFromServerUsecase _getCurrentUserFromServerUsecase;
 
   Future<void> getCurrentUser() async {
@@ -162,6 +164,30 @@ class ProfileViewModel extends Notifier<ProfileScreenState> {
     );
   }
 
+  Future<void> deleteUserProfile(String uid) async {
+    state = state.copyWith(
+      profileState: ProfileStates.loading,
+      message: "Deleting user profile",
+    );
+    final result = await _deleteUserUsecase.call(
+      DeleteUserUsecaseParams(uid: uid),
+    );
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          errorMsg: failure.errorMessage,
+          profileState: ProfileStates.error,
+        );
+      },
+      (success) {
+        state = state.copyWith(
+          profileState: ProfileStates.success,
+          message: "User Porfile deleted successfully",
+        );
+      },
+    );
+  }
+
   Future<void> _refreshUserData() async {
     final result = await _getCurrentUserFromServerUsecase.call();
     result.fold(
@@ -192,6 +218,7 @@ class ProfileViewModel extends Notifier<ProfileScreenState> {
     _getCurrentUserFromServerUsecase = ref.read(
       getCurrentUserFromServerUsecaseProvider,
     );
+    _deleteUserUsecase = ref.read(deleteUserUsecaseProvider);
     return const ProfileScreenState();
   }
 }

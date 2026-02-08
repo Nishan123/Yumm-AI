@@ -38,6 +38,7 @@ class SignupUsecase implements UsecaseWithParms<bool, SignupUsecaseParam> {
   @override
   Future<Either<Failure, bool>> call(params) async {
     final entity = UserEntity(
+      allergicTo: [],
       uid: Uuid().v4(),
       role: "user",
       email: params.email,

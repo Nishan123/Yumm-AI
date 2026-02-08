@@ -8,6 +8,7 @@ class CustomDropdownChecklist extends StatefulWidget {
   final List<String> options;
   final List<String> selectedOptions;
   final Function(List<String>) onConfirm;
+  final EdgeInsets? margin;
 
   const CustomDropdownChecklist({
     super.key,
@@ -15,6 +16,7 @@ class CustomDropdownChecklist extends StatefulWidget {
     required this.options,
     required this.selectedOptions,
     required this.onConfirm,
+    this.margin,
   });
 
   @override
@@ -69,7 +71,7 @@ class _CustomDropdownChecklistState extends State<CustomDropdownChecklist> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: widget.margin ?? const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -164,11 +166,13 @@ class _CustomDropdownChecklistState extends State<CustomDropdownChecklist> {
                                   : null,
                             ),
                             const SizedBox(width: 16),
-                            Text(
-                              option,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
+                            Expanded(
+                              child: Text(
+                                option,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
                           ],
