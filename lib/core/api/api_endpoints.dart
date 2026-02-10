@@ -35,6 +35,8 @@ class ApiEndpoints {
   static String deleteRecipeWithCascade(String recipeId) =>
       "/recipe/$recipeId/cascade";
   static String updateRecipeById(String recipeId) => "/recipe/$recipeId";
+  static String getSavedRecipe(String uid) => "/likedRecipes/$uid";
+  static String toggleSave(String recipeId) => "/recipe/$recipeId/save";
 
   // ================ Cookbook Endpoints ================
   static const String addToCookbook = "/cookbook/add";

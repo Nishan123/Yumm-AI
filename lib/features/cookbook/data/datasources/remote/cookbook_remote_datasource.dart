@@ -53,7 +53,7 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
   Future<List<CookbookRecipeModel>> getUserCookbook(String userId) async {
     final response = await _apiClient.get(ApiEndpoints.getUserCookbook(userId));
     if (response.data["success"]) {
-      final data = response.data["data"] as List<dynamic>;
+      final data = response.data["data"]["recipes"] as List<dynamic>;
       return CookbookRecipeModel.fromJsonList(data);
     }
     throw Exception(response.data['message'] ?? 'Failed to fetch cookbook');

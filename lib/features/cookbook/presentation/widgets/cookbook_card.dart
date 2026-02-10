@@ -87,7 +87,7 @@ class _CookbookCardState extends State<CookbookCard>
         alignment: Alignment.centerRight,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Icon(Icons.delete_outline, color: Colors.white, size: 32),
             const SizedBox(height: 4),

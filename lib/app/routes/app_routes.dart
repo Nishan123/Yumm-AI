@@ -16,7 +16,7 @@ import 'package:yumm_ai/features/kitchen_tool/presentation/pages/kitchen_tools_s
 import 'package:yumm_ai/features/pantry_inventory/presentation/pages/pantry_inventory_screen.dart';
 import 'package:yumm_ai/features/profile/presentation/pages/delete_profile_screen.dart';
 import 'package:yumm_ai/features/profile/presentation/pages/profile_screen.dart';
-import 'package:yumm_ai/features/save_recipe/presentation/pages/saved_recipe_screen.dart';
+import 'package:yumm_ai/features/save_recipe/presentation/pages/saved_recipes_screen.dart';
 import 'package:yumm_ai/features/scanner/presentation/pages/scanner_screen.dart';
 import 'package:yumm_ai/features/settings/presentation/pages/setting_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/add_shopping_list_screen.dart';
@@ -26,7 +26,7 @@ import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plan
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
-    initialLocation: "/",
+    initialLocation: "/main",
     routes: [
       GoRoute(
         path: "/",
@@ -139,12 +139,11 @@ class AppRoutes {
         },
       ),
 
-      // Screens redirected from "Items Screen"
       GoRoute(
         path: "/saved_recipe",
         name: "saved_recipe",
         builder: (context, state) {
-          return SavedRecipeScreen();
+          return const SavedRecipesScreen();
         },
       ),
       GoRoute(

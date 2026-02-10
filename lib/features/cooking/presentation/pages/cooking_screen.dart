@@ -14,6 +14,7 @@ import 'package:yumm_ai/features/cookbook/presentation/view_model/cookbook_view_
 import 'package:yumm_ai/features/cookbook/presentation/widgets/cookbook_recipe_details_widget.dart';
 import 'package:yumm_ai/features/cookbook/presentation/widgets/read_only_recipe_view.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_details_widget.dart';
+import 'package:yumm_ai/features/save_recipe/presentation/view_model/save_recipe_view_model.dart';
 
 class CookingScreen extends ConsumerStatefulWidget {
   final RecipeEntity recipe;
@@ -24,6 +25,8 @@ class CookingScreen extends ConsumerStatefulWidget {
 }
 
 class _CookingScreenState extends ConsumerState<CookingScreen> {
+  bool? _isLikedOptimistic;
+
   @override
   void initState() {
     super.initState();
@@ -197,7 +200,29 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
     final userAsync = ref.watch(currentUserProvider);
+    final user = userAsync.value;
     final cookbookState = ref.watch(cookbookViewModelProvider);
+    final saveRecipeState = ref.watch(saveRecipeViewModelProvider);
+
+    // Helper to determine if liked based on available data
+    bool checkIsLiked() {
+      // 1. If we have optimistic local state, use it (highest priority for immediate UI feedback)
+      if (_isLikedOptimistic != null) {
+        return _isLikedOptimistic!;
+      }
+
+      // 2. If we have the source-of-truth list from SaveRecipeViewModel, use it
+      if (saveRecipeState.savedRecipes != null) {
+        return saveRecipeState.savedRecipes!.any(
+          (r) => r.recipeId == widget.recipe.recipeId,
+        );
+      }
+
+      // 3. Fallback to the widget's passed data
+      return user != null && widget.recipe.likes.contains(user.uid);
+    }
+
+    final kIsLiked = checkIsLiked();
 
     ref.listen<CookbookState>(cookbookViewModelProvider, (previous, next) {
       if (next.status == CookbookStatus.error && next.errorMessage != null) {
@@ -273,9 +298,42 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
                             ),
                             const Spacer(),
                             PrimaryIconButton(
-                              iconColor: AppColors.whiteColor,
-                              icon: LucideIcons.heart,
-                              onTap: () {},
+                              iconColor: kIsLiked
+                                  ? const Color.fromARGB(231, 255, 17, 0)
+                                  : AppColors.whiteColor,
+                              icon: kIsLiked
+                                  ? Icons.favorite
+                                  : LucideIcons.heart,
+                              onTap: () async {
+                                if (currentUserId == null) {
+                                  CustomSnackBar.showErrorSnackBar(
+                                    context,
+                                    "User not logged in",
+                                  );
+                                  return;
+                                }
+
+                                final wasLiked = kIsLiked;
+
+                                // Optimistic update
+                                setState(() {
+                                  _isLikedOptimistic = !kIsLiked;
+                                });
+
+                                await ref
+                                    .read(saveRecipeViewModelProvider.notifier)
+                                    .toggleSaveRecipe(
+                                      recipeId: widget.recipe.recipeId,
+                                      onSuccess: () {
+                                        if (!wasLiked) {
+                                          CustomSnackBar.showSuccessSnackBar(
+                                            context,
+                                            "Recipe Saved",
+                                          );
+                                        }
+                                      },
+                                    );
+                              },
                             ),
                             if (shouldShowMenu) ...[
                               const SizedBox(width: 8),
@@ -299,9 +357,39 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
                           ),
                           const Spacer(),
                           PrimaryIconButton(
-                            iconColor: AppColors.whiteColor,
-                            icon: LucideIcons.heart,
-                            onTap: () {},
+                            iconColor: kIsLiked
+                                ? const Color.fromARGB(231, 255, 17, 0)
+                                : AppColors.whiteColor,
+                            icon: kIsLiked ? Icons.favorite : LucideIcons.heart,
+                            onTap: () async {
+                              if (user == null) {
+                                CustomSnackBar.showErrorSnackBar(
+                                  context,
+                                  "User not logged in",
+                                );
+                                return;
+                              }
+
+                              final wasLiked = kIsLiked;
+
+                              setState(() {
+                                _isLikedOptimistic = !kIsLiked;
+                              });
+
+                              await ref
+                                  .read(saveRecipeViewModelProvider.notifier)
+                                  .toggleSaveRecipe(
+                                    recipeId: widget.recipe.recipeId,
+                                    onSuccess: () {
+                                      if (!wasLiked) {
+                                        CustomSnackBar.showSuccessSnackBar(
+                                          context,
+                                          "Recipe Saved",
+                                        );
+                                      }
+                                    },
+                                  );
+                            },
                           ),
                         ],
                       ),

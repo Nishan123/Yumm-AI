@@ -1,14 +1,18 @@
 import 'dart:ui';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
+import 'package:yumm_ai/core/widgets/custom_snack_bar.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:yumm_ai/core/providers/current_user_provider.dart';
+import 'package:yumm_ai/features/save_recipe/presentation/view_model/save_recipe_view_model.dart';
 import 'package:yumm_ai/core/widgets/primary_icon_button.dart';
 
-class HomeFoodRecommendations extends StatelessWidget {
+class HomeFoodRecommendations extends ConsumerStatefulWidget {
   final double mainFontSize;
   final double iconsSize;
   final double normalFontSize;
@@ -22,9 +26,18 @@ class HomeFoodRecommendations extends StatelessWidget {
     required this.recipe,
   });
 
+  @override
+  ConsumerState<HomeFoodRecommendations> createState() =>
+      _HomeFoodRecommendationsState();
+}
+
+class _HomeFoodRecommendationsState
+    extends ConsumerState<HomeFoodRecommendations> {
+  bool? _isLikedOptimistic;
+
   CookingExpertise get _expertiseEnum {
     return CookingExpertise.values.firstWhere(
-      (e) => e.value == recipe.experienceLevel,
+      (e) => e.value == widget.recipe.experienceLevel,
       orElse: () {
         return CookingExpertise.newBie;
       },
@@ -34,12 +47,40 @@ class HomeFoodRecommendations extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
+    final currentUserAsync = ref.watch(currentUserProvider);
+    final currentUser = currentUserAsync.value;
+
+    // Check SaveRecipeViewModel for the absolute source of truth if available
+    final saveRecipeState = ref.watch(saveRecipeViewModelProvider);
+
+    bool kIsLiked = false;
+
+    // Helper to determine if liked based on available data
+    bool checkIsLiked() {
+      // 1. If we have optimistic local state, use it (highest priority for immediate UI feedback)
+      if (_isLikedOptimistic != null) {
+        return _isLikedOptimistic!;
+      }
+
+      // 2. If we have the source-of-truth list from SaveRecipeViewModel, use it
+      if (saveRecipeState.savedRecipes != null) {
+        return saveRecipeState.savedRecipes!.any(
+          (r) => r.recipeId == widget.recipe.recipeId,
+        );
+      }
+
+      // 3. Fallback to the widget's passed data
+      return currentUser != null &&
+          widget.recipe.likes.contains(currentUser.uid);
+    }
+
+    kIsLiked = checkIsLiked();
 
     return LayoutBuilder(
       builder: (context, constraints) {
         return GestureDetector(
           onTap: () {
-            context.pushNamed("cooking", extra: recipe);
+            context.pushNamed("cooking", extra: widget.recipe);
           },
           child: Container(
             width: mq.width * 0.90,
@@ -52,9 +93,9 @@ class HomeFoodRecommendations extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: recipe.images.isNotEmpty
+                    child: widget.recipe.images.isNotEmpty
                         ? Image.network(
-                            recipe.images.first,
+                            widget.recipe.images.first,
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return Image.asset(
@@ -67,18 +108,6 @@ class HomeFoodRecommendations extends StatelessWidget {
                             "assets/images/salad.png",
                             fit: BoxFit.cover,
                           ),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 14, top: 14),
-                      child: PrimaryIconButton(
-                        backgroundColor: AppColors.lightWhiteColor,
-                        icon: LucideIcons.heart,
-                        iconColor: AppColors.whiteColor,
-                        onTap: () {},
-                      ),
-                    ),
                   ),
                   // Bottom gradient overlay fixed to the bottom portion only
                   Positioned.fill(
@@ -107,12 +136,12 @@ class HomeFoodRecommendations extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  recipe.recipeName,
+                                  widget.recipe.recipeName,
                                   softWrap: true,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: AppTextStyles.h3.copyWith(
-                                    fontSize: mainFontSize,
+                                    fontSize: widget.mainFontSize,
                                     color: AppColors.whiteColor,
                                   ),
                                 ),
@@ -120,15 +149,15 @@ class HomeFoodRecommendations extends StatelessWidget {
                                 Row(
                                   children: [
                                     _buildInfoBox(
-                                      info: recipe.estCookingTime,
+                                      info: widget.recipe.estCookingTime,
                                       icon: LucideIcons.clock,
-                                      fontSize: normalFontSize,
+                                      fontSize: widget.normalFontSize,
                                     ),
                                     const SizedBox(width: 12),
                                     _buildInfoBox(
                                       info: _expertiseEnum.text,
                                       icon: LucideIcons.brain,
-                                      fontSize: normalFontSize,
+                                      fontSize: widget.normalFontSize,
                                     ),
                                   ],
                                 ),
@@ -137,6 +166,54 @@ class HomeFoodRecommendations extends StatelessWidget {
                             ),
                           ),
                         ),
+                      ),
+                    ),
+                  ),
+
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 14, top: 14),
+                      child: PrimaryIconButton(
+                        backgroundColor: AppColors.lightWhiteColor,
+                        icon: kIsLiked ? Icons.favorite : LucideIcons.heart,
+                        iconColor: kIsLiked
+                            ? const Color.fromARGB(231, 255, 17, 0)
+                            : AppColors.whiteColor,
+                        onTap: () async {
+                          if (currentUser == null) {
+                            CustomSnackBar.showErrorSnackBar(
+                              context,
+                              "User not logged in",
+                            );
+                            return;
+                          }
+
+                          // Store previous state to determine action (Save vs Unsave)
+                          final wasLiked = kIsLiked;
+
+                          // Optimistic update
+                          setState(() {
+                            _isLikedOptimistic = !kIsLiked;
+                          });
+                          debugPrint(
+                            "Optimistic like state set to: $_isLikedOptimistic",
+                          );
+
+                          await ref
+                              .read(saveRecipeViewModelProvider.notifier)
+                              .toggleSaveRecipe(
+                                recipeId: widget.recipe.recipeId,
+                                onSuccess: () {
+                                  if (!wasLiked) {
+                                    CustomSnackBar.showSuccessSnackBar(
+                                      context,
+                                      "Recipe Saved",
+                                    );
+                                  }
+                                },
+                              );
+                        },
                       ),
                     ),
                   ),
@@ -167,7 +244,7 @@ class HomeFoodRecommendations extends StatelessWidget {
           child: Row(
             spacing: 8,
             children: [
-              Icon(icon, size: iconsSize, color: AppColors.whiteColor),
+              Icon(icon, size: widget.iconsSize, color: AppColors.whiteColor),
               Text(
                 info,
                 style: AppTextStyles.normalText.copyWith(

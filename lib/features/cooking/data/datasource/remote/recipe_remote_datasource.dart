@@ -25,7 +25,7 @@ class RecipeRemoteDataSource implements IRecipeRemoteDataSource {
   Future<List<RecipeModel>> getPublicRecipes() async {
     final response = await _apiClient.get(ApiEndpoints.getPublicRecipes);
     if (response.data["success"]) {
-      final recipesData = response.data["data"] as List<dynamic>;
+      final recipesData = response.data["data"]["recipe"] as List<dynamic>;
       return recipesData
           .map((e) => RecipeModel.fromJson(e as Map<String, dynamic>))
           .toList();
