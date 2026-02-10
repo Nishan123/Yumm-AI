@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:pushy_flutter/pushy_flutter.dart';
 import 'package:yumm_ai/core/api/api_client.dart';
 import 'package:yumm_ai/core/api/api_endpoints.dart';
 import 'package:yumm_ai/core/services/storage/token_storage_service.dart';
@@ -62,7 +64,9 @@ class RemoteAuthDatasource implements IAuthRemoteDatasource {
       final user = response.data["data"]["user"] as Map<String, dynamic>;
       final token = response.data["data"]["token"] as String;
       _tokenStorageService.saveToken(token);
+      _tokenStorageService.saveToken(token);
       final userModel = UserApiModel.fromJson(user);
+      registerForPush(userModel.uid ?? "");
 
       _userSessionService.saveUserSession(userModel);
       return userModel;
@@ -82,6 +86,7 @@ class RemoteAuthDatasource implements IAuthRemoteDatasource {
       final token = response.data["data"]["token"] as String;
       _tokenStorageService.saveToken(token);
       final registeredUser = UserApiModel.fromJson(data);
+      registerForPush(registeredUser.uid ?? "");
       return registeredUser;
     }
     // Throw an exception with the error message so the error is properly handled
@@ -99,10 +104,30 @@ class RemoteAuthDatasource implements IAuthRemoteDatasource {
       final token = response.data["data"]["token"] as String;
       _tokenStorageService.saveToken(token);
       final userModel = UserApiModel.fromJson(user);
+      registerForPush(userModel.uid ?? "");
       _userSessionService.saveUserSession(userModel);
       return userModel;
     } else {
       return null;
+    }
+  }
+
+  @override
+  Future<void> registerForPush(String uid) async {
+    try {
+      debugPrint("Registering for Pushy...");
+      String deviceToken = await Pushy.register();
+      debugPrint("Pushy device token obtained: $deviceToken");
+
+      final response = await _apiClient.post(
+        ApiEndpoints.registerPushToken(uid),
+        data: {"token": deviceToken},
+      );
+      debugPrint(
+        "Backend registration response: ${response.statusCode} - ${response.data}",
+      );
+    } catch (e) {
+      debugPrint("Error registering token for pushy: $e");
     }
   }
 }

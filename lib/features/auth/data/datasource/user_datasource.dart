@@ -14,4 +14,5 @@ abstract interface class IAuthRemoteDatasource {
   Future<UserApiModel?> signInWithGoogle(String idToken);
   Future<UserApiModel?> getCurrentUser();
   Future<bool> logOut();
+  Future<void> registerForPush(String uid);
 }
