@@ -15,4 +15,10 @@ abstract interface class IAuthRemoteDatasource {
   Future<UserApiModel?> getCurrentUser();
   Future<bool> logOut();
   Future<void> registerForPush(String uid);
+  Future<bool> verifyPassword(String uid, String password);
+  Future<UserApiModel?> changePassword(
+    String uid,
+    String oldPassword,
+    String newPassword,
+  );
 }

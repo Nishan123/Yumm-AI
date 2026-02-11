@@ -175,7 +175,9 @@ class _AuthInterceptor extends Interceptor {
       final path = err.requestOptions.path;
       final isDeleteVerificationEndpoint =
           path.contains('delete-with-password') ||
-          path.contains('delete-with-google');
+          path.contains('delete-with-google') ||
+          path.contains('verify-password') ||
+          path.contains('change-password');
 
       if (!isDeleteVerificationEndpoint) {
         _storage.delete(key: _tokenKey);

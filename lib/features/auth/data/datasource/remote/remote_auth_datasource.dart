@@ -119,15 +119,50 @@ class RemoteAuthDatasource implements IAuthRemoteDatasource {
       String deviceToken = await Pushy.register();
       debugPrint("Pushy device token obtained: $deviceToken");
 
-      final response = await _apiClient.post(
+      await _apiClient.post(
         ApiEndpoints.registerPushToken(uid),
         data: {"token": deviceToken},
-      );
-      debugPrint(
-        "Backend registration response: ${response.statusCode} - ${response.data}",
       );
     } catch (e) {
       debugPrint("Error registering token for pushy: $e");
     }
+  }
+
+  @override
+  Future<bool> verifyPassword(String uid, String password) async {
+    try {
+      final response = await _apiClient.post(
+        ApiEndpoints.verifyPassword(uid),
+        data: {"password": password},
+      );
+      if (response.data["success"]) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  Future<UserApiModel?> changePassword(
+    String uid,
+    String oldPassword,
+    String newPassword,
+  ) async {
+    final response = await _apiClient.post(
+      ApiEndpoints.changePassword(uid),
+      data: {"oldPassword": oldPassword, "newPassword": newPassword},
+    );
+
+    if (response.data["success"]) {
+      final userData = response.data["data"] as Map<String, dynamic>;
+      // Sanitize user data if needed?
+      // The backend returns the updated user object (SafeUser)
+      // verify if we need to update session/token here
+      // For now, just return the user model.
+      return UserApiModel.fromJson(userData);
+    }
+    throw Exception(response.data['message'] ?? 'Failed to change password');
   }
 }

@@ -6,18 +6,20 @@ class SettingItemCard extends StatelessWidget {
   final IconData leadingIcon;
   final String title;
   final String subTitle;
+  final VoidCallback? onTap;
   const SettingItemCard({
     super.key,
     required this.leadingIcon,
     required this.title,
     required this.subTitle,
+    this.onTap
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.all(0),
-      onTap: () {},
+      onTap: onTap,
       leading: Icon(leadingIcon, size: 30),
       title: Text(
         title,

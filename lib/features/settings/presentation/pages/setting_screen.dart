@@ -16,7 +16,6 @@ class SettingScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.status == AuthStatus.unauthenticated) {
         context.goNamed('login');
@@ -49,6 +48,9 @@ class SettingScreen extends ConsumerWidget {
                       title: 'Account access',
                       subTitle:
                           'Security, account activation and deactivation.',
+                      onTap: () {
+                        context.pushNamed("change_password");
+                      },
                     ),
                     SettingItemCard(
                       leadingIcon: LucideIcons.shield,

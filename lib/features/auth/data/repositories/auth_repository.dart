@@ -207,4 +207,76 @@ class AuthRepository implements IAuthRepository {
     }
   }
 
+  @override
+  Future<Either<Failure, bool>> verifyPassword(String password) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final uid = _userSessionService.getCurrentUserUid();
+        if (uid == null) {
+          return Left(ApiFailure(message: "User not logged in"));
+        }
+        final result = await _userRemoteDatasource.verifyPassword(
+          uid,
+          password,
+        );
+        return Right(result);
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data["message"] ?? "Failed to verify password",
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      } catch (e) {
+        return Left(ApiFailure(message: "$e"));
+      }
+    } else {
+      return Left(
+        ApiFailure(message: "No internet connection. Cannot verify password."),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> changePassword(
+    String oldPassword,
+    String newPassword,
+  ) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final uid = _userSessionService.getCurrentUserUid();
+        if (uid == null) {
+          return Left(ApiFailure(message: "User not logged in"));
+        }
+        final userApiModel = await _userRemoteDatasource.changePassword(
+          uid,
+          oldPassword,
+          newPassword,
+        );
+
+        if (userApiModel != null) {
+          // Update session with new user data if necessary
+          // For password change, token might stay same but let's ensure session is fresh
+          await _userSessionService.saveUserSession(userApiModel);
+          return Right(userApiModel.toEntity());
+        }
+        return Left(
+          ApiFailure(message: "Failed to change password. Please try again."),
+        );
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data["message"] ?? "Failed to change password",
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      } catch (e) {
+        return Left(ApiFailure(message: "$e"));
+      }
+    } else {
+      return Left(
+        ApiFailure(message: "No internet connection. Cannot change password."),
+      );
+    }
+  }
 }

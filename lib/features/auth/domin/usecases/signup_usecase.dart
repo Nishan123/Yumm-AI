@@ -19,7 +19,7 @@ class SignupUsecaseParam extends Equatable {
     required this.email,
     required this.password,
     required this.fullName,
-    this.authProvider = "email_password",
+    this.authProvider = "emailPassword",
   });
 
   @override
@@ -47,7 +47,8 @@ class SignupUsecase implements UsecaseWithParms<bool, SignupUsecaseParam> {
       password: params.password,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
-      profilePic: "https://i.pinimg.com/1200x/f5/47/d8/f547d800625af9056d62efe8969aeea0.jpg"
+      profilePic:
+          "https://i.pinimg.com/1200x/f5/47/d8/f547d800625af9056d62efe8969aeea0.jpg",
     );
     return _authRepository.signUpWithEmailPassword(entity);
   }

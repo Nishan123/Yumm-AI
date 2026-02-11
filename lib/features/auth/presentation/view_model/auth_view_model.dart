@@ -35,7 +35,7 @@ class AuthViewModel extends Notifier<AuthState> {
     required String email,
     required String password,
     String? fullName,
-    String authProvider = "email_password",
+    String authProvider = "emailPassword",
   }) async {
     state = state.copyWith(status: AuthStatus.emailPasswordLoading);
     final params = SignupUsecaseParam(

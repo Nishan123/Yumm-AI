@@ -71,7 +71,7 @@ class _DeleteProfileScreenState extends ConsumerState<DeleteProfileScreen> {
     }
 
     final authProvider = user.authProvider;
-    final isAuthEmailPass = authProvider == "email_password";
+    final isAuthEmailPass = authProvider == "emailPassword";
     final isLoading = deleteProfileState.status == DeleteProfileStatus.loading;
 
     return Scaffold(
