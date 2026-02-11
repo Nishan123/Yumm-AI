@@ -28,15 +28,27 @@ class RecipeRepositoryImpl implements IRecipeRepository {
   }) : _remoteDataSource = remoteDataSource,
        _networkInfo = networkInfo;
 
-
-
   @override
-  Future<Either<Failure, List<RecipeEntity>>> getPublicRecipes() async {
+  Future<
+    Either<
+      Failure,
+      ({List<RecipeEntity> recipes, int total, int page, int totalPages})
+    >
+  >
+  getPublicRecipes({int page = 1, int limit = 10}) async {
     if (await _networkInfo.isConnected) {
       try {
-        final models = await _remoteDataSource.getPublicRecipes();
-        final entities = models.map((e) => e.toEntity()).toList();
-        return Right(entities);
+        final result = await _remoteDataSource.getPublicRecipes(
+          page: page,
+          limit: limit,
+        );
+        final entities = result.recipes.map((e) => e.toEntity()).toList();
+        return Right((
+          recipes: entities,
+          total: result.total,
+          page: result.page,
+          totalPages: result.totalPages,
+        ));
       } on DioException catch (e) {
         return Left(
           ApiFailure(

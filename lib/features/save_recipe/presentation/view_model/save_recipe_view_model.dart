@@ -20,6 +20,8 @@ class SaveRecipeViewModel extends Notifier<SaveRecipeState> {
   SaveRecipeState build() {
     _toggleSaveRecipeUsecase = ref.read(toggleSaveRecipeUsecaseProvider);
     _getSavedRecipesUsecase = ref.read(getSavedRecipesUsecaseProvider);
+    // Fetch saved recipes initially so we have the truth
+    Future.microtask(() => getSavedRecipes());
     return SaveRecipeState.initial();
   }
 
@@ -34,7 +36,11 @@ class SaveRecipeViewModel extends Notifier<SaveRecipeState> {
       return;
     }
 
-    state = state.copyWith(isLoading: true);
+    // Only set loading if we don't have data yet to avoid flickering
+    if (state.savedRecipes == null) {
+      state = state.copyWith(isLoading: true);
+    }
+
     final result = await _getSavedRecipesUsecase.call(user.uid!);
     result.fold(
       (failure) {
@@ -62,9 +68,8 @@ class SaveRecipeViewModel extends Notifier<SaveRecipeState> {
       (recipe) {
         debugPrint("ViewModel: Toggle success for recipe $recipeId");
         state = state.copyWith(isToggleLoading: false);
-        if (state.savedRecipes != null) {
-          getSavedRecipes();
-        }
+        // Always refresh the list to keep UI in sync
+        getSavedRecipes();
 
         onSuccess();
       },

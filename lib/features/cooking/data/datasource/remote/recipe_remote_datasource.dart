@@ -9,7 +9,8 @@ final recipeRemoteDataSourceProvider = Provider((ref) {
 });
 
 abstract class IRecipeRemoteDataSource {
-  Future<List<RecipeModel>> getPublicRecipes();
+  Future<({List<RecipeModel> recipes, int total, int page, int totalPages})>
+  getPublicRecipes({int page = 1, int limit = 10});
   Future<RecipeModel> updateRecipe(RecipeModel recipe);
 }
 
@@ -19,16 +20,27 @@ class RecipeRemoteDataSource implements IRecipeRemoteDataSource {
   RecipeRemoteDataSource({required ApiClient apiClient})
     : _apiClient = apiClient;
 
-
-
   @override
-  Future<List<RecipeModel>> getPublicRecipes() async {
-    final response = await _apiClient.get(ApiEndpoints.getPublicRecipes);
+  Future<({List<RecipeModel> recipes, int total, int page, int totalPages})>
+  getPublicRecipes({int page = 1, int limit = 10}) async {
+    final response = await _apiClient.get(
+      "${ApiEndpoints.getPublicRecipes}?page=$page&limit=$limit",
+    );
     if (response.data["success"]) {
-      final recipesData = response.data["data"]["recipe"] as List<dynamic>;
-      return recipesData
+      final data = response.data["data"];
+      final recipesData = data["recipe"] as List<dynamic>;
+      final pagination = data["pagination"];
+
+      final recipes = recipesData
           .map((e) => RecipeModel.fromJson(e as Map<String, dynamic>))
           .toList();
+
+      return (
+        recipes: recipes,
+        total: pagination["total"] as int,
+        page: pagination["page"] as int,
+        totalPages: pagination["totalPages"] as int,
+      );
     }
     throw Exception(
       response.data['message'] ?? 'Failed to fetch public recipes',

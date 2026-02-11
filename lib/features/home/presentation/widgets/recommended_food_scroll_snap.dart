@@ -39,7 +39,13 @@ class _RecommendedFoodScrollSnapState
             padEnds: false,
             controller: _controller,
             itemCount: recipes.length,
-            onPageChanged: (i) => setState(() => focusedIndex = i),
+            onPageChanged: (i) {
+              setState(() => focusedIndex = i);
+              // Trigger load more when we reach the end
+              if (i >= recipes.length - 2) {
+                ref.read(publicRecipesProvider.notifier).loadMore();
+              }
+            },
             itemBuilder: (context, index) {
               final isFocused = index == focusedIndex;
               final recipe = recipes[index];
