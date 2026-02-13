@@ -224,6 +224,17 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
 
     final kIsLiked = checkIsLiked();
 
+    // Listen to provider changes to reset optimistic state when source of truth updates
+    ref.listen(saveRecipeViewModelProvider, (previous, next) {
+      if (previous?.savedRecipes != next.savedRecipes) {
+        if (mounted) {
+          setState(() {
+            _isLikedOptimistic = null;
+          });
+        }
+      }
+    });
+
     ref.listen<CookbookState>(cookbookViewModelProvider, (previous, next) {
       if (next.status == CookbookStatus.error && next.errorMessage != null) {
         CustomSnackBar.showErrorSnackBar(context, next.errorMessage!);

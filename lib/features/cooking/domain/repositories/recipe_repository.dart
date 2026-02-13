@@ -9,6 +9,13 @@ abstract class IRecipeRepository {
       ({List<RecipeEntity> recipes, int total, int page, int totalPages})
     >
   >
+  getTopPublicRecipes({int page = 1, int limit = 10});
+  Future<
+    Either<
+      Failure,
+      ({List<RecipeEntity> recipes, int total, int page, int totalPages})
+    >
+  >
   getPublicRecipes({int page = 1, int limit = 10});
   Future<Either<Failure, RecipeEntity>> updateRecipe(RecipeEntity recipe);
 }

@@ -9,6 +9,7 @@ import 'package:yumm_ai/core/widgets/premium_ad_banner.dart';
 import 'package:yumm_ai/features/cooking/data/datasource/remote/recipe_remote_datasource.dart';
 import 'package:yumm_ai/features/cooking/presentation/providers/recipe_state_provider.dart';
 import 'package:yumm_ai/features/cooking/presentation/providers/recipe_provider.dart';
+import 'package:yumm_ai/features/cooking/presentation/providers/top_recipe_provider.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_search_bar.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/recommended_food_scroll_snap.dart';
@@ -55,65 +56,115 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ref.invalidate(recipeRemoteDataSourceProvider);
             ref.invalidate(currentUserProvider);
             ref.invalidate(publicRecipesProvider);
+            ref.invalidate(topPublicRecipesProvider);
           },
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 12),
-                // Custom Search Bar
-                HomeSearchBar(
-                  onTap: () {
-                    Navigator.of(context).push(SearchScreen.route());
-                  },
-                ),
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (scrollInfo) {
+              if (scrollInfo.metrics.pixels >=
+                      scrollInfo.metrics.maxScrollExtent * 0.9 &&
+                  ref.read(topPublicRecipesProvider.notifier).canLoadMore) {
+                ref.read(topPublicRecipesProvider.notifier).loadMore();
+              }
+              return false;
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 12),
+                  // Custom Search Bar
+                  HomeSearchBar(
+                    onTap: () {
+                      Navigator.of(context).push(SearchScreen.route());
+                    },
+                    onFilterTap: () {
+                      Navigator.of(
+                        context,
+                      ).push(SearchScreen.route(focusFilter: true));
+                    },
+                  ),
 
-                SizedBox(height: 18),
-                //Premium Card
-                PremiumAdBanner(
-                  text: 'Unlock\nUnlimited Recipes',
-                  backgroundImage: '${ConstantsString.assetSvg}/ad_banner.svg',
-                  buttonText: 'Go Premium',
-                ),
+                  SizedBox(height: 18),
+                  //Premium Card
+                  PremiumAdBanner(
+                    text: 'Unlock\nUnlimited Recipes',
+                    backgroundImage:
+                        '${ConstantsString.assetSvg}/ad_banner.svg',
+                    buttonText: 'Go Premium',
+                  ),
 
-                SizedBox(height: 12),
+                  SizedBox(height: 12),
 
-                //Choice Chips
-                CustomChoiceChip<Meal>(
-                  values: Meal.values,
-                  onSelected: (value) {
-                    setState(() {
-                      _selectedMealType = value;
-                      debugPrint(_selectedMealType.text);
-                    });
-                  },
-                  labelBuilder: (meal) => meal.text,
-                  iconBuilder: (meal) => meal.icon,
-                ),
-                SizedBox(height: 8),
+                  //Choice Chips
+                  CustomChoiceChip<Meal>(
+                    values: Meal.values,
+                    onSelected: (value) {
+                      setState(() {
+                        _selectedMealType = value;
+                        debugPrint(_selectedMealType.text);
+                      });
+                    },
+                    labelBuilder: (meal) => meal.text,
+                    iconBuilder: (meal) => meal.icon,
+                  ),
+                  SizedBox(height: 8),
 
-                //Recommendations Card
-                RecommendedFoodScrollSnap(),
+                  //Recommendations Card
+                  RecommendedFoodScrollSnap(),
 
-                Padding(
-                  padding: const EdgeInsets.only(left: 18, top: 18, bottom: 18),
-                  child: Text("Top Recipes", style: AppTextStyles.title),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 18,
+                      top: 18,
+                      bottom: 18,
+                    ),
+                    child: Text("Top Recipes", style: AppTextStyles.title),
+                  ),
 
-                //Top Recipes
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: 8,
-                  itemBuilder: (context, index) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [TopRecipeCard()],
-                    );
-                  },
-                ),
-                SizedBox(height: 80),
-              ],
+                  //Top Recipes
+                  Consumer(
+                    builder: (context, ref, child) {
+                      final topRecipesAsync = ref.watch(
+                        topPublicRecipesProvider,
+                      );
+
+                      return topRecipesAsync.when(
+                        data: (recipes) {
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount:
+                                recipes.length +
+                                (ref
+                                        .read(topPublicRecipesProvider.notifier)
+                                        .canLoadMore
+                                    ? 1
+                                    : 0),
+                            itemBuilder: (context, index) {
+                              if (index == recipes.length) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  TopRecipeCard(recipe: recipes[index]),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        error: (error, stack) =>
+                            Center(child: Text('Error: $error')),
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                      );
+                    },
+                  ),
+                  SizedBox(height: 80),
+                ],
+              ),
             ),
           ),
         ),

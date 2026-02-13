@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/api/api_client.dart';
 import 'package:yumm_ai/core/api/api_endpoints.dart';
+import 'package:yumm_ai/core/error/failure.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 
 final recipeRemoteDataSourceProvider = Provider((ref) {
@@ -12,6 +13,8 @@ abstract class IRecipeRemoteDataSource {
   Future<({List<RecipeModel> recipes, int total, int page, int totalPages})>
   getPublicRecipes({int page = 1, int limit = 10});
   Future<RecipeModel> updateRecipe(RecipeModel recipe);
+  Future<({List<RecipeModel> recipes, int total, int page, int totalPages})>
+  getTopPublicRecipe({int page = 1, int limit = 10});
 }
 
 class RecipeRemoteDataSource implements IRecipeRemoteDataSource {
@@ -42,8 +45,8 @@ class RecipeRemoteDataSource implements IRecipeRemoteDataSource {
         totalPages: pagination["totalPages"] as int,
       );
     }
-    throw Exception(
-      response.data['message'] ?? 'Failed to fetch public recipes',
+    throw ApiFailure(
+      message: response.data['message'] ?? 'Failed to fetch public recipes',
     );
   }
 
@@ -59,5 +62,34 @@ class RecipeRemoteDataSource implements IRecipeRemoteDataSource {
       );
     }
     throw Exception(response.data['message'] ?? 'Failed to update recipe');
+  }
+
+  @override
+  Future<({List<RecipeModel> recipes, int total, int page, int totalPages})>
+  getTopPublicRecipe({int page = 1, int limit = 10}) async {
+    final response = await _apiClient.get(
+      "${ApiEndpoints.getTopPublicRecipes}?page=$page&limit=$limit",
+    );
+    if (response.data["success"]) {
+      final data = response.data["data"];
+      // user confirmed the key is "recipe" for the list
+      final recipeData = data["recipe"] as List<dynamic>;
+      final pagination = data["pagination"];
+
+      final recipes = recipeData
+          .map((e) => RecipeModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+
+      return (
+        recipes: recipes,
+        // pagination entries are likely correct based on user JSON
+        total: pagination["total"] as int,
+        page: pagination["page"] as int,
+        totalPages: pagination["totalPages"] as int,
+      );
+    }
+    throw ApiFailure(
+      message: response.data["message"] ?? "Failed to get top public recipe",
+    );
   }
 }

@@ -7,12 +7,16 @@ class SearchHeader extends StatelessWidget {
   final VoidCallback onBack;
   final TextEditingController controller;
   final VoidCallback onClear;
+  final Function(String)? onSubmitted;
+  final VoidCallback? onFilterTap;
 
   const SearchHeader({
     super.key,
     required this.onBack,
     required this.controller,
     required this.onClear,
+    this.onSubmitted,
+    this.onFilterTap,
   });
 
   @override
@@ -69,6 +73,7 @@ class SearchHeader extends StatelessWidget {
                             border: InputBorder.none,
                             isDense: true,
                           ),
+                          onSubmitted: onSubmitted,
                         ),
                       ),
                       Padding(
@@ -76,18 +81,22 @@ class SearchHeader extends StatelessWidget {
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 150),
                           child: controller.text.isEmpty
-                              ? Container(
-                                  key: const ValueKey('filter'),
-                                  width: 45,
-                                  height: 45,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    Icons.tune,
-                                    color: AppColors.blackColor,
-                                    size: 28,
+                              ? InkWell(
+                                  onTap: onFilterTap,
+                                  borderRadius: BorderRadius.circular(999),
+                                  child: Container(
+                                    key: const ValueKey('filter'),
+                                    width: 45,
+                                    height: 45,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.tune,
+                                      color: AppColors.blackColor,
+                                      size: 28,
+                                    ),
                                   ),
                                 )
                               : InkWell(

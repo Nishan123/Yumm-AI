@@ -76,6 +76,17 @@ class _HomeFoodRecommendationsState
 
     kIsLiked = checkIsLiked();
 
+    // Listen to provider changes to reset optimistic state when source of truth updates
+    ref.listen(saveRecipeViewModelProvider, (previous, next) {
+      if (previous?.savedRecipes != next.savedRecipes) {
+        if (mounted) {
+          setState(() {
+            _isLikedOptimistic = null;
+          });
+        }
+      }
+    });
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return GestureDetector(

@@ -1,5 +1,6 @@
 import 'package:yumm_ai/core/api/api_client.dart';
 import 'package:yumm_ai/core/api/api_endpoints.dart';
+import 'package:yumm_ai/core/error/failure.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 import 'package:yumm_ai/features/cookbook/data/datasources/cookbook_datasource.dart';
 import 'package:yumm_ai/features/cookbook/data/models/cookbook_recipe_model.dart';
@@ -161,6 +162,9 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
         response.data["data"] as Map<String, dynamic>,
       );
     }
-    throw Exception(response.data['message'] ?? 'Failed to reset progress');
+    throw ApiFailure(
+      message: response.data['message'] ?? 'Failed to reset progress',
+    );
   }
+
 }

@@ -65,6 +65,34 @@ class RecipeRepositoryImpl implements IRecipeRepository {
   }
 
   @override
+  getTopPublicRecipes({int page = 1, int limit = 10}) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final result = await _remoteDataSource.getTopPublicRecipe(
+          page: page,
+          limit: limit,
+        );
+        final entites = result.recipes.map((e) => e.toEntity()).toList();
+        return Right((
+          recipes: entites,
+          total: result.total,
+          page: result.page,
+          totalPages: result.totalPages,
+        ));
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data['message'] ?? "Network error",
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      }
+    } else {
+      return Left(ApiFailure(message: "No internet connection"));
+    }
+  }
+
+  @override
   Future<Either<Failure, RecipeEntity>> updateRecipe(
     RecipeEntity recipe,
   ) async {

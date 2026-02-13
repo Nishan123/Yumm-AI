@@ -19,6 +19,7 @@ import 'package:yumm_ai/features/profile/presentation/pages/delete_profile_scree
 import 'package:yumm_ai/features/profile/presentation/pages/profile_screen.dart';
 import 'package:yumm_ai/features/save_recipe/presentation/pages/saved_recipes_screen.dart';
 import 'package:yumm_ai/features/scanner/presentation/pages/scanner_screen.dart';
+import 'package:yumm_ai/features/search/presentation/pages/search_results_screen.dart';
 import 'package:yumm_ai/features/settings/presentation/pages/setting_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/add_shopping_list_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/shopping_list_screen.dart';
@@ -27,7 +28,7 @@ import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plan
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
-    initialLocation: "/",
+    initialLocation: "/main",
     routes: [
       GoRoute(
         path: "/",
@@ -159,6 +160,13 @@ class AppRoutes {
         name: "shopping_list",
         builder: (context, state) {
           return ShoppingListScreen();
+        },
+      ),
+      GoRoute(
+        path: "/search_results",
+        name: "search_results",
+        builder: (context, state) {
+          return SearchResultsScreen();
         },
       ),
       GoRoute(

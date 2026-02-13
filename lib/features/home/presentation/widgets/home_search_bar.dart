@@ -5,7 +5,8 @@ import 'package:yumm_ai/core/constants/constants_string.dart';
 
 class HomeSearchBar extends StatelessWidget {
   final VoidCallback onTap;
-  const HomeSearchBar({super.key, required this.onTap});
+  final VoidCallback onFilterTap;
+  const HomeSearchBar({super.key, required this.onTap, required this.onFilterTap});
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -44,19 +45,22 @@ class HomeSearchBar extends StatelessWidget {
                 ),
 
                 // Settings Icon
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Container(
-                    width: 45,
-                    height: 45,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.tune,
-                      color: AppColors.blackColor,
-                      size: 28,
+                InkWell(
+                  onTap: onFilterTap,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Container(
+                      width: 45,
+                      height: 45,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.tune,
+                        color: AppColors.blackColor,
+                        size: 28,
+                      ),
                     ),
                   ),
                 ),

@@ -24,21 +24,19 @@ abstract class BaseChefViewModel extends Notifier<ChefState> {
       loadingMessage: "Generating images for the recipe.",
     );
 
-    // final imageResult = await generateRecipeImagesUsecase.call(
-    //   GenerateRecipeImagesParams(
-    //     recipeName: tempRecipe.recipeName,
-    //     description: tempRecipe.description,
-    //   ),
-    // );
+    final imageResult = await generateRecipeImagesUsecase.call(
+      GenerateRecipeImagesParams(
+        recipeName: tempRecipe.recipeName,
+        description: tempRecipe.description,
+      ),
+    );
 
-    // await imageResult.fold(
-    //   (failure) async =>
-    //       await _saveRecipe(tempRecipe, [], currentUserId, isPublic),
-    //   (images) async =>
-    //       await _saveRecipe(tempRecipe, images, currentUserId, isPublic),
-    // );
-
-    await _saveRecipe(tempRecipe, [], currentUserId, isPublic);
+    await imageResult.fold(
+      (failure) async =>
+          await _saveRecipe(tempRecipe, [], currentUserId, isPublic),
+      (images) async =>
+          await _saveRecipe(tempRecipe, images, currentUserId, isPublic),
+    );
   }
 
   Future<void> _saveRecipe(

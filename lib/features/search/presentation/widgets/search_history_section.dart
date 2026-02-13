@@ -8,7 +8,16 @@ class SearchHistorySection extends StatelessWidget {
   final List<String> items;
   final VoidCallback? onClearAll;
 
-  const SearchHistorySection({super.key, required this.items, this.onClearAll});
+  final Function(String) onSearch;
+  final Function(String) onDelete;
+
+  const SearchHistorySection({
+    super.key,
+    required this.items,
+    this.onClearAll,
+    required this.onSearch,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +36,8 @@ class SearchHistorySection extends StatelessWidget {
               Text('Search history', style: AppTextStyles.h6),
               CustomTextButton(
                 text: "Clear All",
-                onTap: () {},
-                buttonTextStyle: AppTextStyles.h6,
+                onTap: onClearAll ?? () {},
+                buttonTextStyle: AppTextStyles.normalText,
                 textColor: AppColors.redColor,
               ),
             ],
@@ -39,28 +48,43 @@ class SearchHistorySection extends StatelessWidget {
             runSpacing: 0,
             children: items
                 .map(
-                  (text) => InputChip(
-                    padding: EdgeInsets.only(left: 2, top: 2,bottom: 2, right: 0),
-                    label: Row(
-                      spacing: 4,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          text,
-                          style: AppTextStyles.normalText.copyWith(
-                            fontSize: 13,
-                            color: AppColors.blackColor
+                  (text) => InkWell(
+                    onTap: () => onSearch(text),
+                    borderRadius: BorderRadius.circular(400),
+                    child: InputChip(
+                      padding: EdgeInsets.only(
+                        left: 2,
+                        top: 2,
+                        bottom: 2,
+                        right: 0,
+                      ),
+                      label: Row(
+                        spacing: 4,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            text,
+                            style: AppTextStyles.normalText.copyWith(
+                              fontSize: 13,
+                              color: AppColors.blackColor,
+                            ),
                           ),
-                        ),
-                        InkWell(
-                          child: Icon(LucideIcons.circle_x,color: Colors.red,size: 20,),
-                        )
-                      ],
-                    ),
-                    side: BorderSide(color: AppColors.lightBlackColor),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(400),
+                          InkWell(
+                            onTap: () => onDelete(text),
+                            child: Icon(
+                              LucideIcons.circle_x,
+                              color: Colors.red,
+                              size: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                      side: BorderSide(color: AppColors.lightBlackColor),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(400),
+                      ),
+                      onPressed: () => onSearch(text),
                     ),
                   ),
                 )

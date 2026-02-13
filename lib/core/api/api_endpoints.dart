@@ -42,6 +42,7 @@ class ApiEndpoints {
   static String updateRecipeById(String recipeId) => "/recipe/$recipeId";
   static String getSavedRecipe(String uid) => "/likedRecipes/$uid";
   static String toggleSave(String recipeId) => "/recipe/$recipeId/save";
+  static String getTopPublicRecipes = "/topPublicRecipes";
 
   // ================ Cookbook Endpoints ================
   static const String addToCookbook = "/cookbook/add";
