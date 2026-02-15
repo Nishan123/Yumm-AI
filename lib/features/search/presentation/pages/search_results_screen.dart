@@ -5,9 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/widgets/primary_icon_button.dart';
-import 'package:yumm_ai/features/home/presentation/widgets/top_recipe_card.dart';
 import 'package:yumm_ai/features/search/presentation/state/search_state.dart';
 import 'package:yumm_ai/features/search/presentation/view_model/search_view_model.dart';
+import 'package:yumm_ai/features/search/presentation/widgets/search_result_cards.dart';
 
 class SearchResultsScreen extends ConsumerStatefulWidget {
   const SearchResultsScreen({super.key});
@@ -131,7 +131,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
     }
 
     if (state.recipes.isEmpty && state.status == SearchStatus.loaded) {
-      return Center(child: Text("No recipes found"));
+      return Center(child: Text("No recipes found\nTry reseting filter or enter different keyword",textAlign:TextAlign.center,));
     }
 
     return ListView.builder(
@@ -143,7 +143,7 @@ class _SearchResultsScreenState extends ConsumerState<SearchResultsScreen> {
           return Center(child: CircularProgressIndicator());
         }
         final recipe = state.recipes[index];
-        return TopRecipeCard(recipe: recipe);
+        return SearchResultCards(recipe: recipe);
       },
     );
   }

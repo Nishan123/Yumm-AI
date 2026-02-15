@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/core/constants/constants_string.dart';
+import 'package:yumm_ai/core/widgets/primary_icon_button.dart';
 
 class SearchHeader extends StatelessWidget {
   final VoidCallback onBack;
@@ -27,9 +29,9 @@ class SearchHeader extends StatelessWidget {
       padding: const EdgeInsets.only(left: 12, right: 18, top: 10),
       child: Row(
         children: [
-          IconButton(
-            onPressed: onBack,
-            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+          PrimaryIconButton(
+            onTap: onBack,
+            icon: LucideIcons.chevron_left,
           ),
           const SizedBox(width: 6),
           Expanded(
