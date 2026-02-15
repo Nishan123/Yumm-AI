@@ -91,4 +91,4 @@ jobs:
           artifacts: |
             android-apk/*.apk
             ios-simulator-app/Runner.app.zip
-          token: ${{ secrets.TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
