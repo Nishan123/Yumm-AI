@@ -43,6 +43,10 @@ dependencies:
   google_generative_ai: ^0.4.7
   shimmer: ^3.0.0
   pushy_flutter: ^2.0.43
+  light_sensor: ^3.0.2
+  sensors_plus: ^7.0.0
+  lottie: ^3.3.2
+  screenshot: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -69,6 +73,7 @@ flutter:
     - assets/images/
     - assets/svgs/
     - assets/gif/
+    - assets/lottie/
     - .env
 
   fonts:

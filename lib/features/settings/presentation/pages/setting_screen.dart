@@ -45,17 +45,17 @@ class SettingScreen extends ConsumerWidget {
                   settingLists: [
                     SettingItemCard(
                       leadingIcon: LucideIcons.user,
-                      title: 'Account access',
+                      title: 'Security & Password',
                       subTitle:
-                          'Security, account activation and deactivation.',
+                          'Change your password with new one for security refresh.',
                       onTap: () {
                         context.pushNamed("change_password");
                       },
                     ),
                     SettingItemCard(
                       leadingIcon: LucideIcons.shield,
-                      title: 'Login & Security',
-                      subTitle: 'Manage your information on this app.',
+                      title: 'Account access',
+                      subTitle: 'Deactivate or delete your account permanently',
                     ),
                     SettingItemCard(
                       leadingIcon: LucideIcons.dollar_sign,
@@ -98,9 +98,12 @@ class SettingScreen extends ConsumerWidget {
                   groupName: "Additional",
                   settingLists: [
                     SettingItemCard(
-                      leadingIcon: LucideIcons.smile,
-                      title: 'Feedback',
-                      subTitle: 'Share your thoughts and help us improve',
+                      leadingIcon: LucideIcons.bug,
+                      title: 'Report bug',
+                      subTitle: 'Report bug or app crashes & help us improve',
+                      onTap: () {
+                        context.goNamed("report_bug");
+                      },
                     ),
                     SettingItemCard(
                       leadingIcon: LucideIcons.box,

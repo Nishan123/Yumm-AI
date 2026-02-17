@@ -1,5 +1,7 @@
+import 'dart:typed_data';
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/change_password_screen.dart';
+import 'package:yumm_ai/features/bug_report/presentation/pages/report_bug_screen.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/login_screen.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/signup_screen.dart';
@@ -25,9 +27,12 @@ import 'package:yumm_ai/features/shopping_list/presentation/pages/add_shopping_l
 import 'package:yumm_ai/features/shopping_list/presentation/pages/shopping_list_screen.dart';
 import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plans_screen.dart';
 
+import 'package:yumm_ai/core/utils/navigator_key.dart';
+
 class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: "/main",
     routes: [
       GoRoute(
@@ -42,6 +47,15 @@ class AppRoutes {
         name: "main",
         builder: (context, state) {
           return MainScreen();
+        },
+      ),
+
+      GoRoute(
+        path: "/report_bug",
+        name: "report_bug",
+        builder: (context, state) {
+          final screenshot = state.extra as Uint8List?;
+          return ReportBugScreen(screenshot: screenshot);
         },
       ),
 

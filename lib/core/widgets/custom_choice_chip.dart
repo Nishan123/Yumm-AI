@@ -8,6 +8,7 @@ class CustomChoiceChip<T> extends StatefulWidget {
   final void Function(T)? onSelected;
   final EdgeInsetsGeometry padding;
   final T? selectedValue;
+  final bool isWrap;
 
   const CustomChoiceChip({
     super.key,
@@ -17,6 +18,7 @@ class CustomChoiceChip<T> extends StatefulWidget {
     this.onSelected,
     this.padding = const EdgeInsets.only(right: 16),
     this.selectedValue,
+    this.isWrap = false,
   });
 
   @override
@@ -57,47 +59,60 @@ class _CustomChoiceChipState<T> extends State<CustomChoiceChip<T>> {
       final label = widget.labelBuilder(item);
       final icon = widget.iconBuilder?.call(item);
 
+      final chip = ChoiceChip(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        showCheckmark: false,
+        label: Row(
+          spacing: icon == null ? 0 : 8,
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            icon == null
+                ? SizedBox()
+                : Icon(
+                    icon,
+                    size: 20,
+                    color: _selectedIndex == index
+                        ? AppColors.whiteColor
+                        : AppColors.blackColor,
+                  ),
+            Text(label),
+          ],
+        ),
+        selected: _selectedIndex == index,
+        onSelected: (selected) => _handleSelection(selected, index, item),
+        selectedColor: AppColors.blackColor,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(color: AppColors.blackColor),
+          borderRadius: BorderRadiusGeometry.circular(30),
+        ),
+        labelStyle: TextStyle(
+          fontSize: 15,
+          color: _selectedIndex == index
+              ? AppColors.whiteColor
+              : AppColors.blackColor,
+        ),
+        backgroundColor: AppColors.whiteColor,
+      );
+
+      if (widget.isWrap) {
+        return chip;
+      }
+
       return Padding(
         padding: index == 0
             ? const EdgeInsets.only(left: 18, right: 10)
             : const EdgeInsets.only(right: 10),
-        child: ChoiceChip(
-          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-          showCheckmark: false,
-          label: Row(
-            spacing: icon == null ? 0 : 8,
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              icon == null
-                  ? SizedBox()
-                  : Icon(
-                      icon,
-                      size: 20,
-                      color: _selectedIndex == index
-                          ? AppColors.whiteColor
-                          : AppColors.blackColor,
-                    ),
-              Text(label),
-            ],
-          ),
-          selected: _selectedIndex == index,
-          onSelected: (selected) => _handleSelection(selected, index, item),
-          selectedColor: AppColors.blackColor,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: AppColors.blackColor),
-            borderRadius: BorderRadiusGeometry.circular(30),
-          ),
-          labelStyle: TextStyle(
-            fontSize: 15,
-            color: _selectedIndex == index
-                ? AppColors.whiteColor
-                : AppColors.blackColor,
-          ),
-          backgroundColor: AppColors.whiteColor,
-        ),
+        child: chip,
       );
     }).toList();
+
+    if (widget.isWrap) {
+      return Padding(
+        padding: widget.padding,
+        child: Wrap(spacing: 12, runSpacing:2, children: chips),
+      );
+    }
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

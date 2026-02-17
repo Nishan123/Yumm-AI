@@ -8,6 +8,9 @@ import 'package:yumm_ai/app/routes/app_routes.dart';
 import 'package:yumm_ai/app/theme/app_theme.dart';
 import 'package:yumm_ai/core/services/storage/user_hive_service.dart';
 import 'package:yumm_ai/core/services/storage/user_session_service.dart';
+import 'package:yumm_ai/features/bug_report/presentation/providers/shake_detector_provider.dart';
+import 'package:yumm_ai/features/bug_report/presentation/providers/screenshot_provider.dart';
+import 'package:screenshot/screenshot.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,20 +40,27 @@ Future main() async {
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Initialize shake detector
+    ref.watch(shakeDetectorProvider);
+    final screenshotController = ref.watch(screenshotControllerProvider);
+
     final AppRoutes routingConfig = AppRoutes();
-    return MaterialApp.router(
-      title: "Yumm AI",
-      theme: getAppTheme(),
-      debugShowCheckedModeBanner: false,
-      routeInformationParser: routingConfig.appRoutes.routeInformationParser,
-      routeInformationProvider:
-          routingConfig.appRoutes.routeInformationProvider,
-      routerDelegate: routingConfig.appRoutes.routerDelegate,
+    return Screenshot(
+      controller: screenshotController,
+      child: MaterialApp.router(
+        title: "Yumm AI",
+        theme: getAppTheme(),
+        debugShowCheckedModeBanner: false,
+        routeInformationParser: routingConfig.appRoutes.routeInformationParser,
+        routeInformationProvider:
+            routingConfig.appRoutes.routeInformationProvider,
+        routerDelegate: routingConfig.appRoutes.routerDelegate,
+      ),
     );
   }
 }

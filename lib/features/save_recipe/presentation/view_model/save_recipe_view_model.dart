@@ -41,7 +41,9 @@ class SaveRecipeViewModel extends Notifier<SaveRecipeState> {
       state = state.copyWith(isLoading: true);
     }
 
-    final result = await _getSavedRecipesUsecase.call(user.uid!);
+    final result = await _getSavedRecipesUsecase.call(
+      GetSavedRecipesParams(uid: user.uid!),
+    );
     result.fold(
       (failure) {
         state = state.copyWith(isLoading: false, failure: failure);
@@ -59,7 +61,9 @@ class SaveRecipeViewModel extends Notifier<SaveRecipeState> {
     state = state.copyWith(isToggleLoading: true);
     debugPrint("ViewModel: Toggling save for recipe $recipeId");
 
-    final result = await _toggleSaveRecipeUsecase.call(recipeId);
+    final result = await _toggleSaveRecipeUsecase.call(
+      ToggleSaveRecipeParams(recipeId: recipeId),
+    );
     result.fold(
       (failure) {
         debugPrint("ViewModel: Toggle failed - ${failure.errorMessage}");

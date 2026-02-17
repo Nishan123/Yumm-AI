@@ -6,6 +6,8 @@
 		<string>your usage description here</string>
 		<key>NSMicrophoneUsageDescription</key>
 		<string>your usage description here</string>
+		<key>NSMotionUsageDescription</key>
+		<string>We need access to your motion sensors to detect shakes for bug reporting.</string>
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>

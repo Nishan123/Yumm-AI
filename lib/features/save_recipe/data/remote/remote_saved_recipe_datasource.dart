@@ -13,7 +13,6 @@ class RemoteSavedRecipeDatasource implements IRemoteSavedRecipeDatasource {
   Future<List<RecipeModel>> getSavedRecipe({required String uid}) async {
     try {
       final response = await _apiClient.get(ApiEndpoints.getSavedRecipe(uid));
-      // debugPrint("Saved Recipe API Response: ${response.data}");
 
       if (response.data["success"] == true) {
         final responseData = response.data["data"];
@@ -27,7 +26,6 @@ class RemoteSavedRecipeDatasource implements IRemoteSavedRecipeDatasource {
       }
       throw ApiFailure(message: "${response.data["message"]}");
     } catch (e) {
-      // debugPrint("Saved Recipe API Error: $e");
       rethrow;
     }
   }

@@ -64,4 +64,8 @@ class ApiEndpoints {
       "/cookbook/recipe/$userRecipeId";
   static String resetRecipeProgress(String userRecipeId) =>
       "/cookbook/recipe/$userRecipeId/reset";
+
+  // ==================== Report Bug ====================
+  static const String reportBug = "/bug-report";
+  static const String uploadBugReportImage = "/bug-report/upload-screenshot";
 }
