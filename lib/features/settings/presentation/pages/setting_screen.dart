@@ -53,6 +53,9 @@ class SettingScreen extends ConsumerWidget {
                       },
                     ),
                     SettingItemCard(
+                      onTap: () {
+                        context.pushNamed("delete_profile");
+                      },
                       leadingIcon: LucideIcons.shield,
                       title: 'Account access',
                       subTitle: 'Deactivate or delete your account permanently',

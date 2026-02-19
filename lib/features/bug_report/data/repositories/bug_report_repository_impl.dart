@@ -37,6 +37,8 @@ class BugReportRepositoryImpl implements BugReportRepository {
         problemType: bugReport.problemType,
         reportedBy: bugReport.reportedBy,
         screenshotUrl: screenshotUrl,
+        status: bugReport.status,
+        isResolved: bugReport.isResolved,
       );
 
       final result = await _remoteDataSource.reportBug(bugReportModel);

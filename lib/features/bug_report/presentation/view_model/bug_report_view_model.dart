@@ -32,8 +32,9 @@ class BugReportViewModel extends Notifier<BugReportState> {
       reportDescription: description,
       problemType: problemType,
       reportedBy: reportedBy,
-      screenshotUrl: '', 
+      screenshotUrl: '',
       isResolved: false,
+      status: 'open',
     );
 
     final result = await _reportBugUseCase.call(

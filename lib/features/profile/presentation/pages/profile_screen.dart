@@ -398,12 +398,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             backgroundColor: AppColors.redColor,
                             onTap: () async {
                               context.pushNamed("delete_profile");
-                              // final user = existingUser.value;
-                              // if (user != null && user.uid != null) {
-                              //   await ref
-                              //       .read(profileViewModelProvider.notifier)
-                              //       .deleteUserProfile(user.uid!);
-                              // }
                             },
                             text: "Delete Profile",
                           ),

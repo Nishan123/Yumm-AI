@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +11,9 @@ import 'package:yumm_ai/core/widgets/primary_text_field.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
 import 'package:yumm_ai/features/profile/presentation/state/delete_profile_state.dart';
 import 'package:yumm_ai/features/profile/presentation/view_model/delete_profile_view_model.dart';
+import 'package:yumm_ai/core/widgets/custom_checkbox_with_text.dart';
+import 'package:yumm_ai/core/widgets/google_auth_indicator.dart';
+import 'package:yumm_ai/features/profile/presentation/widgets/delete_profile_warning.dart';
 
 class DeleteProfileScreen extends ConsumerStatefulWidget {
   const DeleteProfileScreen({super.key});
@@ -107,51 +109,9 @@ class _DeleteProfileScreenState extends ConsumerState<DeleteProfileScreen> {
                               controller: passwordController,
                             ),
                           ] else
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        height: 22,
-                                        width: 22,
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/1024px-Google_Favicon_2025.svg.png",
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        "Logged in via Google account",
-                                        style: AppTextStyles.h6.copyWith(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    "You will be asked to verify your Google account before deletion.",
-                                    style: AppTextStyles.descriptionText
-                                        .copyWith(
-                                          fontSize: 13,
-                                          color: Colors.grey.shade600,
-                                        ),
-                                  ),
-                                ],
-                              ),
+                            const GoogleAuthIndicator(
+                              description:
+                                  "I agree to the terms and conditions of deleting my account.",
                             ),
 
                           const SizedBox(height: 14),
@@ -172,94 +132,19 @@ class _DeleteProfileScreenState extends ConsumerState<DeleteProfileScreen> {
                           const SizedBox(height: 24),
 
                           // Warning text
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: AppColors.redColor.withAlpha(8),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: AppColors.redColor.withAlpha(40),
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.warning_amber_rounded,
-                                      color: AppColors.redColor,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      "Warning",
-                                      style: AppTextStyles.h6.copyWith(
-                                        color: AppColors.redColor,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  "Deleting your account is permanent and cannot be undone. All your data will be permanently erased. By proceeding, you will lose access to your account immediately.",
-                                  style: AppTextStyles.descriptionText.copyWith(
-                                    color: AppColors.redColor.withAlpha(200),
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          const DeleteProfileWarning(),
 
                           const SizedBox(height: 16),
 
-                          GestureDetector(
-                            onTap: () {
+                          CustomCheckboxWithText(
+                            text:
+                                "I agree to the terms and conditions of deleting my account.",
+                            isAgreed: isAgreed,
+                            onChanged: (value) {
                               setState(() {
-                                isAgreed = !isAgreed;
+                                isAgreed = value;
                               });
                             },
-                            child: Container(
-                              color: Colors.transparent,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-
-                                children: [
-                                  Container(
-                                    height: 24,
-                                    width: 24,
-                                    decoration: BoxDecoration(
-                                      color: isAgreed
-                                          ? AppColors.redColor
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
-                                        color: isAgreed
-                                            ? AppColors.redColor
-                                            : Colors.grey.shade400,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: isAgreed
-                                        ? const Icon(
-                                            Icons.check,
-                                            size: 16,
-                                            color: Colors.white,
-                                          )
-                                        : null,
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Text(
-                                      "I agree to the terms and conditions of deleting my account.",
-                                      style: AppTextStyles.normalText.copyWith(
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ),
 
                           Spacer(),

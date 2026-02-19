@@ -5,6 +5,7 @@ import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/core/widgets/custom_snack_bar.dart';
+import 'package:yumm_ai/core/widgets/google_auth_indicator.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
 import 'package:yumm_ai/features/auth/presentation/state/change_password_state.dart';
 import 'package:yumm_ai/features/auth/presentation/view_model/change_password_view_model.dart';
@@ -80,13 +81,9 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
           if (user.authProvider != 'emailPassword') {
             return Center(
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text(
-                  "You are logged in with ${user.authProvider}. You cannot change your password here.",
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16),
-                ),
-              ),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: GoogleAuthIndicator(description: "You cannot change your password if you are logged in via Google account"),
+              )
             );
           }
 
