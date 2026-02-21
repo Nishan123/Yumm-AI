@@ -22,6 +22,7 @@ import 'package:yumm_ai/features/profile/presentation/pages/profile_screen.dart'
 import 'package:yumm_ai/features/save_recipe/presentation/pages/saved_recipes_screen.dart';
 import 'package:yumm_ai/features/scanner/presentation/pages/scanner_screen.dart';
 import 'package:yumm_ai/features/search/presentation/pages/search_results_screen.dart';
+import 'package:yumm_ai/features/settings/presentation/pages/app_theme_screen.dart';
 import 'package:yumm_ai/features/settings/presentation/pages/setting_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/add_shopping_list_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/shopping_list_screen.dart';
@@ -64,6 +65,13 @@ class AppRoutes {
         name: "setting",
         builder: (context, state) {
           return SettingScreen();
+        },
+      ),
+      GoRoute(
+        path: "/app_theme",
+        name: "app_theme",
+        builder: (context, state) {
+          return AppThemeScreen();
         },
       ),
       GoRoute(

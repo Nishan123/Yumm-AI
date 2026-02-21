@@ -89,6 +89,9 @@ class SettingScreen extends ConsumerWidget {
                       subTitle: 'Manage how contents are displayed to you.',
                     ),
                     SettingItemCard(
+                      onTap: () {
+                        context.pushNamed("app_theme");
+                      },
                       leadingIcon: LucideIcons.sun,
                       title: 'App theme',
                       subTitle:

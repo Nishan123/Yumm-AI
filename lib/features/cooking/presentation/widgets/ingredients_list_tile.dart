@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
+import 'package:yumm_ai/features/cooking/presentation/widgets/cached_image_error_widget.dart';
 
 class IngredientsListTile extends StatelessWidget {
   final IngredientModel ingredient;
@@ -35,14 +37,16 @@ class IngredientsListTile extends StatelessWidget {
                 ? CachedNetworkImage(
                     imageUrl: ingredient.imageUrl,
                     errorWidget: (context, url, error) {
-                      return SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: Center(child: Text("N/A")),
+                      return CachedImageErrorWidget(
+                        backgroundColor: textColor,
+                        icon: LucideIcons.salad,
                       );
                     },
                   )
-                : const Center(child: Text("N/A")),
+                :  CachedImageErrorWidget(
+                        backgroundColor: textColor,
+                        icon: LucideIcons.salad,
+                      ),
           ),
           SizedBox(width: 8),
 
