@@ -6,6 +6,7 @@ import 'package:yumm_ai/features/auth/domin/usecases/logout_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/signup_usecase.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/google_signin_usecase.dart';
+import 'package:yumm_ai/features/auth/domin/usecases/forgot_password_usecase.dart';
 
 import 'package:yumm_ai/features/auth/presentation/state/auth_state.dart';
 
@@ -19,6 +20,7 @@ class AuthViewModel extends Notifier<AuthState> {
   late final LogoutUsecase _logoutUsecase;
   late final GetCurrentUserUsecase _getCurrentUserUsecase;
   late final GoogleSigninUsecase _googleSignInUsecase;
+  late final ForgotPasswordUsecase _forgotPasswordUsecase;
   late final AppStateResetService _appStateResetService;
 
   @override
@@ -28,6 +30,7 @@ class AuthViewModel extends Notifier<AuthState> {
     _logoutUsecase = ref.read(logoutUsercaseProvider);
     _getCurrentUserUsecase = ref.read(getCurrentUserUsecaseProvider);
     _googleSignInUsecase = ref.read(googleSignInUsecaseProvider);
+    _forgotPasswordUsecase = ref.read(forgotPasswordUsecaseProvider);
     _appStateResetService = ref.read(appStateResetServiceProvider);
     return const AuthState();
   }
@@ -172,6 +175,26 @@ class AuthViewModel extends Notifier<AuthState> {
           }
         }
         state = state.copyWith(status: AuthStatus.authenticated, user: user);
+      },
+    );
+  }
+
+  Future<bool> forgotPassword({required String email}) async {
+    state = state.copyWith(status: AuthStatus.emailPasswordLoading);
+    final result = await _forgotPasswordUsecase.call(email);
+
+    return result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: AuthStatus.error,
+          errorMessage: failure.errorMessage,
+        );
+        return false;
+      },
+      (_) {
+        // Return to initial state so we don't stay in loading
+        state = state.copyWith(status: AuthStatus.initial);
+        return true;
       },
     );
   }
