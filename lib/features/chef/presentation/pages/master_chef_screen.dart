@@ -204,8 +204,7 @@ class _MasterChefScreenState extends ConsumerState<MasterChefScreen> {
                 ],
               ),
               SizedBox(height: 6),
-              // Recipe Visibility Toggle
-              InputWidgetTitle(title: "Recipe Visibility"),
+              // visibility selector
               VisibilitySelector(
                 isPublic: _isPublic,
                 onChanged: (value) => setState(() => _isPublic = value),

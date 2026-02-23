@@ -164,9 +164,7 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
                     ],
                   ),
                   SizedBox(height: 6),
-
-                  // Recipe Visibility Toggle
-                  InputWidgetTitle(title: "Recipe Visibility"),
+                  // recipe  visibility selector
                   VisibilitySelector(
                     isPublic: _isPublic,
                     onChanged: (value) => setState(() => _isPublic = value),
