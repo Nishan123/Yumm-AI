@@ -5,6 +5,7 @@ import 'package:yumm_ai/features/bug_report/presentation/pages/report_bug_screen
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/login_screen.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/signup_screen.dart';
+import 'package:yumm_ai/features/auth/presentation/pages/forgot_password_screen.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/splash_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/chefs_screen.dart';
 import 'package:yumm_ai/features/chef/presentation/pages/macro_chef_screen.dart';
@@ -160,6 +161,13 @@ class AppRoutes {
         name: "login",
         builder: (context, state) {
           return LoginScreen();
+        },
+      ),
+      GoRoute(
+        path: "/forgot_password",
+        name: "forgot_password",
+        builder: (context, state) {
+          return const ForgotPasswordScreen();
         },
       ),
       GoRoute(

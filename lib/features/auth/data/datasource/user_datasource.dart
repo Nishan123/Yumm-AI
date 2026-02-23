@@ -16,6 +16,7 @@ abstract interface class IAuthRemoteDatasource {
   Future<bool> logOut();
   Future<void> registerForPush(String uid);
   Future<bool> verifyPassword(String uid, String password);
+  Future<void> forgotPassword(String email);
   Future<UserApiModel?> changePassword(
     String uid,
     String oldPassword,

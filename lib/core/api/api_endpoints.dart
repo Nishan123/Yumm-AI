@@ -11,6 +11,7 @@ class ApiEndpoints {
   static const String signup = "/auth/register";
   static const String logout = "/auth/logout";
   static const String googleSignIn = "/auth/google";
+  static const String forgotPassword = "/auth/forgot-password";
   static String verifyPassword(String uid) => "/auth/$uid/verify-password";
   static String changePassword(String uid) => "/auth/$uid/change-password";
 

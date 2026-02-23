@@ -116,7 +116,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             children: [
                               CustomTextButton(
                                 text: "Forget Password?",
-                                onTap: () {},
+                                onTap: () {
+                                  context.pushNamed("forgot_password");
+                                },
                               ),
                             ],
                           ),
