@@ -6,7 +6,6 @@ import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:ui';
 import 'package:yumm_ai/app/theme/app_colors.dart';
-import 'package:yumm_ai/core/constants/constants_string.dart';
 import 'package:yumm_ai/core/providers/current_user_provider.dart';
 import 'package:yumm_ai/core/widgets/primary_icon_button.dart';
 import 'package:yumm_ai/features/cookbook/presentation/state/cookbook_state.dart';
@@ -14,6 +13,7 @@ import 'package:yumm_ai/features/cookbook/presentation/view_model/cookbook_view_
 import 'package:yumm_ai/features/cookbook/presentation/widgets/cookbook_recipe_details_widget.dart';
 import 'package:yumm_ai/features/cookbook/presentation/widgets/read_only_recipe_view.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_details_widget.dart';
+import 'package:yumm_ai/features/cooking/presentation/widgets/image_carousel.dart';
 import 'package:yumm_ai/features/save_recipe/presentation/view_model/save_recipe_view_model.dart';
 
 class CookingScreen extends ConsumerStatefulWidget {
@@ -263,21 +263,7 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: widget.recipe.images.isNotEmpty
-                        ? Image.network(
-                            widget.recipe.images.first,
-                            fit: BoxFit.fitWidth,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Image.asset(
-                                "${ConstantsString.assetImage}/salad.png",
-                                fit: BoxFit.fitWidth,
-                              );
-                            },
-                          )
-                        : Image.asset(
-                            "${ConstantsString.assetImage}/salad.png",
-                            fit: BoxFit.fitWidth,
-                          ),
+                    child: ImageCarousel(images: widget.recipe.images),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(
