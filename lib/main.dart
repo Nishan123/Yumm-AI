@@ -7,9 +7,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yumm_ai/app.dart';
 import 'package:yumm_ai/core/services/storage/user_hive_service.dart';
 import 'package:yumm_ai/core/services/storage/user_session_service.dart';
+import 'package:yumm_ai/features/subscription/subscription_initializer.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeRevenueCat();
   final hiveService = HiveService();
   await hiveService.init();
   await dotenv.load(fileName: ".env");

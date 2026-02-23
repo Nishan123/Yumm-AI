@@ -5,11 +5,12 @@ import 'package:yumm_ai/app/theme/app_text_styles.dart';
 class DealsCard extends StatelessWidget {
   final bool isSelected;
   final bool haveBestValueTag;
-  final double actualPrice;
-  final double oldPrice;
+  final String actualPrice;
+  final String oldPrice;
   final String duration;
   final bool? haveOldPrice;
   final VoidCallback onTap;
+  final Size mq;
 
   const DealsCard({
     super.key,
@@ -22,8 +23,6 @@ class DealsCard extends StatelessWidget {
     this.haveOldPrice,
     required this.onTap,
   });
-
-  final Size mq;
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +82,10 @@ class DealsCard extends StatelessWidget {
                           color: AppColors.lightBlackColor,
                           borderRadius: BorderRadius.circular(40),
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
                         child: Text(
                           "BEST VALUE",
                           style: AppTextStyles.normalText.copyWith(
@@ -99,7 +101,7 @@ class DealsCard extends StatelessWidget {
             _benefitsText("Unlimited Generated Recipes"),
             _benefitsText("Access to all Pro Chef Modes"),
             _benefitsText("Daily Meal Plan Tracking"),
-            _benefitsText("Unlimited Cookbook & Shopping\nLists"),
+            _benefitsText("Unlimited Cookbook & Shopping Lists"),
             SizedBox(height: 12),
           ],
         ),
@@ -109,16 +111,20 @@ class DealsCard extends StatelessWidget {
 
   Widget _benefitsText(String text) {
     return Padding(
-      padding: EdgeInsetsGeometry.symmetric(vertical: 2),
+      padding: EdgeInsets.symmetric(vertical: 2),
       child: Row(
-        spacing: 6,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.check_circle, color: AppColors.primaryColor),
-          Text(
-            text,
-            style: AppTextStyles.descriptionText.copyWith(
-              color: AppColors.blackColor,
-              fontWeight: FontWeight.w600,
+          SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              text,
+              style: AppTextStyles.descriptionText.copyWith(
+                color: AppColors.blackColor,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 2,
             ),
           ),
         ],

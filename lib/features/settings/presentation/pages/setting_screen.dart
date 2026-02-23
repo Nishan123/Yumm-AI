@@ -61,6 +61,9 @@ class SettingScreen extends ConsumerWidget {
                       subTitle: 'Deactivate or delete your account permanently',
                     ),
                     SettingItemCard(
+                      onTap: () {
+                        context.pushNamed("plans");
+                      },
                       leadingIcon: LucideIcons.dollar_sign,
                       title: 'Manage Subscription',
                       subTitle:

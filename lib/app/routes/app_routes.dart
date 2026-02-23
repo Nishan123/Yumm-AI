@@ -26,7 +26,7 @@ import 'package:yumm_ai/features/settings/presentation/pages/app_theme_screen.da
 import 'package:yumm_ai/features/settings/presentation/pages/setting_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/add_shopping_list_screen.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/pages/shopping_list_screen.dart';
-import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plans_screen.dart';
+import 'package:yumm_ai/features/subscription/presentation/pages/available_plans_screen.dart';
 
 import 'package:yumm_ai/core/utils/navigator_key.dart';
 

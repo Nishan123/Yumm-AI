@@ -6,6 +6,7 @@ import 'package:yumm_ai/features/cookbook/presentation/view_model/cookbook_view_
 import 'package:yumm_ai/features/cooking/presentation/providers/recipe_provider.dart';
 import 'package:yumm_ai/features/cooking/presentation/providers/recipe_state_provider.dart';
 import 'package:yumm_ai/features/profile/presentation/view_model/profile_view_model.dart';
+import 'package:yumm_ai/features/subscription/presentation/view_model/subscription_view_model.dart';
 
 /// Provider for the app state reset service.
 final appStateResetServiceProvider = Provider<AppStateResetService>((ref) {
@@ -54,5 +55,8 @@ class AppStateResetService {
 
     // Reset recipe state cache (owner's recipe checkbox states)
     _ref.read(recipeStateCacheProvider.notifier).reset();
+
+    // Reset subscription state
+    _ref.invalidate(subscriptionViewModelProvider);
   }
 }

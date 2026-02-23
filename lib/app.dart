@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:yumm_ai/app/routes/app_routes.dart';
 import 'package:yumm_ai/app/theme/app_theme.dart';
+import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/features/bug_report/presentation/providers/screenshot_provider.dart';
 import 'package:yumm_ai/features/bug_report/presentation/providers/shake_detector_provider.dart';
 import 'package:yumm_ai/features/settings/presentation/providers/theme_provider.dart';
@@ -17,6 +18,9 @@ class MyApp extends ConsumerWidget {
     ref.watch(shakeDetectorProvider);
     final screenshotController = ref.watch(screenshotControllerProvider);
     final themeMode = ref.watch(effectiveThemeModeProvider);
+
+    AppColors.currentThemeMode = themeMode;
+
     return Screenshot(
       controller: screenshotController,
       child: MaterialApp.router(

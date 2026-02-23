@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yumm_ai/features/subscriptions/presentation/pages/available_plans_screen.dart';
+import 'package:yumm_ai/features/subscription/presentation/pages/available_plans_screen.dart';
 
 void main() {
   testWidgets('available plans screen loads correctly', (

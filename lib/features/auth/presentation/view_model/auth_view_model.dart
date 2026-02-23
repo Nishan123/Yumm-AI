@@ -4,6 +4,7 @@ import 'package:yumm_ai/features/auth/domin/usecases/get_current_user_usecase.da
 import 'package:yumm_ai/features/auth/domin/usecases/login_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/logout_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/signup_usecase.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/google_signin_usecase.dart';
 
 import 'package:yumm_ai/features/auth/presentation/state/auth_state.dart';
@@ -80,7 +81,14 @@ class AuthViewModel extends Notifier<AuthState> {
           errorMessage: failure.errorMessage,
         );
       },
-      (user) {
+      (user) async {
+        if (user.uid != null || user.email.isNotEmpty) {
+          try {
+            await Purchases.logIn(user.uid ?? user.email);
+          } catch (e) {
+            // Handle error quietly
+          }
+        }
         state = state.copyWith(status: AuthStatus.authenticated, user: user);
       },
     );
@@ -96,8 +104,13 @@ class AuthViewModel extends Notifier<AuthState> {
           errorMessage: failure.errorMessage,
         );
       },
-      (isLoggedOut) {
+      (isLoggedOut) async {
         if (isLoggedOut) {
+          try {
+            await Purchases.logOut();
+          } catch (e) {
+            // Error handling quietly
+          }
           // Reset all app state providers to clear previous user's data
           _appStateResetService.resetAllState();
           state = state.copyWith(
@@ -124,7 +137,14 @@ class AuthViewModel extends Notifier<AuthState> {
           errorMessage: failure.errorMessage,
         );
       },
-      (user) {
+      (user) async {
+        if (user.uid != null || user.email.isNotEmpty) {
+          try {
+            await Purchases.logIn(user.uid ?? user.email);
+          } catch (e) {
+            // Handle error quietly
+          }
+        }
         state = state.copyWith(status: AuthStatus.authenticated, user: user);
       },
     );
@@ -143,7 +163,14 @@ class AuthViewModel extends Notifier<AuthState> {
           errorMessage: failure.errorMessage,
         );
       },
-      (user) {
+      (user) async {
+        if (user.uid != null || user.email.isNotEmpty) {
+          try {
+            await Purchases.logIn(user.uid ?? user.email);
+          } catch (e) {
+            // Handle error quietly
+          }
+        }
         state = state.copyWith(status: AuthStatus.authenticated, user: user);
       },
     );
