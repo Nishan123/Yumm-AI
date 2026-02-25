@@ -2,6 +2,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   static const String baseUrl = 'http://localhost:5000/api';
+  static const String baseUrl = 'https://yumm-ai-server.vercel.app/api';
 
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
@@ -69,4 +70,12 @@ class ApiEndpoints {
   // ==================== Report Bug ====================
   static const String reportBug = "/bug-report";
   static const String uploadBugReportImage = "/bug-report/upload-screenshot";
+
+  // ================ Shopping List Endpoints ================
+  static const String addShoppingListItem = "/shopping-list";
+  static const String getShoppingList = "/shopping-list";
+  static String updateShoppingListItem(String itemId) =>
+      "/shopping-list/$itemId";
+  static String deleteShoppingListItem(String itemId) =>
+      "/shopping-list/$itemId";
 }

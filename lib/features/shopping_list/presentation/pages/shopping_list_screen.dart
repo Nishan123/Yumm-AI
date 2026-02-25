@@ -6,7 +6,8 @@ import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/custom_text_button.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/shopping_list_type.dart';
-import 'package:yumm_ai/features/shopping_list/presentation/providers/check_shopping_list_provider.dart';
+import 'package:yumm_ai/features/shopping_list/presentation/state/shopping_list_state.dart';
+import 'package:yumm_ai/features/shopping_list/presentation/view_model/shopping_list_view_model.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/widgets/shopping_list_tile.dart';
 
 class ShoppingListScreen extends ConsumerStatefulWidget {
@@ -20,15 +21,49 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
   ShoppingListType _itemType = ShoppingListType.any;
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      ref.read(shoppingListViewModelProvider.notifier).getItems();
+    });
+  }
+
+  void _onCategoryChanged(ShoppingListType type) {
+    setState(() {
+      _itemType = type;
+    });
+    final category = type == ShoppingListType.any ? null : type.value;
+    ref
+        .read(shoppingListViewModelProvider.notifier)
+        .getItems(category: category);
+  }
+
+  String _formatDaysAgo(DateTime? date) {
+    if (date == null) return '0';
+    final diff = DateTime.now().difference(date).inDays;
+    return diff.toString();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final shoppingListState = ref.watch(shoppingListViewModelProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Shopping List"),
         actions: [
           CustomTextButton(
             text: "Add Item",
-            onTap: () {
-              context.pushNamed("add_shopping_list");
+            onTap: () async {
+              final result = await context.pushNamed("add_shopping_list");
+              if (result == true) {
+                final category = _itemType == ShoppingListType.any
+                    ? null
+                    : _itemType.value;
+                ref
+                    .read(shoppingListViewModelProvider.notifier)
+                    .getItems(category: category);
+              }
             },
             buttonTextStyle: AppTextStyles.h6.copyWith(
               color: AppColors.blueColor,
@@ -39,48 +74,110 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            spacing: 12,
-            children: [
-              SizedBox(height: 12,),
-              CustomChoiceChip(
-                onSelected: (value) {
-                  setState(() {
-                    _itemType = value;
-                  });
-                },
-                values: ShoppingListType.values,
-                labelBuilder: (item) => item.text,
-                iconBuilder: (item) => null,
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: 6,
-                itemBuilder: (context, index) {
-                  final isChecked = ref.watch(checkShoppingListProvider(index));
-
-                  return ShoppingListTile(
-                    itemName: 'Item Name',
-                    dayAdded: '4',
-                    quantity: '20',
-                    isChecked: isChecked,
-                    onChanged: (value) {
-                      ref
-                              .read(checkShoppingListProvider(index).notifier)
-                              .state =
-                          value!;
-                    },
-                    itemImage:
-                        'https://www.themealdb.com/images/ingredients/Butter.png',
-                  );
-                },
-              ),
-            ],
-          ),
+        child: Column(
+          children: [
+            SizedBox(height: 12),
+            CustomChoiceChip(
+              onSelected: (value) {
+                _onCategoryChanged(value);
+              },
+              values: ShoppingListType.values,
+              labelBuilder: (item) => item.text,
+              iconBuilder: (item) => null,
+            ),
+            SizedBox(height: 12),
+            Expanded(child: _buildBody(shoppingListState)),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _buildBody(ShoppingListState shoppingListState) {
+    if (shoppingListState.status == ShoppingListStatus.loading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (shoppingListState.status == ShoppingListStatus.error) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              shoppingListState.errorMessage ?? 'Something went wrong',
+              style: AppTextStyles.normalText.copyWith(
+                color: AppColors.redColor,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 12),
+            TextButton(
+              onPressed: () {
+                final category = _itemType == ShoppingListType.any
+                    ? null
+                    : _itemType.value;
+                ref
+                    .read(shoppingListViewModelProvider.notifier)
+                    .getItems(category: category);
+              },
+              child: Text("Retry"),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (shoppingListState.items.isEmpty &&
+        shoppingListState.status == ShoppingListStatus.loaded) {
+      return Center(
+        child: Text(
+          "No items in your shopping list.\nTap 'Add Item' to get started!",
+          style: AppTextStyles.normalText.copyWith(
+            color: AppColors.descriptionTextColor,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: shoppingListState.items.length,
+      itemBuilder: (context, index) {
+        final item = shoppingListState.items[index];
+        return Dismissible(
+          key: Key(item.itemId ?? index.toString()),
+          direction: DismissDirection.endToStart,
+          background: Container(
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.only(right: 24),
+            margin: EdgeInsets.only(left: 16, right: 16, bottom: 10),
+            decoration: BoxDecoration(
+              color: AppColors.redColor,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(Icons.delete, color: AppColors.whiteColor),
+          ),
+          onDismissed: (_) {
+            if (item.itemId != null) {
+              ref
+                  .read(shoppingListViewModelProvider.notifier)
+                  .deleteItem(item.itemId!);
+            }
+          },
+          child: ShoppingListTile(
+            itemName: item.name,
+            dayAdded: _formatDaysAgo(item.createdAt),
+            quantity: '${item.quantity} ${item.unit}',
+            isChecked: item.isChecked,
+            onChanged: (value) {
+              ref
+                  .read(shoppingListViewModelProvider.notifier)
+                  .toggleChecked(item);
+            },
+            itemImage: item.imageUrl,
+          ),
+        );
+      },
     );
   }
 }

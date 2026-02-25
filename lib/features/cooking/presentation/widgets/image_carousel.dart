@@ -62,7 +62,7 @@ class _ImageCarouselState extends State<ImageCarousel> {
                   decoration: BoxDecoration(
                     color: _currentImageIndex == index
                         ? AppColors.primaryColor
-                        : AppColors.whiteColor.withOpacity(0.5),
+                        : AppColors.whiteColor,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

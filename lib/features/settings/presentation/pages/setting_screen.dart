@@ -111,7 +111,7 @@ class SettingScreen extends ConsumerWidget {
                       title: 'Report bug',
                       subTitle: 'Report bug or app crashes & help us improve',
                       onTap: () {
-                        context.goNamed("report_bug");
+                        context.pushNamed("report_bug");
                       },
                     ),
                     SettingItemCard(

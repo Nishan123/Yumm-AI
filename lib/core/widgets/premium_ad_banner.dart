@@ -49,7 +49,7 @@ class PremiumAdBanner extends ConsumerWidget {
         context.pushNamed("plans");
       },
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 18),
+        margin: EdgeInsets.only(left: 18,right: 18,bottom: 12),
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height * 0.2,
         decoration: BoxDecoration(

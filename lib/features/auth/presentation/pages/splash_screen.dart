@@ -12,15 +12,34 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends ConsumerState<SplashScreen> {
+class _SplashPageState extends ConsumerState<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _fadeController;
+  late final Animation<double> _fadeAnimation;
+
   @override
   void initState() {
     super.initState();
+
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    );
+
+    // Start fade-in immediately
+    _fadeController.forward();
+
     _navigateToNext();
   }
 
   Future<void> _navigateToNext() async {
-    await Future.delayed(const Duration(seconds: 5));
+    // Reduced from 5s to 2.5s — just enough for the GIF logo to play
+    await Future.delayed(const Duration(milliseconds: 2500));
     if (!mounted) return;
 
     // Check if user is already logged in
@@ -36,6 +55,7 @@ class _SplashPageState extends ConsumerState<SplashScreen> {
 
   @override
   void dispose() {
+    _fadeController.dispose();
     super.dispose();
   }
 
@@ -44,9 +64,12 @@ class _SplashPageState extends ConsumerState<SplashScreen> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       body: Center(
-        child: Image.asset(
-          "${ConstantsString.assetGif}/animated_text_logo.gif",
-          width: 200,
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: Image.asset(
+            "${ConstantsString.assetGif}/animated_text_logo.gif",
+            width: 200,
+          ),
         ),
       ),
     );

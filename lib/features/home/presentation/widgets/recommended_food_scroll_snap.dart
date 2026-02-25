@@ -14,7 +14,7 @@ class RecommendedFoodScrollSnap extends ConsumerStatefulWidget {
 
 class _RecommendedFoodScrollSnapState
     extends ConsumerState<RecommendedFoodScrollSnap> {
-  final _controller = PageController(viewportFraction: 0.82);
+  final _controller = PageController(viewportFraction: 0.90);
   int focusedIndex = 0;
 
   @override
@@ -27,8 +27,17 @@ class _RecommendedFoodScrollSnapState
   Widget build(BuildContext context) {
     final recipesAsyncValue = ref.watch(publicRecipesProvider);
 
+    ref.listen(publicRecipesProvider, (previous, next) {
+      if (previous is AsyncLoading && next is AsyncData) {
+        if (_controller.hasClients) {
+          _controller.jumpToPage(0);
+        }
+        setState(() => focusedIndex = 0);
+      }
+    });
+
     return SizedBox(
-      height: 390,
+      height: 440,
       width: double.infinity,
       child: recipesAsyncValue.when(
         data: (recipes) {

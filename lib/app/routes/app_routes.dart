@@ -35,7 +35,7 @@ class AppRoutes {
   AppRoutes();
   final GoRouter appRoutes = GoRouter(
     navigatorKey: navigatorKey,
-    initialLocation: "/main",
+    initialLocation: "/",
     routes: [
       GoRoute(
         path: "/",

@@ -8,8 +8,8 @@ class RecommendedFoodSnapLoadingSkelaton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context).size;
-    // Match the PageController viewportFraction (0.82) for card width
-    final cardWidth = mq.width * 0.74;
+    // Match the PageController viewportFraction (0.90) for card width
+    final cardWidth = mq.width * 0.82;
 
     return SizedBox(
       width: mq.width,

@@ -35,12 +35,13 @@ class RecipeRepositoryImpl implements IRecipeRepository {
       ({List<RecipeEntity> recipes, int total, int page, int totalPages})
     >
   >
-  getPublicRecipes({int page = 1, int limit = 10}) async {
+  getPublicRecipes({int page = 1, int limit = 10, String? mealType}) async {
     if (await _networkInfo.isConnected) {
       try {
         final result = await _remoteDataSource.getPublicRecipes(
           page: page,
           limit: limit,
+          mealType: mealType,
         );
         final entities = result.recipes.map((e) => e.toEntity()).toList();
         return Right((

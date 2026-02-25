@@ -94,7 +94,7 @@ class _HomeFoodRecommendationsState
             context.pushNamed("cooking", extra: widget.recipe);
           },
           child: Container(
-            width: mq.width * 0.90,
+            width: mq.width * 0.95,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(40),
               color: AppColors.lightBlackColor,

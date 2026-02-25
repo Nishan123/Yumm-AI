@@ -11,7 +11,7 @@ final recipeRemoteDataSourceProvider = Provider((ref) {
 
 abstract class IRecipeRemoteDataSource {
   Future<({List<RecipeModel> recipes, int total, int page, int totalPages})>
-  getPublicRecipes({int page = 1, int limit = 10});
+  getPublicRecipes({int page = 1, int limit = 10, String? mealType});
   Future<RecipeModel> updateRecipe(RecipeModel recipe);
   Future<({List<RecipeModel> recipes, int total, int page, int totalPages})>
   getTopPublicRecipe({int page = 1, int limit = 10});
@@ -25,10 +25,12 @@ class RecipeRemoteDataSource implements IRecipeRemoteDataSource {
 
   @override
   Future<({List<RecipeModel> recipes, int total, int page, int totalPages})>
-  getPublicRecipes({int page = 1, int limit = 10}) async {
-    final response = await _apiClient.get(
-      "${ApiEndpoints.getPublicRecipes}?page=$page&limit=$limit",
-    );
+  getPublicRecipes({int page = 1, int limit = 10, String? mealType}) async {
+    String url = "${ApiEndpoints.getPublicRecipes}?page=$page&limit=$limit";
+    if (mealType != null && mealType.isNotEmpty) {
+      url += "&mealType=$mealType";
+    }
+    final response = await _apiClient.get(url);
     if (response.data["success"]) {
       final data = response.data["data"];
       final recipesData = data["recipe"] as List<dynamic>;

@@ -1,15 +1,19 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/custom_drop_down.dart';
+import 'package:yumm_ai/core/widgets/custom_snack_bar.dart';
 import 'package:yumm_ai/core/widgets/primary_text_field.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/presentation/providers/get_ingredients_provider.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/item_unit.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/shopping_list_type.dart';
+import 'package:yumm_ai/features/shopping_list/presentation/state/shopping_list_state.dart';
+import 'package:yumm_ai/features/shopping_list/presentation/view_model/shopping_list_view_model.dart';
 
 class AddShoppingListScreen extends ConsumerStatefulWidget {
   const AddShoppingListScreen({super.key});
@@ -32,6 +36,7 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
   String? _ingredientsError;
   String _query = "";
   String? _selectedIngredientId;
+  String _selectedImageUrl = "";
 
   @override
   void initState() {
@@ -68,6 +73,7 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
     setState(() {
       _query = value.trim();
       _selectedIngredientId = null;
+      _selectedImageUrl = "";
       _filteredIngredients = _query.isEmpty
           ? _ingredients
           : _ingredients
@@ -82,11 +88,41 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
   void _selectIngredient(IngredientModel item) {
     setState(() {
       _selectedIngredientId = item.ingredientId;
+      _selectedImageUrl = item.imageUrl;
       itemController.text = item.name;
       _query = item.name;
       _filteredIngredients = [item];
     });
     FocusScope.of(context).unfocus();
+  }
+
+  Future<void> _onSubmit() async {
+    if (!_form.currentState!.validate()) return;
+
+    final viewModel = ref.read(shoppingListViewModelProvider.notifier);
+    final success = await viewModel.addItem(
+      name: itemController.text.trim(),
+      imageUrl: _selectedImageUrl,
+      quantity: quantityController.text.trim(),
+      unit: _selectedUnit,
+      category: _itemType.value,
+      ingredientId: _selectedIngredientId,
+    );
+
+    if (!mounted) return;
+
+    if (success) {
+      CustomSnackBar.showSuccessSnackBar(
+        context,
+        "Shopping List added successfully",
+      );
+      context.pop(true);
+    } else {
+      final errorMessage =
+          ref.read(shoppingListViewModelProvider).errorMessage ??
+          'Failed to add item';
+      CustomSnackBar.showErrorSnackBar(context, errorMessage);
+    }
   }
 
   @override
@@ -98,6 +134,9 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final shoppingListState = ref.watch(shoppingListViewModelProvider);
+    final isAdding = shoppingListState.status == ShoppingListStatus.adding;
+
     return Scaffold(
       appBar: AppBar(title: Text("Add Shopping List")),
       body: SafeArea(
@@ -243,7 +282,6 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
                         onSelected: (value) {
                           setState(() {
                             _itemType = value;
-                            debugPrint(_itemType.value);
                           });
                         },
                         values: ShoppingListType.values,
@@ -254,14 +292,8 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
                       SecondaryButton(
                         borderRadius: 40,
                         backgroundColor: AppColors.blackColor,
-                        onTap: () {
-                          if (!_form.currentState!.validate()) return;
-
-                          debugPrint(
-                            "${itemController.text}, $_selectedIngredientId, $_selectedUnit, ${quantityController.text}, ${_itemType.value}",
-                          );
-                        },
-                        text: "Add Item",
+                        onTap: isAdding ? null : _onSubmit,
+                        text: isAdding ? "Adding..." : "Add Item",
                       ),
                       SizedBox(height: 20),
                     ],

@@ -25,8 +25,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  Meal _selectedMealType = Meal.anything;
-
   @override
   Widget build(BuildContext context) {
     // Watch user data from the database
@@ -83,7 +81,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ).push(SearchScreen.route(focusFilter: true));
                     },
                   ),
-
                   SizedBox(height: 18),
                   //Premium Card
                   PremiumAdBanner(
@@ -93,16 +90,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     buttonText: 'Go Premium',
                   ),
 
-                  SizedBox(height: 12),
-
                   //Choice Chips
                   CustomChoiceChip<Meal>(
                     values: Meal.values,
                     onSelected: (value) {
-                      setState(() {
-                        _selectedMealType = value;
-                        debugPrint(_selectedMealType.text);
-                      });
+                      ref.read(selectedMealTypeProvider.notifier).state = value;
                     },
                     labelBuilder: (meal) => meal.text,
                     iconBuilder: (meal) => meal.icon,
