@@ -11,8 +11,13 @@ import 'package:yumm_ai/features/profile/domain/repositories/profile_repository.
 class DeleteUserWithPasswordParams {
   final String uid;
   final String password;
+  final String? reason;
 
-  DeleteUserWithPasswordParams({required this.uid, required this.password});
+  DeleteUserWithPasswordParams({
+    required this.uid,
+    required this.password,
+    this.reason,
+  });
 }
 
 /// Usecase for deleting user with password verification (emailPassword auth)
@@ -37,6 +42,7 @@ class DeleteUserWithPasswordUsecase
     return await _iProfileRepository.deleteUserWithPassword(
       params.uid,
       params.password,
+      params.reason,
     );
   }
 }
@@ -44,8 +50,9 @@ class DeleteUserWithPasswordUsecase
 /// Parameters for deleting user with Google verification
 class DeleteUserWithGoogleParams {
   final String uid;
+  final String? reason;
 
-  DeleteUserWithGoogleParams({required this.uid});
+  DeleteUserWithGoogleParams({required this.uid, this.reason});
 }
 
 /// Usecase for deleting user with Google token verification (Google auth)
@@ -96,6 +103,7 @@ class DeleteUserWithGoogleUsecase
       return await _iProfileRepository.deleteUserWithGoogle(
         params.uid,
         idToken,
+        params.reason,
       );
     } catch (e) {
       return Left(

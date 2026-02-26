@@ -164,13 +164,13 @@ class ProfileViewModel extends Notifier<ProfileScreenState> {
     );
   }
 
-  Future<void> deleteUserProfile(String uid) async {
+  Future<void> deleteUserProfile(String uid, [String? reason]) async {
     state = state.copyWith(
       profileState: ProfileStates.loading,
       message: "Deleting user profile",
     );
     final result = await _deleteUserUsecase.call(
-      DeleteUserUsecaseParams(uid: uid),
+      DeleteUserUsecaseParams(uid: uid, reason: reason),
     );
     result.fold(
       (failure) {

@@ -9,7 +9,15 @@ abstract interface class IProfileRemoteDatasource {
     bool isSubscribed,
     String uid,
   );
-  Future<bool> deleteProfile(String uid);
-  Future<bool> deleteProfileWithPassword(String uid, String password);
-  Future<bool> deleteProfileWithGoogle(String uid, String idToken);
+  Future<bool> deleteProfile(String uid, [String? reason]);
+  Future<bool> deleteProfileWithPassword(
+    String uid,
+    String password, [
+    String? reason,
+  ]);
+  Future<bool> deleteProfileWithGoogle(
+    String uid,
+    String idToken, [
+    String? reason,
+  ]);
 }

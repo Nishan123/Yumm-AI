@@ -7,8 +7,9 @@ import 'package:yumm_ai/features/profile/domain/repositories/profile_repository.
 
 class DeleteUserUsecaseParams {
   String uid;
+  String? reason;
 
-  DeleteUserUsecaseParams({required this.uid});
+  DeleteUserUsecaseParams({required this.uid, this.reason});
 }
 
 final deleteUserUsecaseProvider = Provider((ref) {
@@ -25,6 +26,6 @@ class DeleteUserUsecase
 
   @override
   Future<Either<Failure, bool>> call(DeleteUserUsecaseParams params) async {
-    return await _iProfileRepository.deleteUser(params.uid);
+    return await _iProfileRepository.deleteUser(params.uid, params.reason);
   }
 }

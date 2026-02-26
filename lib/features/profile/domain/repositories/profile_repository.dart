@@ -14,15 +14,17 @@ abstract interface class IProfileRepository {
     String uid,
   );
 
-  Future<Either<Failure, bool>> deleteUser(String uid);
+  Future<Either<Failure, bool>> deleteUser(String uid, [String? reason]);
 
   Future<Either<Failure, bool>> deleteUserWithPassword(
     String uid,
-    String password,
-  );
+    String password, [
+    String? reason,
+  ]);
 
   Future<Either<Failure, bool>> deleteUserWithGoogle(
     String uid,
-    String idToken,
-  );
+    String idToken, [
+    String? reason,
+  ]);
 }

@@ -20,6 +20,7 @@ import 'package:yumm_ai/features/chef/presentation/widgets/available_time_select
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_chip.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_wrap_container.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/visibility_selector.dart';
+import 'package:yumm_ai/features/pantry_inventory/presentation/providers/pantry_inventory_provider.dart';
 
 class PantryChefScreen extends ConsumerStatefulWidget {
   const PantryChefScreen({super.key});
@@ -34,6 +35,7 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
   Meal _selectedMeal = Meal.anything;
   List<IngredientModel> selectedIngredients = [];
   bool _isPublic = true;
+  int _selectedTabIndex = 0;
 
   void onAddItem() {
     showModalBottomSheet(
@@ -52,11 +54,43 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
     );
   }
 
+  void _onTabChanged(int index) {
+    setState(() {
+      _selectedTabIndex = index;
+      if (index == 1) {
+        // "Your Inventory" tab — load pantry items
+        final pantryAsync = ref.read(pantryInventoryProvider);
+        pantryAsync.whenData((pantryItems) {
+          setState(() {
+            selectedIngredients = List.from(pantryItems);
+          });
+        });
+      } else {
+        // "Ingredients List" tab — clear and let user add manually
+        selectedIngredients = [];
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var mq = MediaQuery.of(context).size;
     final state = ref.watch(pantryChefViewModelProvider);
     final userAsync = ref.watch(currentUserProvider);
+
+    // Watch pantry inventory so it stays updated when on "Your Inventory" tab
+    if (_selectedTabIndex == 1) {
+      final pantryAsync = ref.watch(pantryInventoryProvider);
+      pantryAsync.whenData((pantryItems) {
+        if (selectedIngredients.length != pantryItems.length) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+              selectedIngredients = List.from(pantryItems);
+            });
+          });
+        }
+      });
+    }
 
     // Listen for loading state to navigate to loading screen
     ref.listen(pantryChefViewModelProvider, (previous, next) {
@@ -70,6 +104,8 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
       }
     });
 
+    final isInventoryTab = _selectedTabIndex == 1;
+
     return Scaffold(
       appBar: AppBar(title: Text("Pantry Chef")),
       body: SafeArea(
@@ -80,37 +116,46 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
                 spacing: 8,
                 children: [
                   SizedBox(height: 12),
-                  CookbookHint(text:"Generated meal is saved in your Cookbook"),
+                  CookbookHint(
+                    text: "Generated meal is saved in your Cookbook",
+                  ),
                   SizedBox(height: 6),
-                  CustomTabBar(
+                  CustomTabBar<int>(
                     tabItems: ["Ingredients List", "Your Inventory"],
+                    values: [0, 1],
+                    onTabChanged: _onTabChanged,
                   ),
                   SizedBox(height: 6),
 
                   InputWidgetTitle(
-                    title: "Selected ingredients",
-                    haveActionButton: true,
+                    title: isInventoryTab
+                        ? "Pantry ingredients"
+                        : "Selected ingredients",
+                    haveActionButton: !isInventoryTab,
                     actionButtonText: "Add Item",
                     onActionTap: () {
                       onAddItem();
                     },
                   ),
                   IngredientsWrapContainer(
-                    haveAddIngredientButton: true,
+                    haveAddIngredientButton: !isInventoryTab,
                     onAddIngredientButtonPressed: () {
                       onAddItem();
                     },
                     items: selectedIngredients
                         .map(
                           (ing) => IngredientsChip(
-                            onTap: () {
-                              setState(() {
-                                selectedIngredients.removeWhere(
-                                  (item) =>
-                                      item.ingredientId == ing.ingredientId,
-                                );
-                              });
-                            },
+                            onTap: isInventoryTab
+                                ? () {}
+                                : () {
+                                    setState(() {
+                                      selectedIngredients.removeWhere(
+                                        (item) =>
+                                            item.ingredientId ==
+                                            ing.ingredientId,
+                                      );
+                                    });
+                                  },
                             text: ing.name,
                             image: ing.imageUrl,
                           ),

@@ -199,6 +199,8 @@ class _DeleteProfileScreenState extends ConsumerState<DeleteProfileScreen> {
       return;
     }
 
+    // Create a comma-separated string of selected reasons
+    final composedReason = selectedOptions.join(", ");
     final viewModel = ref.read(deleteProfileViewModelProvider.notifier);
 
     if (isAuthEmailPass) {
@@ -207,11 +209,12 @@ class _DeleteProfileScreenState extends ConsumerState<DeleteProfileScreen> {
         viewModel.deleteWithPassword(
           uid: uid,
           password: passwordController.text,
+          reason: composedReason,
         );
       }
     } else {
       // For Google auth users, trigger Google re-authentication flow
-      viewModel.deleteWithGoogle(uid: uid);
+      viewModel.deleteWithGoogle(uid: uid, reason: composedReason);
     }
   }
 }

@@ -1,8 +1,8 @@
 class ApiEndpoints {
   ApiEndpoints._();
 
-  // static const String baseUrl = 'http://localhost:5000/api';
-  static const String baseUrl = 'https://yumm-ai-server.vercel.app/api';
+  static const String baseUrl = 'http://localhost:5000/api';
+  // static const String baseUrl = 'https://yumm-ai-server.vercel.app/api';
 
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);

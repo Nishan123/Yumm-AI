@@ -95,10 +95,11 @@ class ProfileRemoteDatasource implements IProfileRemoteDatasource {
   }
 
   @override
-  Future<bool> deleteProfile(String uid) async {
+  Future<bool> deleteProfile(String uid, [String? reason]) async {
     final token = await _tokenStorageService.getToken();
     final response = await _apiClient.delete(
       ApiEndpoints.deleteUser(uid),
+      data: reason != null ? {'reason': reason} : null,
       options: Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
       ),
@@ -112,11 +113,15 @@ class ProfileRemoteDatasource implements IProfileRemoteDatasource {
   }
 
   @override
-  Future<bool> deleteProfileWithPassword(String uid, String password) async {
+  Future<bool> deleteProfileWithPassword(
+    String uid,
+    String password, [
+    String? reason,
+  ]) async {
     final token = await _tokenStorageService.getToken();
     final response = await _apiClient.delete(
       ApiEndpoints.deleteUserWithPassword(uid),
-      data: {'password': password},
+      data: {'password': password, if (reason != null) 'reason': reason},
       options: Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
       ),
@@ -130,11 +135,15 @@ class ProfileRemoteDatasource implements IProfileRemoteDatasource {
   }
 
   @override
-  Future<bool> deleteProfileWithGoogle(String uid, String idToken) async {
+  Future<bool> deleteProfileWithGoogle(
+    String uid,
+    String idToken, [
+    String? reason,
+  ]) async {
     final token = await _tokenStorageService.getToken();
     final response = await _apiClient.delete(
       ApiEndpoints.deleteUserWithGoogle(uid),
-      data: {'idToken': idToken},
+      data: {'idToken': idToken, if (reason != null) 'reason': reason},
       options: Options(
         headers: {HttpHeaders.authorizationHeader: 'Bearer $token'},
       ),

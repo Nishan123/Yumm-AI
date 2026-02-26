@@ -30,11 +30,16 @@ class DeleteProfileViewModel extends Notifier<DeleteProfileState> {
   Future<void> deleteWithPassword({
     required String uid,
     required String password,
+    String? reason,
   }) async {
     state = state.copyWith(status: DeleteProfileStatus.loading);
 
     final result = await _deleteWithPasswordUsecase.call(
-      DeleteUserWithPasswordParams(uid: uid, password: password),
+      DeleteUserWithPasswordParams(
+        uid: uid,
+        password: password,
+        reason: reason,
+      ),
     );
 
     await result.fold(
@@ -56,11 +61,11 @@ class DeleteProfileViewModel extends Notifier<DeleteProfileState> {
   }
 
   /// Delete user profile with Google verification (for Google auth users)
-  Future<void> deleteWithGoogle({required String uid}) async {
+  Future<void> deleteWithGoogle({required String uid, String? reason}) async {
     state = state.copyWith(status: DeleteProfileStatus.loading);
 
     final result = await _deleteWithGoogleUsecase.call(
-      DeleteUserWithGoogleParams(uid: uid),
+      DeleteUserWithGoogleParams(uid: uid, reason: reason),
     );
 
     await result.fold(

@@ -64,9 +64,9 @@ class ProfileRepository implements IProfileRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> deleteUser(String uid) async {
+  Future<Either<Failure, bool>> deleteUser(String uid, [String? reason]) async {
     try {
-      await _remoteDatasource.deleteProfile(uid);
+      await _remoteDatasource.deleteProfile(uid, reason);
       return Right(true);
     } catch (e) {
       return Left(ApiFailure(message: e.toString()));
@@ -76,10 +76,11 @@ class ProfileRepository implements IProfileRepository {
   @override
   Future<Either<Failure, bool>> deleteUserWithPassword(
     String uid,
-    String password,
-  ) async {
+    String password, [
+    String? reason,
+  ]) async {
     try {
-      await _remoteDatasource.deleteProfileWithPassword(uid, password);
+      await _remoteDatasource.deleteProfileWithPassword(uid, password, reason);
       return Right(true);
     } on DioException catch (e) {
       debugPrint('ProfileRepository: DioException - ${e.message}');
@@ -95,10 +96,11 @@ class ProfileRepository implements IProfileRepository {
   @override
   Future<Either<Failure, bool>> deleteUserWithGoogle(
     String uid,
-    String idToken,
-  ) async {
+    String idToken, [
+    String? reason,
+  ]) async {
     try {
-      await _remoteDatasource.deleteProfileWithGoogle(uid, idToken);
+      await _remoteDatasource.deleteProfileWithGoogle(uid, idToken, reason);
       return Right(true);
     } on DioException catch (e) {
       debugPrint('ProfileRepository: DioException - ${e.message}');
