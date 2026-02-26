@@ -8,16 +8,12 @@ import 'package:yumm_ai/features/shopping_list/domain/entities/shopping_list_ent
 import 'package:yumm_ai/features/shopping_list/domain/repositories/shopping_list_repository.dart';
 
 class AddShoppingListItemParam extends Equatable {
-  final String name;
-  final String imageUrl;
   final String quantity;
   final String unit;
   final String category;
   final String? ingredientId;
 
   const AddShoppingListItemParam({
-    required this.name,
-    this.imageUrl = '',
     required this.quantity,
     required this.unit,
     this.category = 'none',
@@ -25,14 +21,7 @@ class AddShoppingListItemParam extends Equatable {
   });
 
   @override
-  List<Object?> get props => [
-    name,
-    imageUrl,
-    quantity,
-    unit,
-    category,
-    ingredientId,
-  ];
+  List<Object?> get props => [quantity, unit, category, ingredientId];
 }
 
 final addShoppingListItemUsecaseProvider = Provider((ref) {
@@ -52,8 +41,6 @@ class AddShoppingListItemUsecase
     AddShoppingListItemParam params,
   ) {
     final entity = ShoppingListEntity(
-      name: params.name,
-      imageUrl: params.imageUrl,
       quantity: params.quantity,
       unit: params.unit,
       category: params.category,

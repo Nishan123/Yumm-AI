@@ -25,9 +25,9 @@ class ShoppingListTile extends StatelessWidget {
     final mq = MediaQuery.of(context).size;
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(width: 0.6, color: AppColors.lightPrimaryColor),
+        border: Border.all(width: 4, color: AppColors.extraLightBlackColor),
         borderRadius: BorderRadius.circular(16),
-        color: AppColors.extraLightBlackColor,
+        color: AppColors.whiteColor,
       ),
       padding: EdgeInsets.symmetric(horizontal: 6, vertical: 5),
       margin: EdgeInsets.only(left: 16, right: 16, bottom: 10),
@@ -103,10 +103,10 @@ class ShoppingListTile extends StatelessWidget {
                     return Icon(Icons.error);
                   },
                   imageUrl: itemImage,
-                  height: 60,
-                  width: 60,
+                  height: 50,
+                  width: 50,
                 )
-              : SizedBox(height: 60, width: 60),
+              : SizedBox(height: 50, width: 50),
         ],
       ),
     );

@@ -12,10 +12,10 @@ final shoppingListViewModelProvider =
     );
 
 class ShoppingListViewModel extends Notifier<ShoppingListState> {
-  late final AddShoppingListItemUsecase _addItemUsecase;
-  late final GetShoppingListUsecase _getItemsUsecase;
-  late final UpdateShoppingListItemUsecase _updateItemUsecase;
-  late final DeleteShoppingListItemUsecase _deleteItemUsecase;
+  late AddShoppingListItemUsecase _addItemUsecase;
+  late GetShoppingListUsecase _getItemsUsecase;
+  late UpdateShoppingListItemUsecase _updateItemUsecase;
+  late DeleteShoppingListItemUsecase _deleteItemUsecase;
 
   @override
   ShoppingListState build() {
@@ -43,8 +43,6 @@ class ShoppingListViewModel extends Notifier<ShoppingListState> {
   }
 
   Future<bool> addItem({
-    required String name,
-    String imageUrl = '',
     required String quantity,
     required String unit,
     String category = 'none',
@@ -52,8 +50,6 @@ class ShoppingListViewModel extends Notifier<ShoppingListState> {
   }) async {
     state = state.copyWith(status: ShoppingListStatus.adding);
     final params = AddShoppingListItemParam(
-      name: name,
-      imageUrl: imageUrl,
       quantity: quantity,
       unit: unit,
       category: category,
@@ -86,8 +82,6 @@ class ShoppingListViewModel extends Notifier<ShoppingListState> {
         return ShoppingListEntity(
           itemId: e.itemId,
           userId: e.userId,
-          name: e.name,
-          imageUrl: e.imageUrl,
           quantity: e.quantity,
           unit: e.unit,
           category: e.category,
@@ -104,8 +98,6 @@ class ShoppingListViewModel extends Notifier<ShoppingListState> {
     final toggledItem = ShoppingListEntity(
       itemId: item.itemId,
       userId: item.userId,
-      name: item.name,
-      imageUrl: item.imageUrl,
       quantity: item.quantity,
       unit: item.unit,
       category: item.category,
@@ -134,23 +126,26 @@ class ShoppingListViewModel extends Notifier<ShoppingListState> {
   }
 
   Future<void> deleteItem(String itemId) async {
-    state = state.copyWith(status: ShoppingListStatus.deleting);
+    // Optimistically remove the item immediately to avoid Dismissible error
+    final previousItems = state.items;
+    final updatedItems = state.items.where((e) => e.itemId != itemId).toList();
+    state = state.copyWith(
+      status: ShoppingListStatus.loaded,
+      items: updatedItems,
+    );
+
     final result = await _deleteItemUsecase.call(itemId);
     result.fold(
       (failure) {
+        // Revert on failure
         state = state.copyWith(
           status: ShoppingListStatus.error,
+          items: previousItems,
           errorMessage: failure.errorMessage,
         );
       },
       (_) {
-        final updatedItems = state.items
-            .where((e) => e.itemId != itemId)
-            .toList();
-        state = state.copyWith(
-          status: ShoppingListStatus.loaded,
-          items: updatedItems,
-        );
+        // Already removed optimistically
       },
     );
   }

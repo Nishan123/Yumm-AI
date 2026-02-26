@@ -36,7 +36,6 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
   String? _ingredientsError;
   String _query = "";
   String? _selectedIngredientId;
-  String _selectedImageUrl = "";
 
   @override
   void initState() {
@@ -73,7 +72,6 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
     setState(() {
       _query = value.trim();
       _selectedIngredientId = null;
-      _selectedImageUrl = "";
       _filteredIngredients = _query.isEmpty
           ? _ingredients
           : _ingredients
@@ -88,7 +86,6 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
   void _selectIngredient(IngredientModel item) {
     setState(() {
       _selectedIngredientId = item.ingredientId;
-      _selectedImageUrl = item.imageUrl;
       itemController.text = item.name;
       _query = item.name;
       _filteredIngredients = [item];
@@ -101,8 +98,6 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
 
     final viewModel = ref.read(shoppingListViewModelProvider.notifier);
     final success = await viewModel.addItem(
-      name: itemController.text.trim(),
-      imageUrl: _selectedImageUrl,
       quantity: quantityController.text.trim(),
       unit: _selectedUnit,
       category: _itemType.value,

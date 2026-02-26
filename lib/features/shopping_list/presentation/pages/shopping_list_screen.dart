@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
+import 'package:yumm_ai/core/widgets/cookbook_hint.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
 import 'package:yumm_ai/core/widgets/custom_text_button.dart';
+import 'package:yumm_ai/features/shopping_list/data/services/ingredient_lookup_service.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/shopping_list_type.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/state/shopping_list_state.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/view_model/shopping_list_view_model.dart';
@@ -23,9 +25,24 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      ref.read(shoppingListViewModelProvider.notifier).getItems();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadShoppingList();
     });
+  }
+
+  Future<void> _loadShoppingList({bool forceRefresh = false}) async {
+    final currentState = ref.read(shoppingListViewModelProvider);
+    if (!forceRefresh &&
+        currentState.items.isNotEmpty &&
+        currentState.status != ShoppingListStatus.initial &&
+        currentState.status != ShoppingListStatus.error) {
+      return; // Use cached data
+    }
+
+    final category = _itemType == ShoppingListType.any ? null : _itemType.value;
+    ref
+        .read(shoppingListViewModelProvider.notifier)
+        .getItems(category: category);
   }
 
   void _onCategoryChanged(ShoppingListType type) {
@@ -47,6 +64,8 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
   @override
   Widget build(BuildContext context) {
     final shoppingListState = ref.watch(shoppingListViewModelProvider);
+    final ingredientLookup = ref.watch(ingredientLookupProvider);
+    final lookupMap = ingredientLookup.value ?? {};
 
     return Scaffold(
       appBar: AppBar(
@@ -57,12 +76,7 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
             onTap: () async {
               final result = await context.pushNamed("add_shopping_list");
               if (result == true) {
-                final category = _itemType == ShoppingListType.any
-                    ? null
-                    : _itemType.value;
-                ref
-                    .read(shoppingListViewModelProvider.notifier)
-                    .getItems(category: category);
+                _loadShoppingList(forceRefresh: true);
               }
             },
             buttonTextStyle: AppTextStyles.h6.copyWith(
@@ -74,26 +88,36 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
         ],
       ),
       body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 12),
-            CustomChoiceChip(
-              onSelected: (value) {
-                _onCategoryChanged(value);
-              },
-              values: ShoppingListType.values,
-              labelBuilder: (item) => item.text,
-              iconBuilder: (item) => null,
-            ),
-            SizedBox(height: 12),
-            Expanded(child: _buildBody(shoppingListState)),
-          ],
+        child: RefreshIndicator(
+          onRefresh: () => _loadShoppingList(forceRefresh: true),
+          child: Column(
+            children: [
+              SizedBox(height: 12),
+              CustomChoiceChip(
+                onSelected: (value) {
+                  _onCategoryChanged(value);
+                },
+                values: ShoppingListType.values,
+                labelBuilder: (item) => item.text,
+                iconBuilder: (item) => null,
+              ),
+              SizedBox(height: 12),
+              CookbookHint(
+                text: "Marked items will be saved in inventory",
+              ),
+              SizedBox(height: 12),
+              Expanded(child: _buildBody(shoppingListState, lookupMap)),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildBody(ShoppingListState shoppingListState) {
+  Widget _buildBody(
+    ShoppingListState shoppingListState,
+    Map<String, dynamic> lookupMap,
+  ) {
     if (shoppingListState.status == ShoppingListStatus.loading) {
       return Center(child: CircularProgressIndicator());
     }
@@ -164,17 +188,31 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
                   .deleteItem(item.itemId!);
             }
           },
-          child: ShoppingListTile(
-            itemName: item.name,
-            dayAdded: _formatDaysAgo(item.createdAt),
-            quantity: '${item.quantity} ${item.unit}',
-            isChecked: item.isChecked,
-            onChanged: (value) {
-              ref
-                  .read(shoppingListViewModelProvider.notifier)
-                  .toggleChecked(item);
+          child: Builder(
+            builder: (context) {
+              // Resolve name and image from local JSON via ingredientId
+              String displayName = 'Unknown Item';
+              String displayImage = '';
+              if (item.ingredientId != null &&
+                  item.ingredientId!.isNotEmpty &&
+                  lookupMap.containsKey(item.ingredientId)) {
+                final ingredient = lookupMap[item.ingredientId];
+                displayName = ingredient.name;
+                displayImage = ingredient.imageUrl;
+              }
+              return ShoppingListTile(
+                itemName: displayName.isEmpty ? 'Unknown Item' : displayName,
+                dayAdded: _formatDaysAgo(item.createdAt),
+                quantity: '${item.quantity} ${item.unit}',
+                isChecked: item.isChecked,
+                onChanged: (value) {
+                  ref
+                      .read(shoppingListViewModelProvider.notifier)
+                      .toggleChecked(item);
+                },
+                itemImage: displayImage,
+              );
             },
-            itemImage: item.imageUrl,
           ),
         );
       },

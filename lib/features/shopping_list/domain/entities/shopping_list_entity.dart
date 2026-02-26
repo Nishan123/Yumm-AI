@@ -3,8 +3,6 @@ import 'package:equatable/equatable.dart';
 class ShoppingListEntity extends Equatable {
   final String? itemId;
   final String? userId;
-  final String name;
-  final String imageUrl;
   final String quantity;
   final String unit;
   final String category;
@@ -16,8 +14,6 @@ class ShoppingListEntity extends Equatable {
   const ShoppingListEntity({
     this.itemId,
     this.userId,
-    required this.name,
-    this.imageUrl = '',
     required this.quantity,
     required this.unit,
     this.category = 'none',
@@ -31,8 +27,6 @@ class ShoppingListEntity extends Equatable {
   List<Object?> get props => [
     itemId,
     userId,
-    name,
-    imageUrl,
     quantity,
     unit,
     category,

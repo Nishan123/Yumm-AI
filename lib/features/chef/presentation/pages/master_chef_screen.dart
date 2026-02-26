@@ -85,7 +85,7 @@ class _MasterChefScreenState extends ConsumerState<MasterChefScreen> {
             spacing: 8,
             children: [
               SizedBox(height: 12),
-              CookbookHint(),
+              CookbookHint(text:"Generated meal is saved in your Cookbook"),
               SizedBox(height: 6),
               CustomTabBar(tabItems: ["Ingredients List", "Your Inventory"]),
               SizedBox(height: 6),

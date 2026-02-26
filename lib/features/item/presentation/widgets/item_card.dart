@@ -5,14 +5,14 @@ import 'package:yumm_ai/app/theme/container_property.dart';
 
 class ItemCard extends StatelessWidget {
   final String itemName;
-  final int savedItems;
+  final String  subTitle;
   final String image;
   final VoidCallback onTap;
   const ItemCard({
     super.key,
     required this.mq,
     required this.itemName,
-    required this.savedItems,
+    required this.subTitle,
     required this.image,
     required this.onTap,
   });
@@ -53,7 +53,7 @@ class ItemCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           Text(
-            "${savedItems.toString()} Saved",
+            subTitle,
             style: AppTextStyles.normalText.copyWith(
               color: AppColors.descriptionTextColor,
             ),

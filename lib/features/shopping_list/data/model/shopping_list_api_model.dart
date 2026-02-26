@@ -3,8 +3,6 @@ import 'package:yumm_ai/features/shopping_list/domain/entities/shopping_list_ent
 class ShoppingListApiModel {
   final String? itemId;
   final String? userId;
-  final String name;
-  final String imageUrl;
   final String quantity;
   final String unit;
   final String category;
@@ -16,8 +14,6 @@ class ShoppingListApiModel {
   ShoppingListApiModel({
     this.itemId,
     this.userId,
-    required this.name,
-    this.imageUrl = '',
     required this.quantity,
     required this.unit,
     this.category = 'none',
@@ -39,8 +35,6 @@ class ShoppingListApiModel {
     return ShoppingListApiModel(
       itemId: json['itemId'] as String?,
       userId: json['userId'] as String?,
-      name: (json['name'] ?? '') as String,
-      imageUrl: (json['imageUrl'] ?? '') as String,
       quantity: (json['quantity'] ?? '') as String,
       unit: (json['unit'] ?? '') as String,
       category: (json['category'] ?? 'none') as String,
@@ -53,17 +47,16 @@ class ShoppingListApiModel {
 
   // to json
   Map<String, dynamic> toJson() {
-    return {
+    final json = <String, dynamic>{
       'itemId': itemId,
       'userId': userId,
-      'name': name,
-      'imageUrl': imageUrl,
       'quantity': quantity,
       'unit': unit,
       'category': category,
       'isChecked': isChecked,
       'ingredientId': ingredientId,
     };
+    return json;
   }
 
   // to entity
@@ -71,8 +64,6 @@ class ShoppingListApiModel {
     return ShoppingListEntity(
       itemId: itemId,
       userId: userId,
-      name: name,
-      imageUrl: imageUrl,
       quantity: quantity,
       unit: unit,
       category: category,
@@ -88,8 +79,6 @@ class ShoppingListApiModel {
     return ShoppingListApiModel(
       itemId: entity.itemId,
       userId: entity.userId,
-      name: entity.name,
-      imageUrl: entity.imageUrl,
       quantity: entity.quantity,
       unit: entity.unit,
       category: entity.category,

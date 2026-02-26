@@ -57,7 +57,7 @@ class _ItemScreenState extends State<ItemScreen> {
                   },
                   mq: mq,
                   itemName: "Shopping List",
-                  savedItems: 0,
+                  subTitle: "Manage your shopping list",
                   image: "${ConstantsString.assetImage}/shopping_list.png",
                 ),
                 ItemCard(
@@ -65,8 +65,8 @@ class _ItemScreenState extends State<ItemScreen> {
                     context.pushNamed("pantry_inventory");
                   },
                   mq: mq,
-                  itemName: "Pantry Inventory",
-                  savedItems: 0,
+                  itemName: "Inventory",
+                  subTitle: "All of your kitchen inventory",
                   image: "${ConstantsString.assetImage}/pantry.png",
                 ),
                 ItemCard(
@@ -75,7 +75,7 @@ class _ItemScreenState extends State<ItemScreen> {
                   },
                   mq: mq,
                   itemName: "Kitchen Tools",
-                  savedItems: 0,
+                  subTitle: "Manage your kitchen tools",
                   image: "${ConstantsString.assetImage}/pan.png",
                 ),
                 ItemCard(
@@ -84,7 +84,7 @@ class _ItemScreenState extends State<ItemScreen> {
                   },
                   mq: mq,
                   itemName: "Saved Recipes",
-                  savedItems: 0,
+                  subTitle: "Manage all your saved recipe",
                   image: "${ConstantsString.assetImage}/saved_recipe.png",
                 ),
               ],
