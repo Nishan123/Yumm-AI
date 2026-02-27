@@ -48,44 +48,31 @@ class SearchHistorySection extends StatelessWidget {
             runSpacing: 0,
             children: items
                 .map(
-                  (text) => InkWell(
-                    onTap: () => onSearch(text),
-                    borderRadius: BorderRadius.circular(400),
-                    child: InputChip(
-                      padding: EdgeInsets.only(
-                        left: 2,
-                        top: 2,
-                        bottom: 2,
-                        right: 0,
-                      ),
-                      label: Row(
-                        spacing: 4,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            text,
-                            style: AppTextStyles.normalText.copyWith(
-                              fontSize: 13,
-                              color: AppColors.blackColor,
-                            ),
-                          ),
-                          InkWell(
-                            onTap: () => onDelete(text),
-                            child: Icon(
-                              LucideIcons.circle_x,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                          ),
-                        ],
-                      ),
-                      side: BorderSide(color: AppColors.lightBlackColor),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(400),
-                      ),
-                      onPressed: () => onSearch(text),
+                  (text) => InputChip(
+                    padding: EdgeInsets.only(
+                      left: 2,
+                      top: 2,
+                      bottom: 2,
+                      right: 0,
                     ),
+                    label: Text(
+                      text,
+                      style: AppTextStyles.normalText.copyWith(
+                        fontSize: 13,
+                        color: AppColors.blackColor,
+                      ),
+                    ),
+                    deleteIcon: Icon(
+                      LucideIcons.circle_x,
+                      color: Colors.red,
+                      size: 20,
+                    ),
+                    onDeleted: () => onDelete(text),
+                    side: BorderSide(color: AppColors.lightBlackColor),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(400),
+                    ),
+                    onPressed: () => onSearch(text),
                   ),
                 )
                 .toList(),

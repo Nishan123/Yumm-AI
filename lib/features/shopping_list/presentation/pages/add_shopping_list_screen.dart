@@ -130,7 +130,6 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
   @override
   Widget build(BuildContext context) {
     final shoppingListState = ref.watch(shoppingListViewModelProvider);
-    final isAdding = shoppingListState.status == ShoppingListStatus.adding;
 
     return Scaffold(
       appBar: AppBar(title: Text("Add Shopping List")),
@@ -285,10 +284,11 @@ class _AddShoppingListScreenState extends ConsumerState<AddShoppingListScreen> {
                       ),
                       SizedBox(height: 12),
                       SecondaryButton(
+                        isLoading:shoppingListState.status==ShoppingListStatus.loading,
                         borderRadius: 40,
                         backgroundColor: AppColors.blackColor,
-                        onTap: isAdding ? null : _onSubmit,
-                        text: isAdding ? "Adding..." : "Add Item",
+                        onTap: _onSubmit,
+                        text: "Add Item",
                       ),
                       SizedBox(height: 20),
                     ],

@@ -11,9 +11,11 @@ import 'package:yumm_ai/features/cooking/presentation/providers/recipe_state_pro
 import 'package:yumm_ai/features/cooking/presentation/providers/recipe_provider.dart';
 import 'package:yumm_ai/features/cooking/presentation/providers/top_recipe_provider.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_app_bar.dart';
+import 'package:yumm_ai/features/home/presentation/widgets/home_app_bar_loading_skelaton.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/home_search_bar.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/recommended_food_scroll_snap.dart';
 import 'package:yumm_ai/features/home/presentation/widgets/top_recipe_card.dart';
+import 'package:yumm_ai/features/home/presentation/widgets/top_recipe_loading_skelaton.dart';
 import 'package:yumm_ai/features/search/presentation/pages/search_screen.dart';
 import 'package:yumm_ai/core/providers/user_selectors.dart';
 
@@ -42,7 +44,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           return HomeAppBar(userName: user.fullName, profilePic: profilePicUrl);
         },
         loading: () {
-          return HomeAppBar(userName: "", profilePic: "");
+          return HomeAppBarLoadingSkelaton();
         },
         error: (_, __) => HomeAppBar(userName: 'N/A', profilePic: ''),
       ),
@@ -150,7 +152,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         error: (error, stack) =>
                             Center(child: Text('Error: $error')),
                         loading: () =>
-                            const Center(child: CircularProgressIndicator()),
+                            TopRecipeLoadingSkelaton()
                       );
                     },
                   ),

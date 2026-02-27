@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/widgets/cookbook_hint.dart';
 import 'package:yumm_ai/core/widgets/custom_choice_chip.dart';
-import 'package:yumm_ai/core/widgets/custom_text_button.dart';
 import 'package:yumm_ai/features/shopping_list/data/services/ingredient_lookup_service.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/enums/shopping_list_type.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/state/shopping_list_state.dart';
@@ -68,25 +68,26 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
     final lookupMap = ingredientLookup.value ?? {};
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Shopping List"),
-        actions: [
-          CustomTextButton(
-            text: "Add Item",
-            onTap: () async {
-              final result = await context.pushNamed("add_shopping_list");
-              if (result == true) {
-                _loadShoppingList(forceRefresh: true);
-              }
-            },
-            buttonTextStyle: AppTextStyles.h6.copyWith(
-              color: AppColors.blueColor,
-              fontWeight: FontWeight.bold,
-            ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: ElevatedButton.icon(
+          icon: Icon(LucideIcons.leafy_green),
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            backgroundColor: AppColors.blackColor,
+            foregroundColor: AppColors.whiteColor,
           ),
-          SizedBox(width: 16),
-        ],
+          onPressed: () async {
+            final result = await context.pushNamed("add_shopping_list");
+            if (result == true) {
+              _loadShoppingList(forceRefresh: true);
+            }
+          },
+          label: Text("Add Item"),
+        ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      appBar: AppBar(title: Text("Shopping List")),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () => _loadShoppingList(forceRefresh: true),
@@ -102,9 +103,7 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
                 iconBuilder: (item) => null,
               ),
               SizedBox(height: 12),
-              CookbookHint(
-                text: "Marked items will be saved in inventory",
-              ),
+              CookbookHint(text: "Marked items will be saved in inventory"),
               SizedBox(height: 12),
               Expanded(child: _buildBody(shoppingListState, lookupMap)),
             ],
@@ -165,6 +164,7 @@ class _ShoppingListScreenState extends ConsumerState<ShoppingListScreen> {
     }
 
     return ListView.builder(
+      padding: const EdgeInsets.only(bottom: 80),
       itemCount: shoppingListState.items.length,
       itemBuilder: (context, index) {
         final item = shoppingListState.items[index];

@@ -59,7 +59,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 userName,
                 style: AppTextStyles.normalText.copyWith(
                   fontWeight: FontWeight.w400,
-                  color: AppColors.descriptionTextColor
+                  color: AppColors.descriptionTextColor,
+                  height: 1
 
                 ),
               ),
