@@ -23,6 +23,10 @@ class ShoppingListViewModel extends Notifier<ShoppingListState> {
     _getItemsUsecase = ref.read(getShoppingListUsecaseProvider);
     _updateItemUsecase = ref.read(updateShoppingListItemUsecaseProvider);
     _deleteItemUsecase = ref.read(deleteShoppingListItemUsecaseProvider);
+
+    // Initial fetch
+    Future.microtask(() => getItems());
+
     return const ShoppingListState();
   }
 

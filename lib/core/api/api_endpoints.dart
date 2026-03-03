@@ -19,6 +19,9 @@ class ApiEndpoints {
   // =============== Push Notification ===============
   static String registerPushToken(String uid) => "/users/$uid/push-token";
 
+  // =============== Notifications ===============
+  static const String getNotificationLogs = "/notifications/logs";
+
   // ================ User Endpoints ===============
   static const String getAllUsers = "/getAllUsers";
   static String getUserById(String uid) => "/users/$uid";

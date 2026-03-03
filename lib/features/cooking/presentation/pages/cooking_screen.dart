@@ -421,23 +421,27 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
                     widget.recipe.generatedBy == currentUserId;
                 final isInCookbook = cookbookState.isInCookbook == true;
 
-                // Case 1: User is the owner - show original interactive view
-                if (isOwner) {
-                  return RecipeDetailsWidget(recipe: widget.recipe);
-                }
-
-                // Case 2a: Recipe is in cookbook AND we have the user's copy - show cookbook version
+                // Case 1: Recipe is in cookbook AND we have the user's copy - show cookbook version
                 if (isInCookbook && cookbookState.currentRecipe != null) {
                   return CookbookRecipeDetailsWidget(
                     recipe: cookbookState.currentRecipe!,
                   );
                 }
 
+                // Case 2: User is the owner - show original interactive view
+                if (isOwner) {
+                  return RecipeDetailsWidget(recipe: widget.recipe);
+                }
+
                 // Case 2b: Recipe is in cookbook but we couldn't fetch it - fallback to read-only
                 // This happens when checkRecipeWithFallback found it in cookbook but fetch failed
                 // Show original recipe but disable "Add to Cookbook" since it's already added
                 if (isInCookbook && cookbookState.currentRecipe == null) {
-                  return RecipeDetailsWidget(recipe: widget.recipe);
+                  return ReadOnlyRecipeView(
+                    recipe: widget.recipe,
+                    onAddToCookbook: () {}, // Already added
+                    isAddingToCookbook: false,
+                  );
                 }
 
                 // Case 3: Recipe is not in cookbook - show read-only view with add button

@@ -1,13 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/shopping_list/data/services/ingredient_lookup_service.dart';
+import 'package:yumm_ai/features/shopping_list/presentation/state/shopping_list_state.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/view_model/shopping_list_view_model.dart';
-
 
 final pantryInventoryProvider = FutureProvider<List<IngredientModel>>((
   ref,
 ) async {
   final shoppingListState = ref.watch(shoppingListViewModelProvider);
+
+  // If the shopping list is still loading, stay in the loading state
+  if (shoppingListState.status == ShoppingListStatus.initial ||
+      shoppingListState.status == ShoppingListStatus.loading) {
+    return Completer<List<IngredientModel>>().future;
+  }
 
   // Filter for checked items only
   final checkedItems = shoppingListState.items

@@ -20,8 +20,12 @@ class CookingViewModel extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     final result = await _updateRecipeUseCase(recipe);
     result.fold(
-      (failure) => state = AsyncValue.error(failure, StackTrace.current),
-      (success) => state = const AsyncValue.data(null),
+      (failure) {
+        state = AsyncValue.error(failure, StackTrace.current);
+      },
+      (success) {
+        state = const AsyncValue.data(null);
+      },
     );
   }
 }

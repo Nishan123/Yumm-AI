@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/constants/constants_string.dart';
@@ -24,7 +26,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.lightBlackColor
+              color: AppColors.lightBlackColor,
             ),
             child: CircleAvatar(
               radius: 23,
@@ -60,8 +62,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 style: AppTextStyles.normalText.copyWith(
                   fontWeight: FontWeight.w400,
                   color: AppColors.descriptionTextColor,
-                  height: 1
-
+                  height: 1,
                 ),
               ),
             ],
@@ -69,7 +70,12 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        PrimaryIconButton(onTap: () {}, icon: Icons.menu),
+        PrimaryIconButton(
+          onTap: () {
+            context.pushNamed("notifications");
+          },
+          icon: LucideIcons.bell,
+        ),
         SizedBox(width: 18),
       ],
     );
