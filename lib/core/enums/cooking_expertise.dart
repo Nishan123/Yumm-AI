@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 enum CookingExpertise {
   newBie,
   canCook,
-  expert;
+  expert,
+  beginner;
 
   String get text {
     switch (this) {
@@ -13,6 +14,8 @@ enum CookingExpertise {
         return "Can Cook";
       case CookingExpertise.expert:
         return "Expert";
+      case CookingExpertise.beginner:
+        return "Beginner";
     }
   }
 
@@ -24,6 +27,8 @@ enum CookingExpertise {
         return "canCook";
       case CookingExpertise.expert:
         return "expert";
+      case CookingExpertise.beginner:
+        return "beginner";
     }
   }
 
@@ -35,6 +40,8 @@ enum CookingExpertise {
         return Colors.blue;
       case CookingExpertise.expert:
         return Colors.red;
+      case CookingExpertise.beginner:
+        return Colors.yellow;
     }
   }
 }

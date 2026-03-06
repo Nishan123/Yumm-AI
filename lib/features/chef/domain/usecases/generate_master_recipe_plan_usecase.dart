@@ -29,7 +29,7 @@ class GenerateMasterRecipePlanParams extends Equatable {
     required this.noOfServes,
     required this.dietaryRestrictions,
     required this.mealPreferences,
-    required this.allergicIngridents
+    required this.allergicIngridents,
   });
 
   @override
@@ -41,7 +41,7 @@ class GenerateMasterRecipePlanParams extends Equatable {
     noOfServes,
     dietaryRestrictions,
     mealPreferences,
-    allergicIngridents
+    allergicIngridents,
   ];
 }
 

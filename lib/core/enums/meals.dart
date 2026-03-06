@@ -9,7 +9,8 @@ enum Meal {
   snacks,
   dessert,
   hardDrink,
-  softDrink;
+  softDrink,
+  lunch;
 
   String get text {
     switch (this) {
@@ -29,6 +30,8 @@ enum Meal {
         return "Hard Drinks";
       case Meal.softDrink:
         return "Soft Drinks";
+      case Meal.lunch:
+        return "Lunch";
     }
   }
 
@@ -50,6 +53,8 @@ enum Meal {
         return "hard Drinks";
       case Meal.softDrink:
         return "soft Drinks";
+      case Meal.lunch:
+        return "lunch";
     }
   }
 
@@ -71,6 +76,8 @@ enum Meal {
         return LucideIcons.bottle_wine;
       case Meal.softDrink:
         return LucideIcons.martini;
+      case Meal.lunch:
+        return LucideIcons.salad;
     }
   }
 }

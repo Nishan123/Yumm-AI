@@ -26,7 +26,7 @@ class GoogleAuthIndicator extends StatelessWidget {
                 width: 22,
                 child: CachedNetworkImage(
                   imageUrl:
-                      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/1024px-Google_Favicon_2025.svg.png",
+                      "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/1280px-Google_Favicon_2025.svg.png",
                   fit: BoxFit.cover,
                 ),
               ),

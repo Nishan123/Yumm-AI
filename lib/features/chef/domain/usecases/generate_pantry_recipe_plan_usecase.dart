@@ -25,7 +25,7 @@ class GeneratePantryRecipePlanParams extends Equatable {
     required this.availableTime,
     required this.expertise,
     required this.currentUserId,
-    required this.allergicIngridents
+    required this.allergicIngridents,
   });
 
   @override
@@ -55,7 +55,7 @@ class GeneratePantryRecipePlanUsecase
         mealType: params.mealType,
         availableTime: params.availableTime,
         cookingExperties: params.expertise,
-        allergicIngridents: params.allergicIngridents
+        allergicIngridents: params.allergicIngridents,
       );
 
       final response = await Gemini.instance.prompt(parts: [Part.text(prompt)]);

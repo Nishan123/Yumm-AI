@@ -41,12 +41,14 @@ class ScannerChefViewModel extends BaseChefViewModel {
       GenerateScanRecipeFridgeParams(image: image, mealType: mealType),
     );
 
-    result.fold(
-      (failure) => state = state.copyWith(
-        status: ChefStatus.error,
-        errorMessage: failure.errorMessage,
-        loadingMessage: null,
-      ),
+    await result.fold(
+      (failure) async {
+        state = state.copyWith(
+          status: ChefStatus.error,
+          errorMessage: failure.errorMessage,
+          loadingMessage: null,
+        );
+      },
       (recipe) async {
         await generateImagesAndSave(
           tempRecipe: recipe,
@@ -72,12 +74,14 @@ class ScannerChefViewModel extends BaseChefViewModel {
       GenerateScanRecipeReceiptParams(image: image, mealType: mealType),
     );
 
-    result.fold(
-      (failure) => state = state.copyWith(
-        status: ChefStatus.error,
-        errorMessage: failure.errorMessage,
-        loadingMessage: null,
-      ),
+    await result.fold(
+      (failure) async {
+        state = state.copyWith(
+          status: ChefStatus.error,
+          errorMessage: failure.errorMessage,
+          loadingMessage: null,
+        );
+      },
       (recipe) async {
         await generateImagesAndSave(
           tempRecipe: recipe,

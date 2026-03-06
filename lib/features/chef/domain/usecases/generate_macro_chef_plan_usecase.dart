@@ -25,7 +25,6 @@ class GenerateMacroChefPlanParams extends Equatable {
   final Duration availableTime;
   final List<String> allergicIngridents;
 
-
   const GenerateMacroChefPlanParams({
     required this.ingridents,
     required this.carbs,
@@ -37,7 +36,7 @@ class GenerateMacroChefPlanParams extends Equatable {
     required this.cookingExpertise,
     required this.dietaryRistrictions,
     required this.availableTime,
-    required this.allergicIngridents
+    required this.allergicIngridents,
   });
 
   @override
@@ -52,13 +51,14 @@ class GenerateMacroChefPlanParams extends Equatable {
     cookingExpertise,
     dietaryRistrictions,
     availableTime,
-    allergicIngridents
+    allergicIngridents,
   ];
 }
 
-final generateMacroChefPlanUsecaseProvider = Provider<GenerateMacroChefPlanUsecase>((ref) {
-  return GenerateMacroChefPlanUsecase();
-});
+final generateMacroChefPlanUsecaseProvider =
+    Provider<GenerateMacroChefPlanUsecase>((ref) {
+      return GenerateMacroChefPlanUsecase();
+    });
 
 class GenerateMacroChefPlanUsecase
     implements UsecaseWithParms<RecipeModel, GenerateMacroChefPlanParams> {
@@ -78,11 +78,10 @@ class GenerateMacroChefPlanUsecase
         availableTime: params.availableTime,
         cookingExperties: params.cookingExpertise,
         calories: params.calories,
-        allergicIngridents: params.allergicIngridents
+        allergicIngridents: params.allergicIngridents,
       );
 
-      final response = await Gemini.instance.prompt(
-        parts: [Part.text(prompt)]);
+      final response = await Gemini.instance.prompt(parts: [Part.text(prompt)]);
       if (response?.output == null) {
         return Left(GeneralFailure("Failed to generate recipe"));
       }
