@@ -100,10 +100,7 @@ class ProfileViewModel extends Notifier<ProfileScreenState> {
       return;
     }
 
-    state = ProfileScreenState(
-      profileState: ProfileStates.loading,
-      userData: state.userData,
-    );
+    state = state.copyWith(profileState: ProfileStates.loading);
 
     String finalProfilePicUrl = profilePic;
 

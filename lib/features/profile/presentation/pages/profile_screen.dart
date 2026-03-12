@@ -336,7 +336,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               });
 
                               return SecondaryButton(
-                                isLoading: state == ProfileStates.loading,
+                                isLoading:
+                                    state.profileState == ProfileStates.loading,
                                 margin: const EdgeInsets.symmetric(
                                   horizontal: 0,
                                   vertical: 4,
