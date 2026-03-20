@@ -7,6 +7,7 @@ import 'package:yumm_ai/core/constants/propmpts.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/error/failure.dart';
+import 'package:yumm_ai/core/services/gen_ai/gemini_service.dart';
 import 'package:yumm_ai/core/usecases/app_usecases.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
@@ -46,11 +47,18 @@ class GenerateMasterRecipePlanParams extends Equatable {
 }
 
 final generateMasterRecipePlanUsecaseProvider = Provider((ref) {
-  return GenerateMasterRecipePlanUsecase();
+  return GenerateMasterRecipePlanUsecase(
+    geminiService: ref.read(geminiServiceProvider),
+  );
 });
 
 class GenerateMasterRecipePlanUsecase
     implements UsecaseWithParms<RecipeModel, GenerateMasterRecipePlanParams> {
+  final GeminiService _geminiService;
+
+  GenerateMasterRecipePlanUsecase({required GeminiService geminiService})
+    : _geminiService = geminiService;
+
   @override
   Future<Either<Failure, RecipeModel>> call(
     GenerateMasterRecipePlanParams params,
@@ -66,18 +74,14 @@ class GenerateMasterRecipePlanUsecase
         cookingExperties: params.expertise,
         allergicIngridents: params.allergicIngridents,
       );
-      final response = await Gemini.instance.prompt(parts: [Part.text(prompt)]);
+      final response = await _geminiService.promptAi(prompt);
 
       if (response?.output == null) {
         return Left(GeneralFailure("Failed to generate recipe text"));
       }
 
       String jsonString = response!.output!;
-      if (jsonString.contains('```json')) {
-        jsonString = jsonString.replaceAll('```json', '').replaceAll('```', '');
-      } else if (jsonString.contains('```')) {
-        jsonString = jsonString.replaceAll('```', '');
-      }
+      jsonString = _geminiService.formatJsonResponse(jsonString);
 
       final masterIngridents = await Propmpts.loadIngredients();
       final Map<String, dynamic> jsonMap = jsonDecode(jsonString);

@@ -11,17 +11,16 @@ import 'package:yumm_ai/features/subscription/subscription_initializer.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await initializeRevenueCat();
   final hiveService = HiveService();
   await hiveService.init();
-  await dotenv.load(fileName: ".env");
   Gemini.init(apiKey: dotenv.get("gemini_api_key"));
   Pushy.listen();
   Pushy.setNotificationListener((data) {
     debugPrint("Received notification: $data");
     String notificationTitle = data['title'] ?? 'Yumm AI';
     String notificationText = data['message'] ?? 'New notification';
-
     Pushy.notify(notificationTitle, notificationText, data);
     Pushy.clearBadge();
   });

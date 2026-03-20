@@ -34,20 +34,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final cacheKey = ref.watch(profilePicCacheKeyProvider);
 
     return Scaffold(
-      appBar: userAsync.when(
-        data: (user) {
-          String profilePicUrl = user!.profilePic!;
-          if (profilePicUrl.isNotEmpty) {
-            final separator = profilePicUrl.contains('?') ? '&' : '?';
-            profilePicUrl = '$profilePicUrl${separator}v=$cacheKey';
-          }
-          return HomeAppBar(userName: user.fullName, profilePic: profilePicUrl);
-        },
-        loading: () {
-          return HomeAppBarLoadingSkelaton();
-        },
-        error: (_, __) => HomeAppBar(userName: 'N/A', profilePic: ''),
-      ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
@@ -71,7 +57,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 12),
+                  userAsync.when(
+                    data: (user) {
+                      String profilePicUrl = user!.profilePic!;
+                      if (profilePicUrl.isNotEmpty) {
+                        final separator = profilePicUrl.contains('?')
+                            ? '&'
+                            : '?';
+                        profilePicUrl = '$profilePicUrl${separator}v=$cacheKey';
+                      }
+                      return HomeAppBar(
+                        profilePic: profilePicUrl,
+                        userName: user.fullName.split(" ").first,
+                      );
+                    },
+                    loading: () {
+                      return HomeAppBarLoadingSkelaton();
+                    },
+                    error: (error, stack) {
+                      return HomeAppBar(profilePic: "", userName: "n/a");
+                    },
+                  ),
+                  SizedBox(height: 21),
                   // Custom Search Bar
                   HomeSearchBar(
                     onTap: () {
@@ -151,8 +158,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         },
                         error: (error, stack) =>
                             Center(child: Text('Error: $error')),
-                        loading: () =>
-                            TopRecipeLoadingSkelaton()
+                        loading: () => TopRecipeLoadingSkelaton(),
                       );
                     },
                   ),

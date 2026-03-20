@@ -185,6 +185,11 @@ class UserSessionService {
     await _prefs.setString(_keyProfilePic, profilePic);
   }
 
+  // Update user full name
+  Future<void> updateFullName(String fullName) async {
+    await _prefs.setString(_keyFullName, fullName);
+  }
+
   // Update user subscription status
   Future<void> updateSubscriptionStatus(bool isSubscribed) async {
     await _prefs.setBool(_keyIsSubscribed, isSubscribed);

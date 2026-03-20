@@ -160,7 +160,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
 
   void _showNewPasswordBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      isDismissible: false,
+      isDismissible: true,
       context: context,
       isScrollControlled: false,
       enableDrag: false,

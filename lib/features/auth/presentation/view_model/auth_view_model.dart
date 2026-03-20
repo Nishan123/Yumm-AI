@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/services/app_state_reset_service.dart';
+import 'package:yumm_ai/features/auth/domin/usecases/apple_signin_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/get_current_user_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/login_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/logout_usecase.dart';
@@ -22,6 +23,7 @@ class AuthViewModel extends Notifier<AuthState> {
   late final GoogleSigninUsecase _googleSignInUsecase;
   late final ForgotPasswordUsecase _forgotPasswordUsecase;
   late final AppStateResetService _appStateResetService;
+  late final AppleSigninUsecase _appleSignInUsecase;
 
   @override
   AuthState build() {
@@ -32,6 +34,7 @@ class AuthViewModel extends Notifier<AuthState> {
     _googleSignInUsecase = ref.read(googleSignInUsecaseProvider);
     _forgotPasswordUsecase = ref.read(forgotPasswordUsecaseProvider);
     _appStateResetService = ref.read(appStateResetServiceProvider);
+    _appleSignInUsecase = ref.read(appleSigninUsecaseProvider);
     return const AuthState();
   }
 
@@ -87,7 +90,9 @@ class AuthViewModel extends Notifier<AuthState> {
       (user) async {
         if (user.uid != null || user.email.isNotEmpty) {
           try {
-            await Purchases.logIn(user.uid ?? user.email);
+            if (await Purchases.isConfigured) {
+              await Purchases.logIn(user.uid ?? user.email);
+            }
           } catch (e) {
             // Handle error quietly
           }
@@ -110,7 +115,9 @@ class AuthViewModel extends Notifier<AuthState> {
       (isLoggedOut) async {
         if (isLoggedOut) {
           try {
-            await Purchases.logOut();
+            if (await Purchases.isConfigured) {
+              await Purchases.logOut();
+            }
           } catch (e) {
             // Error handling quietly
           }
@@ -143,7 +150,9 @@ class AuthViewModel extends Notifier<AuthState> {
       (user) async {
         if (user.uid != null || user.email.isNotEmpty) {
           try {
-            await Purchases.logIn(user.uid ?? user.email);
+            if (await Purchases.isConfigured) {
+              await Purchases.logIn(user.uid ?? user.email);
+            }
           } catch (e) {
             // Handle error quietly
           }
@@ -169,9 +178,37 @@ class AuthViewModel extends Notifier<AuthState> {
       (user) async {
         if (user.uid != null || user.email.isNotEmpty) {
           try {
-            await Purchases.logIn(user.uid ?? user.email);
+            if (await Purchases.isConfigured) {
+              await Purchases.logIn(user.uid ?? user.email);
+            }
           } catch (e) {
             // Handle error quietly
+          }
+        }
+        state = state.copyWith(status: AuthStatus.authenticated, user: user);
+      },
+    );
+  }
+
+  Future<void> signInWithApple() async {
+    _appStateResetService.resetAllState();
+    state = state.copyWith(status: AuthStatus.appleAuthLoading);
+    final result = await _appleSignInUsecase.call();
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: AuthStatus.error,
+          errorMessage: failure.errorMessage,
+        );
+      },
+      (user) async {
+        if (user.uid != null || user.email.isNotEmpty) {
+          try {
+            if (await Purchases.isConfigured) {
+              await Purchases.logIn(user.uid ?? user.email);
+            }
+          } catch (e) {
+            // handle error
           }
         }
         state = state.copyWith(status: AuthStatus.authenticated, user: user);

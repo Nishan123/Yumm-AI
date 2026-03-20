@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/widgets/custom_text_button.dart';
 import 'package:yumm_ai/core/widgets/primary_button.dart';
+import 'package:yumm_ai/features/subscription/domain/entities/subscription_package_entity.dart';
 import 'package:yumm_ai/features/subscription/presentation/state/subscription_state.dart';
 import 'package:yumm_ai/features/subscription/presentation/view_model/subscription_view_model.dart';
 import 'package:yumm_ai/features/subscription/presentation/widgets/deals_card.dart';
@@ -20,7 +21,7 @@ class AvailablePlansScreen extends ConsumerStatefulWidget {
 }
 
 class _AvailablePlansScreenState extends ConsumerState<AvailablePlansScreen> {
-  Package? _selectedPackage;
+  SubscriptionPackageEntity? _selectedPackage;
 
   @override
   void initState() {
@@ -75,6 +76,10 @@ class _AvailablePlansScreenState extends ConsumerState<AvailablePlansScreen> {
     final annualPackage = currentOffering?.annual;
     final monthlyPackage = currentOffering?.monthly;
 
+    // Compute dynamic trial start date (7 days from now)
+    final trialStartDate = DateTime.now().add(const Duration(days: 7));
+    final formattedTrialStartDate = DateFormat('dd/MM/yyyy').format(trialStartDate);
+
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
@@ -116,9 +121,9 @@ class _AvailablePlansScreenState extends ConsumerState<AvailablePlansScreen> {
                         mq: mq,
                         isSelected: _selectedPackage == annualPackage,
                         haveBestValueTag: true,
-                        actualPrice: annualPackage.storeProduct.priceString,
+                        actualPrice: annualPackage.priceString,
                         oldPrice:
-                            "\$${((annualPackage.storeProduct.price / 12) * 1.2 * 12).toStringAsFixed(2)}",
+                            "\$${((annualPackage.price / 12) * 1.2 * 12).toStringAsFixed(2)}",
                         duration: "year",
                       ),
                     SizedBox(height: 12),
@@ -133,7 +138,7 @@ class _AvailablePlansScreenState extends ConsumerState<AvailablePlansScreen> {
                         mq: mq,
                         isSelected: _selectedPackage == monthlyPackage,
                         haveBestValueTag: false,
-                        actualPrice: monthlyPackage.storeProduct.priceString,
+                        actualPrice: monthlyPackage.priceString,
                         oldPrice: "",
                         duration: "month",
                         haveOldPrice: false,
@@ -156,7 +161,7 @@ class _AvailablePlansScreenState extends ConsumerState<AvailablePlansScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Text(
-                        "Billing starts at the end of your free trial. Starting on 17/06/2024 you will be billed ${_selectedPackage?.storeProduct.priceString ?? 'amount'} every year until you cancel. You can cancel anytime in the Google Play Store",
+                        "Billing starts at the end of your free trial. Starting on $formattedTrialStartDate you will be billed ${_selectedPackage?.priceString ?? 'amount'} every ${_selectedPackage?.packageType == PackageType.annual ? 'year' : 'month'} until you cancel. You can cancel anytime in the Google Play Store",
                         textAlign: TextAlign.center,
                         style: AppTextStyles.descriptionText.copyWith(
                           fontSize: 12,

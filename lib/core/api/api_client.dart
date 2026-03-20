@@ -50,7 +50,7 @@ class ApiClient {
       ),
     );
 
-    // Only add logger in debug mode
+    // logger in debug mode
     if (kDebugMode) {
       _dio.interceptors.add(
         PrettyDioLogger(
@@ -64,8 +64,6 @@ class ApiClient {
       );
     }
   }
-
-  Dio get dio => _dio;
 
   // GET request
   Future<Response> get(

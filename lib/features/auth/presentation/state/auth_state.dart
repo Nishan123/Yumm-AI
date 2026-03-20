@@ -7,6 +7,7 @@ enum AuthStatus {
   authenticated,
   unauthenticated,
   googleAuthLoading,
+  appleAuthLoading,
   emailPasswordLoading,
   error,
   registered,

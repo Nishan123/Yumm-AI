@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,9 +21,19 @@ class GoogleSigninUsecase implements UsecaseWithoutParms {
   Future<Either<Failure, dynamic>> call() async {
     try {
       // Initialize GoogleSignIn with client ID from environment
-      final clientId = dotenv.env['GOOGLE_CLIENT_ID'];
+      final webClientId = dotenv.env['GOOGLE_CLIENT_ID'];
+      final iosClientId = dotenv.env['IOS_CLIENT_ID'];
+      
+      String? clientId;
+      if (Platform.isIOS || Platform.isMacOS) {
+        clientId = iosClientId;
+      } else {
+        clientId = webClientId;
+      }
+
       final googleSignIn = GoogleSignIn(
         clientId: clientId,
+        serverClientId: webClientId,
         scopes: ['email', 'profile'],
       );
 

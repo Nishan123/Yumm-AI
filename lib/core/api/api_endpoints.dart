@@ -1,8 +1,15 @@
+// import 'dart:io';
+
 class ApiEndpoints {
   ApiEndpoints._();
 
-  static const String baseUrl = 'http://localhost:5000/api';
-  // static const String baseUrl = 'https://yumm-ai-server.vercel.app/api';
+  // static String get baseUrl {
+  //   if (Platform.isAndroid) return 'http://10.0.2.2:5050/api';
+  //   if (Platform.isIOS) return 'http://localhost:5050/api';
+  //   return 'http://localhost:5050/api';
+  // }
+
+  static const String baseUrl = 'https://yumm-ai-server.vercel.app/api';
 
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);
@@ -12,6 +19,7 @@ class ApiEndpoints {
   static const String signup = "/auth/register";
   static const String logout = "/auth/logout";
   static const String googleSignIn = "/auth/google";
+  static const String appleSignIn = "/auth/apple";
   static const String forgotPassword = "/auth/forgot-password";
   static String verifyPassword(String uid) => "/auth/$uid/verify-password";
   static String changePassword(String uid) => "/auth/$uid/change-password";

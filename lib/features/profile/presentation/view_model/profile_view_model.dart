@@ -100,10 +100,7 @@ class ProfileViewModel extends Notifier<ProfileScreenState> {
       return;
     }
 
-    state = ProfileScreenState(
-      profileState: ProfileStates.loading,
-      userData: state.userData,
-    );
+    state = state.copyWith(profileState: ProfileStates.loading);
 
     String finalProfilePicUrl = profilePic;
 
@@ -127,6 +124,7 @@ class ProfileViewModel extends Notifier<ProfileScreenState> {
           // Invalidate providers to trigger UI refresh
           ref.invalidate(currentUserProvider);
           ref.invalidate(userProfilePicProvider);
+          // ref.invalidate(profileViewModelProvider);
 
           // Update cache key to bust image cache
           ref.read(profilePicCacheKeyProvider.notifier).state =
@@ -154,6 +152,17 @@ class ProfileViewModel extends Notifier<ProfileScreenState> {
         );
       },
       (success) async {
+        // Update local session storage with new full name and allergies
+        await ref.read(userSessionServiceProvider).updateFullName(fullName);
+        await ref.read(userSessionServiceProvider).updateAllergies(allergicIng);
+        
+        // Invalidate providers to trigger UI refresh
+        ref.invalidate(userNameProvider);
+        ref.invalidate(userAllergiesProvider);
+        ref.invalidate(userProfileCardDataProvider);
+        ref.invalidate(userBasicInfoProvider);
+        ref.invalidate(userAvatarDataProvider);
+
         // Fetch fresh data from server to update session and UI
         await _refreshUserData();
         state = state.copyWith(
@@ -202,6 +211,13 @@ class ProfileViewModel extends Notifier<ProfileScreenState> {
       (user) {
         // Invalidate providers to trigger UI refresh with new data
         ref.invalidate(currentUserProvider);
+        ref.invalidate(userNameProvider);
+        ref.invalidate(userAllergiesProvider);
+        ref.invalidate(userProfileCardDataProvider);
+        ref.invalidate(userBasicInfoProvider);
+        ref.invalidate(userAvatarDataProvider);
+        ref.invalidate(userProfilePicProvider);
+        
         state = state.copyWith(
           profileState: ProfileStates.loaded,
           userData: user,

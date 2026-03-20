@@ -1,10 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:yumm_ai/features/subscription/domain/usecases/check_entitlement_usecase.dart';
 import 'package:yumm_ai/features/subscription/domain/usecases/get_offerings_usecase.dart';
 import 'package:yumm_ai/features/subscription/domain/usecases/purchase_subscription_usecase.dart';
 import 'package:yumm_ai/features/subscription/domain/usecases/restore_purchases_usecase.dart';
-import 'package:yumm_ai/features/subscription/domain/entities/subscription_entity.dart';
+import 'package:yumm_ai/features/subscription/domain/entities/subscription_package_entity.dart';
 import 'package:yumm_ai/features/subscription/presentation/state/subscription_state.dart';
 
 final subscriptionViewModelProvider =
@@ -47,7 +46,7 @@ class SubscriptionViewModel extends Notifier<SubscriptionState> {
     );
   }
 
-  Future<void> purchasePackage(Package package) async {
+  Future<void> purchasePackage(SubscriptionPackageEntity package) async {
     state = state.copyWith(status: SubscriptionStatus.processing);
     final result = await _purchaseSubscriptionUsecase.call(package);
 
@@ -58,9 +57,11 @@ class SubscriptionViewModel extends Notifier<SubscriptionState> {
           errorMessage: failure.errorMessage,
         );
       },
-      (isPro) {
-        // Automatically fetch new offerings state after a successful purchase
-        fetchOfferings();
+      (entitlementEntity) {
+        state = state.copyWith(
+          status: SubscriptionStatus.success,
+          subscriptionData: entitlementEntity,
+        );
       },
     );
   }
@@ -76,8 +77,11 @@ class SubscriptionViewModel extends Notifier<SubscriptionState> {
           errorMessage: failure.errorMessage,
         );
       },
-      (isPro) {
-        fetchOfferings();
+      (entitlementEntity) {
+        state = state.copyWith(
+          status: SubscriptionStatus.success,
+          subscriptionData: entitlementEntity,
+        );
       },
     );
   }
@@ -92,13 +96,10 @@ class SubscriptionViewModel extends Notifier<SubscriptionState> {
           errorMessage: failure.errorMessage,
         );
       },
-      (isPro) {
+      (entitlementEntity) {
         state = state.copyWith(
           status: SubscriptionStatus.success,
-          subscriptionData: SubscriptionEntity(
-            currentOffering: state.subscriptionData?.currentOffering,
-            isPremium: isPro,
-          ),
+          subscriptionData: entitlementEntity,
         );
       },
     );

@@ -16,11 +16,13 @@ class ProfileCard extends ConsumerWidget {
   final TextEditingController userNameController;
   final File? selectedImage;
   final VoidCallback onProfileIconTap;
+  final bool havePremium;
   const ProfileCard({
     super.key,
     required this.userNameController,
     required this.onProfileIconTap,
     this.selectedImage,
+    required this.havePremium
   });
 
   @override
@@ -37,7 +39,6 @@ class ProfileCard extends ConsumerWidget {
         final displayName = userData!.fullName;
         final displayEmail = userData.email;
         final profilePicUrl = userData.profilePic;
-        final isSubscribedUser = userData.isSubscribedUser;
 
         // Add cache buster to URL if it exists
         String? cacheBustedUrl;
@@ -52,7 +53,7 @@ class ProfileCard extends ConsumerWidget {
           displayName: displayName,
           displayEmail: displayEmail,
           profilePicUrl: cacheBustedUrl,
-          isSubscribed: isSubscribedUser ?? false,
+          
           selectedImage: selectedImage,
         );
       },
@@ -63,7 +64,6 @@ class ProfileCard extends ConsumerWidget {
         displayName: 'Username',
         displayEmail: 'user@example.com',
         profilePicUrl: null,
-        isSubscribed: false,
         selectedImage: selectedImage,
       ),
     );
@@ -75,7 +75,6 @@ class ProfileCard extends ConsumerWidget {
     required String displayName,
     required String displayEmail,
     required String? profilePicUrl,
-    required bool isSubscribed,
     File? selectedImage,
   }) {
     return Container(
@@ -154,8 +153,7 @@ class ProfileCard extends ConsumerWidget {
                           ),
                         ),
                         _planChip(
-                          backgroundColor: AppColors.lightBlueColor,
-                          plan: isSubscribed ? "Pro" : "Free",
+                          havePremium: havePremium
                         ),
                       ],
                     ),
@@ -243,15 +241,15 @@ class ProfileCard extends ConsumerWidget {
     );
   }
 
-  Widget _planChip({required Color backgroundColor, required String plan}) {
+  Widget _planChip({ required bool havePremium}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: havePremium?AppColors.blueColor:AppColors.redColor,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        plan,
+       havePremium?"Pro": "Free",
         style: AppTextStyles.normalText.copyWith(color: AppColors.whiteColor),
       ),
     );
