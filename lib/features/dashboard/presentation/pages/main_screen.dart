@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/features/cookbook/presentation/pages/cookbook_screen.dart';
@@ -26,11 +28,18 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: CustomFab(
-        onTap: () {
-          context.pushNamed("chefs");
-        },
-      ),
+      floatingActionButton: Platform.isIOS?Transform.translate(
+        offset: const Offset(0, 24),
+        child: CustomFab(
+          onTap: () {
+            context.pushNamed("chefs");
+          },
+        ),
+      ):CustomFab(
+          onTap: () {
+            context.pushNamed("chefs");
+          },
+        ),
       extendBody: true,
 
       body: Stack(

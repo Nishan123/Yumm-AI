@@ -15,6 +15,7 @@ abstract interface class IAuthRepository {
   /// Gets current user from the server/database (requires network)
   Future<Either<Failure, UserEntity>> getCurrentUserFromServer();
   Future<Either<Failure, UserEntity>> signInWithGoogle(String idToken);
+  Future<Either<Failure, UserEntity>> signInWithApple(String idToken, {String? fullName});
   Future<Either<Failure, bool>> logOut();
   Future<Either<Failure, bool>> verifyPassword(String password);
   Future<Either<Failure, void>> forgotPassword(String email);

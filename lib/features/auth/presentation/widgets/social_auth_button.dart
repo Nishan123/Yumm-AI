@@ -2,33 +2,42 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 
-class GoogleSigninButton extends StatelessWidget {
+class SocialAuthButton extends StatelessWidget {
   final VoidCallback onTap;
   final String text;
   final bool? isLoading;
-  const GoogleSigninButton({
+  final Color backgroundColor;
+  final String icon;
+  const SocialAuthButton({
     super.key,
     required this.onTap,
     required this.text,
-     this.isLoading,
+    required this.icon,
+    required this.backgroundColor,
+    this.isLoading,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: isLoading??false?null:onTap,
+      onTap: isLoading ?? false ? null : onTap,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+
         width: double.infinity,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
           border: Border.all(width: 2),
+          color: backgroundColor
         ),
         child: isLoading ?? false
-            ? Center(child: SizedBox(
-              height: 21,
-              width: 21,
-              child: CircularProgressIndicator(strokeWidth: 3,)))
+            ? Center(
+                child: SizedBox(
+                  height: 21,
+                  width: 21,
+                  child: CircularProgressIndicator(strokeWidth: 3),
+                ),
+              )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -37,8 +46,7 @@ class GoogleSigninButton extends StatelessWidget {
                     width: 22,
                     child: CachedNetworkImage(
                       imageUrl:
-                          "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/1280px-Google_Favicon_2025.svg.png",
-                      fit: BoxFit.cover,
+                          icon,
                     ),
                   ),
                   Text(text, style: AppTextStyles.h6),

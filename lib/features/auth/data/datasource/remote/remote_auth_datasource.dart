@@ -157,10 +157,6 @@ class RemoteAuthDatasource implements IAuthRemoteDatasource {
 
     if (response.data["success"]) {
       final userData = response.data["data"] as Map<String, dynamic>;
-      // Sanitize user data if needed?
-      // The backend returns the updated user object (SafeUser)
-      // verify if we need to update session/token here
-      // For now, just return the user model.
       return UserApiModel.fromJson(userData);
     }
     throw Exception(response.data['message'] ?? 'Failed to change password');
@@ -175,6 +171,28 @@ class RemoteAuthDatasource implements IAuthRemoteDatasource {
 
     if (response.data["success"] != true) {
       throw Exception(response.data['message'] ?? 'Failed to send reset link');
+    }
+  }
+
+  @override
+  Future<UserApiModel?> signInWithApple(
+    String idToken, {
+    String? fullName,
+  }) async {
+    final reponse = await _apiClient.post(
+      ApiEndpoints.appleSignIn,
+      data: {"idToken": idToken, if (fullName != null) "fullName": fullName},
+    );
+    if (reponse.data["success"]) {
+      final user = reponse.data["data"]["user"] as Map<String, dynamic>;
+      final token = reponse.data["data"]["token"] as String;
+      _tokenStorageService.saveToken(token);
+      final userModel = UserApiModel.fromJson(user);
+      registerForPush(userModel.uid ?? "");
+      _userSessionService.saveUserSession(userModel);
+      return userModel;
+    } else {
+      return null;
     }
   }
 }

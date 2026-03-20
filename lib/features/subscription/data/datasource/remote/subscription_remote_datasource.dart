@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 abstract class SubscriptionRemoteDatasource {
@@ -11,38 +10,26 @@ abstract class SubscriptionRemoteDatasource {
 class SubscriptionRemoteDatasourceImpl implements SubscriptionRemoteDatasource {
   @override
   Future<Offerings> fetchOfferings() async {
-    try {
-      return await Purchases.getOfferings();
-    } on PlatformException catch (_) {
-      rethrow;
-    }
+    if (!await Purchases.isConfigured) throw Exception('RevenueCat is not configured');
+    return await Purchases.getOfferings();
   }
 
   @override
   Future<CustomerInfo> purchasePackage(Package package) async {
-    try {
-      final result = await Purchases.purchaseStoreProduct(package.storeProduct);
-      return result.customerInfo;
-    } on PlatformException catch (_) {
-      rethrow;
-    }
+    if (!await Purchases.isConfigured) throw Exception('RevenueCat is not configured');
+    final result = await Purchases.purchase(PurchaseParams.package(package));
+    return result.customerInfo;
   }
 
   @override
   Future<CustomerInfo> restorePurchases() async {
-    try {
-      return await Purchases.restorePurchases();
-    } on PlatformException catch (_) {
-      rethrow;
-    }
+    if (!await Purchases.isConfigured) throw Exception('RevenueCat is not configured');
+    return await Purchases.restorePurchases();
   }
 
   @override
   Future<CustomerInfo> getCustomerInfo() async {
-    try {
-      return await Purchases.getCustomerInfo();
-    } on PlatformException catch (_) {
-      rethrow;
-    }
+    if (!await Purchases.isConfigured) throw Exception('RevenueCat is not configured');
+    return await Purchases.getCustomerInfo();
   }
 }

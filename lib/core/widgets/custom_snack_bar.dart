@@ -11,7 +11,7 @@ class CustomSnackBar {
     String text,
   ) {
     final overlay = Overlay.of(context);
-    final safeTop = MediaQuery.of(context).padding.top;
+    final safeTop = MediaQueryData.fromView(View.of(context)).padding.top;
 
     late OverlayEntry entry;
 
@@ -38,15 +38,15 @@ class CustomSnackBar {
   }
 
   static void showSuccessSnackBar(BuildContext context, String text) {
-    _show(context, LucideIcons.laugh, AppColors.primaryColor, text);
+    _show(context, LucideIcons.laugh, AppColors.primaryColor.withGreen(100), text);
   }
 
   static void showErrorSnackBar(BuildContext context, String text) {
-    _show(context, LucideIcons.frown, AppColors.redColor, text);
+    _show(context, LucideIcons.frown, AppColors.redColor.withRed(100), text);
   }
 
   static void showNormalSnackBar(BuildContext context, String text) {
-    _show(context, LucideIcons.meh, AppColors.blueColor, text);
+    _show(context, LucideIcons.meh, AppColors.blueColor.withBlue(100), text);
   }
 }
 
@@ -81,8 +81,8 @@ class _SnackBarContentState extends State<_SnackBarContent>
 
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 250),
-      reverseDuration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 280),
+      reverseDuration: const Duration(milliseconds: 250),
     )..forward();
 
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
@@ -93,7 +93,7 @@ class _SnackBarContentState extends State<_SnackBarContent>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     // Auto dismiss
-    _autoDismissTimer = Timer(const Duration(seconds: 3), _dismiss);
+    _autoDismissTimer = Timer(const Duration(seconds: 5), _dismiss);
   }
 
   void _dismiss() async {

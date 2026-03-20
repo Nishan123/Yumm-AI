@@ -8,6 +8,7 @@ import 'package:yumm_ai/core/constants/propmpts.dart';
 import 'package:yumm_ai/core/enums/cooking_expertise.dart';
 import 'package:yumm_ai/core/enums/meals.dart';
 import 'package:yumm_ai/core/error/failure.dart';
+import 'package:yumm_ai/core/services/gen_ai/gemini_service.dart';
 import 'package:yumm_ai/core/usecases/app_usecases.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
@@ -57,11 +58,18 @@ class GenerateMacroChefPlanParams extends Equatable {
 
 final generateMacroChefPlanUsecaseProvider =
     Provider<GenerateMacroChefPlanUsecase>((ref) {
-      return GenerateMacroChefPlanUsecase();
+      return GenerateMacroChefPlanUsecase(
+        geminiService: ref.read(geminiServiceProvider),
+      );
     });
 
 class GenerateMacroChefPlanUsecase
     implements UsecaseWithParms<RecipeModel, GenerateMacroChefPlanParams> {
+  final GeminiService _geminiService;
+
+  GenerateMacroChefPlanUsecase({required GeminiService geminiService})
+    : _geminiService = geminiService;
+
   @override
   Future<Either<Failure, RecipeModel>> call(
     GenerateMacroChefPlanParams params,
@@ -81,16 +89,12 @@ class GenerateMacroChefPlanUsecase
         allergicIngridents: params.allergicIngridents,
       );
 
-      final response = await Gemini.instance.prompt(parts: [Part.text(prompt)]);
+      final response = await _geminiService.promptAi(prompt);
       if (response?.output == null) {
         return Left(GeneralFailure("Failed to generate recipe"));
       }
       String jsonString = response!.output!;
-      if (jsonString.contains('```json')) {
-        jsonString = jsonString.replaceAll('```json', '').replaceAll('```', '');
-      } else if (jsonString.contains('```')) {
-        jsonString = jsonString.replaceAll('```', '');
-      }
+      jsonString = _geminiService.formatJsonResponse(jsonString);
 
       final masterIngridents = await Propmpts.loadIngredients();
       final Map<String, dynamic> jsonMap = jsonDecode(jsonString);

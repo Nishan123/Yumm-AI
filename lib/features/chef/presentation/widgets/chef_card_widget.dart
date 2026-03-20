@@ -12,7 +12,7 @@ class ChefCardWidget extends StatelessWidget {
   final VoidCallback onTap;
   final String title;
   final String description;
-  final bool isLocked;
+  final bool havePremium;
   final bool isSuffixCropped;
   const ChefCardWidget({
     super.key,
@@ -21,7 +21,7 @@ class ChefCardWidget extends StatelessWidget {
     required this.onTap,
     required this.title,
     required this.description,
-    required this.isLocked,
+    required this.havePremium,
     this.isSuffixCropped = false,
   });
 
@@ -74,8 +74,8 @@ class ChefCardWidget extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(title, style: AppTextStyles.h5),
-                              isLocked
-                                  ? Container(
+                              havePremium
+                                  ? SizedBox():Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 4,
                                         vertical: 2,
@@ -89,8 +89,7 @@ class ChefCardWidget extends StatelessWidget {
                                         size: 18,
                                         color: AppColors.whiteColor,
                                       ),
-                                    )
-                                  : SizedBox(),
+                                    ),
                             ],
                           ),
                           const SizedBox(height: 8),

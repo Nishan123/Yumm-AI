@@ -16,8 +16,8 @@ class HomeAppBarLoadingSkelaton extends StatelessWidget
           spacing: 10,
           children: [
             Container(
-              height: 46,
-              width: 46,
+              height: 48,
+              width: 48,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: AppColors.extraLightBlackColor,

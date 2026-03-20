@@ -302,4 +302,32 @@ class AuthRepository implements IAuthRepository {
       );
     }
   }
+
+  @override
+  Future<Either<Failure, UserEntity>> signInWithApple(
+    String idToken, {
+    String? fullName,
+  }) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final userApiModel = await _userRemoteDatasource.signInWithApple(
+          idToken,
+          fullName: fullName,
+        );
+        if (userApiModel != null) {
+          return Right(userApiModel.toEntity());
+        }
+        return Left(ApiFailure(message: "Apple Sign-In failed"));
+      } on DioException catch (e) {
+        return Left(
+          ApiFailure(
+            message: e.response?.data["message"] ?? "Apple Sign-In failed",
+            statusCode: e.response?.statusCode,
+          ),
+        );
+      }
+    }else{
+      return Left(ApiFailure(message: "No internet connection. Apple Sign-In requires internet"));
+    }
+  }
 }

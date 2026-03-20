@@ -21,6 +21,7 @@ import 'package:yumm_ai/features/profile/presentation/state/profile_screen_state
 import 'package:yumm_ai/features/profile/presentation/view_model/profile_view_model.dart';
 import 'package:yumm_ai/features/profile/presentation/widgets/profile_card.dart';
 import 'package:yumm_ai/features/profile/presentation/widgets/profile_pic_source_bottom_sheet.dart';
+import 'package:yumm_ai/features/subscription/presentation/view_model/subscription_view_model.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -149,6 +150,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final isLoggedIn = ref.watch(isUserLoggedInProvider);
     final existingUser = ref.watch(currentUserProvider);
     final state = ref.watch(profileViewModelProvider);
+    final subscriptionState = ref.watch(subscriptionViewModelProvider);
+    final subscriptionData = subscriptionState.subscriptionData;
+    final isPremium = subscriptionData?.isPremium??false;
 
     ref.listen(currentUserProvider, (previous, next) {
       next.whenData((user) {
@@ -224,6 +228,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           const SizedBox(height: 20),
                           // ProfileCard now fetches its own data using userProfileCardDataProvider
                           ProfileCard(
+                            havePremium: isPremium,
                             userNameController: userNameController,
                             selectedImage: _selectedProfilePic,
                             onProfileIconTap: () {

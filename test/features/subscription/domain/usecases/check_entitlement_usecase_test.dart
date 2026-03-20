@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:yumm_ai/features/subscription/domain/repositories/subscription_repository.dart';
+import 'package:yumm_ai/features/subscription/domain/entities/subscription_entity.dart';
 import 'package:yumm_ai/features/subscription/domain/usecases/check_entitlement_usecase.dart';
 
 class MockSubscriptionRepository extends Mock
@@ -20,13 +21,13 @@ void main() {
     // arrange
     when(
       () => mockRepository.checkEntitlement(),
-    ).thenAnswer((_) async => const Right(true));
+    ).thenAnswer((_) async => const Right(SubscriptionEntity(isPremium: true)));
 
     // act
     final result = await usecase();
 
     // assert
-    expect(result, const Right(true));
+    expect(result, const Right(SubscriptionEntity(isPremium: true)));
     verify(() => mockRepository.checkEntitlement());
     verifyNoMoreInteractions(mockRepository);
   });

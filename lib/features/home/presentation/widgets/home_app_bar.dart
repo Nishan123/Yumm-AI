@@ -6,19 +6,23 @@ import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/constants/constants_string.dart';
 import 'package:yumm_ai/core/widgets/primary_icon_button.dart';
 
-class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String userName;
+class HomeAppBar extends StatelessWidget {
   final String profilePic;
+  final String userName;
   const HomeAppBar({
     super.key,
-    required this.userName,
     required this.profilePic,
+    required this.userName,
   });
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      title: Row(
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: 18
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         spacing: 6,
         children: [
           Container(
@@ -48,6 +52,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              
               Row(
                 children: [
                   Text("Hi,", style: AppTextStyles.h5),
@@ -67,20 +72,15 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ],
           ),
-        ],
-      ),
-      actions: [
-        PrimaryIconButton(
+          Spacer(),
+          PrimaryIconButton(
           onTap: () {
             context.pushNamed("notifications");
           },
           icon: LucideIcons.bell,
         ),
-        SizedBox(width: 18),
-      ],
+        ],
+      ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

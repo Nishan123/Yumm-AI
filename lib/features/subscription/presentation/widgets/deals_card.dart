@@ -45,8 +45,32 @@ class DealsCard extends StatelessWidget {
         ),
         child: Column(
           children: [
+            haveBestValueTag?Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                        Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.lightBlackColor,
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
+                        child: Text(
+                          "BEST VALUE",
+                          style: AppTextStyles.normalText.copyWith(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      )
+
+                      ],):SizedBox(),
+                      SizedBox(height: 4,),
             Row(
               children: [
+                
                 RichText(
                   text: TextSpan(
                     style: AppTextStyles.title.copyWith(
@@ -54,6 +78,7 @@ class DealsCard extends StatelessWidget {
                       fontWeight: FontWeight.w800,
                     ),
                     children: [
+                      
                       haveOldPrice ?? true
                           ? TextSpan(
                               text: "$oldPrice ",
@@ -75,26 +100,7 @@ class DealsCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Spacer(),
-                haveBestValueTag
-                    ? Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.lightBlackColor,
-                          borderRadius: BorderRadius.circular(40),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
-                        ),
-                        child: Text(
-                          "BEST VALUE",
-                          style: AppTextStyles.normalText.copyWith(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      )
-                    : SizedBox(),
+                
               ],
             ),
             SizedBox(height: 6),

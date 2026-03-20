@@ -12,6 +12,7 @@ abstract interface class IAuthRemoteDatasource {
   Future<UserApiModel?> signWithEmailPassword(UserApiModel userModel);
   Future<UserApiModel?> loginWithEmailPassword(String email, String password);
   Future<UserApiModel?> signInWithGoogle(String idToken);
+  Future<UserApiModel?> signInWithApple(String idToken, {String? fullName});
   Future<UserApiModel?> getCurrentUser();
   Future<bool> logOut();
   Future<void> registerForPush(String uid);

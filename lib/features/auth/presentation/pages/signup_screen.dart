@@ -12,7 +12,7 @@ import 'package:yumm_ai/core/widgets/svg_text_logo.dart';
 import 'package:yumm_ai/features/auth/presentation/state/auth_state.dart';
 import 'package:yumm_ai/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:yumm_ai/features/auth/presentation/widgets/auth_text_field.dart';
-import 'package:yumm_ai/features/auth/presentation/widgets/google_signin_button.dart';
+import 'package:yumm_ai/features/auth/presentation/widgets/social_auth_button.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -56,6 +56,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   void _signnWithGoogle() {
     ref.read(authViewModelProvider.notifier).signInWithGoogle();
+  }
+
+  void _signinWithApple(){
+    ref.read(authViewModelProvider.notifier).signInWithApple();
   }
 
   @override
@@ -166,7 +170,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                           ),
                           CustomDivider(),
 
-                          GoogleSigninButton(
+                          // google sign in
+                          SocialAuthButton(
                             isLoading:
                                 authState.status ==
                                 AuthStatus.googleAuthLoading,
@@ -177,6 +182,20 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                                   : _signnWithGoogle();
                             },
                             text: "Continue with Google",
+                            icon:
+                                "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Google_Favicon_2025.svg/1280px-Google_Favicon_2025.svg.png",
+                            backgroundColor: AppColors.whiteColor,
+                          ),
+
+                          // apple sign in
+                          SocialAuthButton(
+                            icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1280px-Apple_logo_black.svg.png",
+                            backgroundColor: AppColors.whiteColor,
+                            isLoading:authState.status==AuthStatus.appleAuthLoading,
+                            onTap: () {
+                             _signinWithApple();
+                            },
+                            text: "Continue With Apple",
                           ),
 
                           Spacer(),

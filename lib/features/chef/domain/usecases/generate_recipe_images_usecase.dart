@@ -4,7 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/core/error/failure.dart';
-import 'package:yumm_ai/core/services/imagen_service.dart';
+import 'package:yumm_ai/core/services/gen_ai/imagen_service.dart';
 import 'package:yumm_ai/core/usecases/app_usecases.dart';
 
 class GenerateRecipeImagesParams extends Equatable {

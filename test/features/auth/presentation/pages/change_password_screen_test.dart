@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:dartz/dartz.dart';
@@ -10,7 +9,6 @@ import 'package:yumm_ai/features/auth/data/repositories/auth_repository.dart';
 import 'package:yumm_ai/features/auth/domin/entities/user_entity.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/verify_password_usecase.dart';
 import 'package:yumm_ai/features/auth/domin/usecases/change_password_usecase.dart';
-import 'package:yumm_ai/features/auth/presentation/state/change_password_state.dart';
 import 'package:yumm_ai/features/auth/presentation/view_model/change_password_view_model.dart';
 import 'package:yumm_ai/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:yumm_ai/features/auth/presentation/state/auth_state.dart';
