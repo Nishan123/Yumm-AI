@@ -39,7 +39,7 @@ class IngredientsWrapContainer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    emptyText ?? "No Ingredients Selected 😪",
+                    emptyText ?? "No Ingredients Selected",
                     style: AppTextStyles.h3.copyWith(
                       color: AppColors.descriptionTextColor,
                       fontWeight: FontWeight.bold,

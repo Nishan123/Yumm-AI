@@ -45,6 +45,7 @@ class _AddIngredientsBottomSheetState extends State<AddIngredientsBottomSheet> {
     final mq = MediaQuery.of(context).size;
 
     return Container(
+      height: mq.height*0.53,
       padding: EdgeInsets.only(top: 8, bottom: 4, left: 16, right: 16),
       decoration: BoxDecoration(
         color: AppColors.whiteColor,

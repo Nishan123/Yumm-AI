@@ -6,7 +6,7 @@ class EmptyCookbookStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-        height: MediaQuery.of(context).size.height *0.7,
+        height: MediaQuery.of(context).size.height *0.55,
         child: const Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 30),

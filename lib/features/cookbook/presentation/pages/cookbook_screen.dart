@@ -95,7 +95,6 @@ class _CookbookScreenState extends ConsumerState<CookbookScreen> {
       return EmptyCookbookStateWidget();
     }
 
-    // return CookbookList(state: state);
-    return CookbookLoadingSkelaton();
+    return CookbookList(state: state);
   }
 }

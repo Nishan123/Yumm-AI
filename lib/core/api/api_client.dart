@@ -156,7 +156,11 @@ class _AuthInterceptor extends Interceptor {
         options.path == ApiEndpoints.login ||
         options.path == ApiEndpoints.signup;
 
-    if (!isPublicGet && !isAuthEndpoint) {
+    final isGoogleApi =
+        options.path.contains('googleapis.com') ||
+        options.uri.host.contains('googleapis.com');
+
+    if (!isPublicGet && !isAuthEndpoint && !isGoogleApi) {
       final token = await _storage.read(key: _tokenKey);
       if (token != null) {
         options.headers['Authorization'] = 'Bearer $token';

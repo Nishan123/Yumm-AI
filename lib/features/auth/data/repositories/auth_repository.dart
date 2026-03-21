@@ -8,7 +8,6 @@ import 'package:yumm_ai/features/auth/data/datasource/local/auth_local_datasourc
 import 'package:yumm_ai/features/auth/data/datasource/remote/remote_auth_datasource.dart';
 import 'package:yumm_ai/features/auth/data/datasource/user_datasource.dart';
 import 'package:yumm_ai/features/auth/data/model/user_api_model.dart';
-import 'package:yumm_ai/features/auth/data/model/user_hive_model.dart';
 import 'package:yumm_ai/features/auth/domin/entities/user_entity.dart';
 import 'package:yumm_ai/features/auth/domin/repositories/auth_repository.dart';
 
@@ -66,14 +65,8 @@ class AuthRepository implements IAuthRepository {
       }
     } else {
       try {
-        final user = await _userLocalDatasource.loginWithEmailPassword(
-          email,
-          password,
-        );
-        if (user != null) {
-          return Right(user.toEntity());
-        }
-        return Left(LocalDatabaseFailure(message: "Invalid email or password"));
+       return Left( GeneralFailure("No internet connection"));
+        
       } catch (e) {
         return Left(LocalDatabaseFailure(message: "$e"));
       }
@@ -103,13 +96,7 @@ class AuthRepository implements IAuthRepository {
       }
     } else {
       try {
-        // convert entity to model
-        final model = UserHiveModel.fromEntity(userEntity);
-        final result = await _userLocalDatasource.signWithEmailPassword(model);
-        if (result) {
-          return Right(true);
-        }
-        return Left(LocalDatabaseFailure(message: "Failed to Signup"));
+        return Left(GeneralFailure("No internet connection"));
       } catch (e) {
         return Left((LocalDatabaseFailure(message: "$e")));
       }
@@ -187,9 +174,7 @@ class AuthRepository implements IAuthRepository {
       }
     } else {
       return Left(
-        ApiFailure(
-          message: "No internet connection. Google Sign-In requires network.",
-        ),
+        GeneralFailure("No internet connection")
       );
     }
   }
