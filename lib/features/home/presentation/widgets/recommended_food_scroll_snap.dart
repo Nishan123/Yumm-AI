@@ -26,6 +26,8 @@ class _RecommendedFoodScrollSnapState
   @override
   Widget build(BuildContext context) {
     final recipesAsyncValue = ref.watch(publicRecipesProvider);
+    final screenHeight = MediaQuery.sizeOf(context).height;
+    final responsiveHeight = screenHeight * 0.52;
 
     ref.listen(publicRecipesProvider, (previous, next) {
       if (previous is AsyncLoading && next is AsyncData) {
@@ -37,7 +39,7 @@ class _RecommendedFoodScrollSnapState
     });
 
     return SizedBox(
-      height: 440,
+      height: responsiveHeight,
       width: double.infinity,
       child: recipesAsyncValue.when(
         data: (recipes) {
@@ -50,7 +52,6 @@ class _RecommendedFoodScrollSnapState
             itemCount: recipes.length,
             onPageChanged: (i) {
               setState(() => focusedIndex = i);
-              // Trigger load more when we reach the end
               if (i >= recipes.length - 2) {
                 ref.read(publicRecipesProvider.notifier).loadMore();
               }

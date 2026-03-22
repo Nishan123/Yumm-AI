@@ -27,7 +27,7 @@ class KitchenToolsCard extends StatelessWidget {
             ),
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(18),
+              borderRadius: BorderRadius.circular(22),
               color: AppColors.extraLightBlackColor,
             ),
             child: Stack(

@@ -57,7 +57,7 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
       final data = response.data["data"]["recipes"] as List<dynamic>;
       return CookbookRecipeModel.fromJsonList(data);
     }
-    throw Exception(response.data['message'] ?? 'Failed to fetch cookbook');
+    throw ApiFailure(message:response.data['message'] ?? 'Failed to fetch cookbook');
   }
 
   @override
@@ -70,7 +70,7 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
         response.data["data"] as Map<String, dynamic>,
       );
     }
-    throw Exception(response.data['message'] ?? 'Failed to fetch user recipe');
+    throw ApiFailure(message:response.data['message'] ?? 'Failed to fetch user recipe');
   }
 
   @override
@@ -86,8 +86,8 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
         response.data["data"] as Map<String, dynamic>,
       );
     }
-    throw Exception(
-      response.data['message'] ?? 'Failed to fetch user recipe by original',
+    throw ApiFailure(
+      message:response.data['message'] ?? 'Failed to fetch user recipe by original',
     );
   }
 
@@ -104,7 +104,7 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
         response.data["data"] as Map<String, dynamic>,
       );
     }
-    throw Exception(response.data['message'] ?? 'Failed to update user recipe');
+    throw ApiFailure(message:response.data['message'] ?? 'Failed to update user recipe');
   }
 
   @override
@@ -120,7 +120,7 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
         response.data["data"] as Map<String, dynamic>,
       );
     }
-    throw Exception(response.data['message'] ?? 'Failed to update user recipe');
+    throw ApiFailure(message:response.data['message'] ?? 'Failed to update user recipe');
   }
 
   @override
@@ -147,7 +147,7 @@ class CookbookRemoteDataSource implements ICookbookRemoteDataSource {
     if (response.data["success"]) {
       return response.data["data"]["isInCookbook"] as bool;
     }
-    throw Exception(
+    throw ApiFailure(message:
       response.data['message'] ?? 'Failed to check cookbook status',
     );
   }

@@ -9,7 +9,7 @@ final cookbookRemoteDataSourceProvider = Provider((ref) {
   return CookbookRemoteDataSource(apiClient: apiClient);
 });
 
-abstract class ICookbookRemoteDataSource {
+abstract interface class ICookbookRemoteDataSource {
   Future<CookbookRecipeModel> addToCookbook({
     required String userId,
     required String recipeId,

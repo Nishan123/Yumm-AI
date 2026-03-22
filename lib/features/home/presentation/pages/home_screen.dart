@@ -54,9 +54,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               return false;
             },
             child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: ClampingScrollPhysics(),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Home app bar
                   userAsync.when(
                     data: (user) {
                       String profilePicUrl = user!.profilePic!;
@@ -108,7 +112,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     labelBuilder: (meal) => meal.text,
                     iconBuilder: (meal) => meal.icon,
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 18),
 
                   //Recommendations Card
                   RecommendedFoodScrollSnap(),

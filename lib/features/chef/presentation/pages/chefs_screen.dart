@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/core/constants/constants_string.dart';
 import 'package:yumm_ai/core/widgets/premium_ad_banner.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/chef_card_widget.dart';
+import 'package:yumm_ai/features/chef/presentation/widgets/paywall.dart';
 import 'package:yumm_ai/features/subscription/presentation/view_model/subscription_view_model.dart';
 
 class ChefsScreen extends ConsumerWidget {
@@ -13,7 +14,7 @@ class ChefsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final subscriptionState = ref.watch(subscriptionViewModelProvider);
     final subscriptionData = subscriptionState.subscriptionData;
-    final bool isPremium = subscriptionData?.isPremium??true;
+    final bool isPremium = subscriptionData?.isPremium ?? false;
 
     return Scaffold(
       appBar: AppBar(title: Text("Select your desired chef")),
@@ -73,7 +74,8 @@ class ChefsScreen extends ConsumerWidget {
                 suffixImage: ConstantsString.masterChefSuffix,
                 backgroundImage: ConstantsString.masterChefBackground,
                 onTap: () {
-                  context.pushNamed("master_chef");
+                  isPremium?
+                  context.pushNamed("master_chef"):Paywall.showPaywall(context);
                 },
                 title: "Master Chef",
                 description:
@@ -84,7 +86,8 @@ class ChefsScreen extends ConsumerWidget {
                 suffixImage: ConstantsString.macroChefSuffix,
                 backgroundImage: ConstantsString.macroChefBackground,
                 onTap: () {
-                  context.pushNamed("macro_chef");
+                  isPremium?
+                  context.pushNamed("macro_chef"):Paywall.showPaywall(context);
                 },
                 title: "Macro Chef",
                 description:

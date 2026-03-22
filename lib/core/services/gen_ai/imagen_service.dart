@@ -18,7 +18,6 @@ class ImagenService {
   static const String _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-fast-generate-001:predict';
 
-  // final Dio _dio = Dio();
   final ApiClient _apiClient;
 
   ImagenService({required ApiClient apiClient}) : _apiClient = apiClient {
@@ -27,8 +26,7 @@ class ImagenService {
     }
   }
 
-  /// Generates images based on the recipe description
-  /// Returns a list of image bytes
+// Generate image recipe
   Future<List<Uint8List>> generateRecipeImages({
     required String recipeName,
     required String description,
