@@ -1,12 +1,14 @@
 import '../../domain/entities/kitchen_tool_entity.dart';
 
 class KitchenToolModel {
+  final String? uid;
   final String toolId;
   final String toolName;
   final String imageUrl;
   final bool isReady;
 
   const KitchenToolModel({
+    this.uid,
     required this.toolId,
     required this.toolName,
     required this.imageUrl,
@@ -16,6 +18,7 @@ class KitchenToolModel {
   // toJson - converts model to JSON map
   Map<String, dynamic> toJson() {
     return {
+      'uid': uid,
       'toolId': toolId,
       'toolName': toolName,
       'imageUrl': imageUrl,
@@ -26,6 +29,7 @@ class KitchenToolModel {
   // fromJson - creates model from JSON map
   factory KitchenToolModel.fromJson(Map<String, dynamic> json) {
     return KitchenToolModel(
+      uid: json['uid'] as String? ?? '',
       toolId: json['toolId'] as String? ?? '',
       toolName: json['toolName'] as String? ?? '',
       imageUrl: json['imageUrl'] as String? ?? '',
@@ -36,6 +40,7 @@ class KitchenToolModel {
   // toEntity - converts model to entity
   KitchenToolEntity toEntity() {
     return KitchenToolEntity(
+      uid: uid,
       toolId: toolId,
       toolName: toolName,
       imageUrl: imageUrl,
@@ -46,6 +51,7 @@ class KitchenToolModel {
   // fromEntity - creates model from entity
   factory KitchenToolModel.fromEntity(KitchenToolEntity entity) {
     return KitchenToolModel(
+      uid: entity.uid,
       toolId: entity.toolId,
       toolName: entity.toolName,
       imageUrl: entity.imageUrl,

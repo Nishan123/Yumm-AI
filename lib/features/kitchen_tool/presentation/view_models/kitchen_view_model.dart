@@ -8,9 +8,9 @@ import 'package:yumm_ai/features/kitchen_tool/presentation/state/tools_state.dar
 final kitchenViewModelProvider = NotifierProvider<KitchenViewModel, ToolsState>(()=>KitchenViewModel());
 
 class KitchenViewModel extends Notifier<ToolsState> {
-  late final AddKitchenToolsUsecase _addKitchenToolUsecase;
-  late final DeleteKitchenToolUsecase _deleteKitchenToolUsecase;
-  late final GetAvailableKitchenToolsUsecase _getUserKitchenToolUsecase;
+  late AddKitchenToolsUsecase _addKitchenToolUsecase;
+  late DeleteKitchenToolUsecase _deleteKitchenToolUsecase;
+  late GetAvailableKitchenToolsUsecase _getUserKitchenToolUsecase;
 
   @override
   ToolsState build() {
@@ -38,9 +38,10 @@ class KitchenViewModel extends Notifier<ToolsState> {
         );
       },
       (success) {
+        final currentTools = state.kitchenTools ?? [];
         state = state.copyWith(
           status: ToolsStatus.success,
-          kitchenTools: [success],
+          kitchenTools: [...currentTools, success],
         );
       },
     );
@@ -59,7 +60,13 @@ class KitchenViewModel extends Notifier<ToolsState> {
         state = state.copyWith(status: ToolsStatus.error);
       },
       (success) {
-        state = state.copyWith(status: ToolsStatus.success);
+        final currentTools = state.kitchenTools ?? [];
+        final updatedTools =
+            currentTools.where((t) => t.toolId != toolId).toList();
+        state = state.copyWith(
+          status: ToolsStatus.success,
+          kitchenTools: updatedTools,
+        );
       },
     );
   }
@@ -70,7 +77,7 @@ class KitchenViewModel extends Notifier<ToolsState> {
       GetAvailableKitchenToolsUsecaseParams(uid: uid),
     );
     result.fold((failure) {
-      state = state.copyWith(status: ToolsStatus.error);
+      state = state.copyWith(status: ToolsStatus.error, message: failure.errorMessage);
     }, (tools) {
       state = state.copyWith(status: ToolsStatus.loaded, kitchenTools: tools);
     });

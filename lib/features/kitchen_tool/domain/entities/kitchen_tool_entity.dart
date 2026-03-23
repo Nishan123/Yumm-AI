@@ -1,10 +1,12 @@
 class KitchenToolEntity {
+  final String? uid;
   final String toolId;
   final String toolName;
   final String imageUrl;
   final bool isReady;
 
   const KitchenToolEntity({
+    this.uid,
     required this.toolId,
     required this.toolName,
     required this.imageUrl,
@@ -12,12 +14,14 @@ class KitchenToolEntity {
   });
 
   KitchenToolEntity copyWith({
+    String? uid,
     String? toolId,
     String? toolName,
     String? imageUrl,
     bool? isReady,
   }) {
     return KitchenToolEntity(
+      uid: uid ?? this.uid,
       toolId: toolId ?? this.toolId,
       toolName: toolName ?? this.toolName,
       imageUrl: imageUrl ?? this.imageUrl,
@@ -30,6 +34,7 @@ class KitchenToolEntity {
       identical(this, other) ||
       other is KitchenToolEntity &&
           runtimeType == other.runtimeType &&
+          uid == other.uid &&
           toolId == other.toolId &&
           toolName == other.toolName &&
           toolName == other.toolName &&
@@ -38,6 +43,7 @@ class KitchenToolEntity {
 
   @override
   int get hashCode =>
+      uid.hashCode ^
       toolId.hashCode ^
       toolName.hashCode ^
       imageUrl.hashCode ^

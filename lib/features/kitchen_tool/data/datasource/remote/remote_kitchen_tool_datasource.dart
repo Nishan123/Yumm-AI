@@ -27,7 +27,7 @@ class RemoteKitchenToolDatasource implements IRemoteKitchenToolDatasource{
   Future<List<KitchenToolModel>> getUserKithcenTools({required String uid}) async{
     final response = await _apiClient.get(ApiEndpoints.getUserKitchenTools(uid));
     if(response.data["success"]){
-      return KitchenToolModel.fromJsonList(response.data["data"]);
+      return KitchenToolModel.fromJsonList(response.data["data"]["tools"]);
     }
     throw ApiFailure(message: response.data['message']);
   }

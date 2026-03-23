@@ -9,11 +9,13 @@ import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.da
 class KitchenToolsCard extends StatelessWidget {
   final int index;
   final KitchenToolModel kitchenTool;
-  const KitchenToolsCard({super.key, required this.index, required this.kitchenTool});
+  final VoidCallback onTap;
+  const KitchenToolsCard({super.key, required this.index, required this.kitchenTool, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Expanded(
@@ -54,7 +56,7 @@ class KitchenToolsCard extends StatelessWidget {
                     child: PrimaryIconButton(
                       iconColor: AppColors.redColor,
                       icon: LucideIcons.x,
-                      onTap: () {},
+                      onTap: onTap
                     ),
                   ),
                 ),
@@ -65,7 +67,7 @@ class KitchenToolsCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Text(
-            "Kitchen Tool name sak djak asdk ka sdka ",
+            kitchenTool.toolName,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: AppTextStyles.normalText.copyWith(
