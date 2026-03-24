@@ -1,4 +1,5 @@
-import '../../../kitchen_tool/data/models/kitchen_tools_model.dart';
+import 'package:yumm_ai/features/chef/data/models/recipe_kitchen_tool_model.dart';
+
 import '../../domain/entities/recipe_entity.dart';
 import 'ingredient_model.dart';
 import 'initial_preparation_model.dart';
@@ -12,7 +13,7 @@ class RecipeModel {
   final List<IngredientModel> ingredients;
   final List<InstructionModel> steps;
   final List<InitialPreparationModel> initialPreparation;
-  final List<KitchenToolModel> kitchenTools;
+  final List<RecipeKitchenToolModel> kitchenTools;
   final String experienceLevel;
   final String estCookingTime;
   final String description;
@@ -59,7 +60,7 @@ class RecipeModel {
     List<IngredientModel>? ingredients,
     List<InstructionModel>? steps,
     List<InitialPreparationModel>? initialPreparation,
-    List<KitchenToolModel>? kitchenTools,
+    List<RecipeKitchenToolModel>? kitchenTools,
     String? experienceLevel,
     String? estCookingTime,
     String? description,
@@ -145,7 +146,7 @@ class RecipeModel {
             )
           : [],
       kitchenTools: json['kitchenTools'] != null
-          ? KitchenToolModel.fromJsonList(json['kitchenTools'] as List<dynamic>)
+          ? RecipeKitchenToolModel.fromJsonList(json['kitchenTools'] as List<dynamic>)
           : [],
       experienceLevel: json['experienceLevel'] as String? ?? '',
       estCookingTime: json['estCookingTime'] as String? ?? '',
@@ -206,7 +207,7 @@ class RecipeModel {
             )
           : [],
       kitchenTools: json['kitchenTools'] != null
-          ? KitchenToolModel.fromJsonList(json['kitchenTools'] as List<dynamic>)
+          ? RecipeKitchenToolModel.fromJsonList(json['kitchenTools'] as List<dynamic>)
           : [],
       experienceLevel: json['experienceLevel'] as String? ?? '',
       estCookingTime: json['estCookingTime'] as String? ?? '',
@@ -246,7 +247,7 @@ class RecipeModel {
       ingredients: IngredientModel.toEntityList(ingredients),
       steps: steps, // Already extending Entity
       initialPreparation: initialPreparation, // Already extending Entity
-      kitchenTools: KitchenToolModel.toEntityList(kitchenTools),
+      kitchenTools: RecipeKitchenToolModel.toEntityList(kitchenTools),
       experienceLevel: experienceLevel,
       estCookingTime: estCookingTime,
       description: description,
@@ -278,7 +279,7 @@ class RecipeModel {
           .map((e) => InitialPreparationModel.fromEntity(e))
           .toList(),
       kitchenTools: entity.kitchenTools
-          .map((e) => KitchenToolModel.fromEntity(e))
+          .map((e) => RecipeKitchenToolModel.fromEntity(e))
           .toList(),
       experienceLevel: entity.experienceLevel,
       estCookingTime: entity.estCookingTime,

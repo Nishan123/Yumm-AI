@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/features/chef/domain/entities/ingredient_entity.dart';
 import 'package:yumm_ai/features/chef/domain/entities/initial_preparation_entity.dart';
 import 'package:yumm_ai/features/chef/domain/entities/instruction_entity.dart';
+import 'package:yumm_ai/features/chef/domain/entities/recipe_kitchen_tool_entity.dart';
 import 'package:yumm_ai/features/chef/domain/usecases/delete_recipe_usecase.dart';
 import 'package:yumm_ai/features/chef/domain/usecases/update_recipe_usecase.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
@@ -15,7 +16,6 @@ import 'package:yumm_ai/features/cookbook/domain/usecases/is_recipe_in_cookbook_
 import 'package:yumm_ai/features/cookbook/domain/usecases/remove_from_cookbook_usecase.dart';
 import 'package:yumm_ai/features/cookbook/domain/usecases/update_cookbook_recipe_usecase.dart';
 import 'package:yumm_ai/features/cookbook/presentation/state/cookbook_state.dart';
-import 'package:yumm_ai/features/kitchen_tool/domain/entities/kitchen_tool_entity.dart';
 
 final cookbookViewModelProvider =
     NotifierProvider<CookbookViewModel, CookbookState>(
@@ -289,7 +289,7 @@ class CookbookViewModel extends Notifier<CookbookState> {
   void toggleKitchenTool(int index, bool value) {
     if (state.currentRecipe == null) return;
 
-    final kitchenTools = List<KitchenToolEntity>.from(
+    final kitchenTools = List<RecipeKitchenToolEntity>.from(
       state.currentRecipe!.kitchenTools,
     );
     kitchenTools[index] = kitchenTools[index].copyWith(isReady: value);

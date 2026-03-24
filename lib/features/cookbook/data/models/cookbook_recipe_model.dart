@@ -2,8 +2,8 @@ import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/data/models/initial_preparation_model.dart';
 import 'package:yumm_ai/features/chef/data/models/instruction_model.dart';
 import 'package:yumm_ai/features/chef/data/models/nutrition_model.dart';
+import 'package:yumm_ai/features/chef/data/models/recipe_kitchen_tool_model.dart';
 import 'package:yumm_ai/features/cookbook/domain/entities/cookbook_recipe_entity.dart';
-import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.dart';
 
 /// Model for user-specific recipe instances in their cookbook.
 /// Handles JSON serialization and conversion to/from entity.
@@ -16,7 +16,7 @@ class CookbookRecipeModel {
   final List<IngredientModel> ingredients;
   final List<InstructionModel> steps;
   final List<InitialPreparationModel> initialPreparation;
-  final List<KitchenToolModel> kitchenTools;
+  final List<RecipeKitchenToolModel> kitchenTools;
   final String experienceLevel;
   final String estCookingTime;
   final String description;
@@ -103,7 +103,7 @@ class CookbookRecipeModel {
             )
           : [],
       kitchenTools: json['kitchenTools'] != null
-          ? KitchenToolModel.fromJsonList(json['kitchenTools'] as List<dynamic>)
+          ? RecipeKitchenToolModel.fromJsonList(json['kitchenTools'] as List<dynamic>)
           : [],
       experienceLevel: json['experienceLevel'] as String? ?? '',
       estCookingTime: json['estCookingTime'] as String? ?? '',
@@ -141,7 +141,7 @@ class CookbookRecipeModel {
       ingredients: ingredients.map((e) => e.toEntity()).toList(),
       steps: steps,
       initialPreparation: initialPreparation,
-      kitchenTools: KitchenToolModel.toEntityList(kitchenTools),
+      kitchenTools: RecipeKitchenToolModel.toEntityList(kitchenTools),
       experienceLevel: experienceLevel,
       estCookingTime: estCookingTime,
       description: description,
@@ -173,7 +173,7 @@ class CookbookRecipeModel {
           .map((e) => InitialPreparationModel.fromEntity(e))
           .toList(),
       kitchenTools: entity.kitchenTools
-          .map((e) => KitchenToolModel.fromEntity(e))
+          .map((e) => RecipeKitchenToolModel.fromEntity(e))
           .toList(),
       experienceLevel: entity.experienceLevel,
       estCookingTime: entity.estCookingTime,
@@ -210,7 +210,7 @@ class CookbookRecipeModel {
     List<IngredientModel>? ingredients,
     List<InstructionModel>? steps,
     List<InitialPreparationModel>? initialPreparation,
-    List<KitchenToolModel>? kitchenTools,
+    List<RecipeKitchenToolModel>? kitchenTools,
     String? experienceLevel,
     String? estCookingTime,
     String? description,

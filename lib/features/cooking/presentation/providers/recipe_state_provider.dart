@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:yumm_ai/features/chef/domain/entities/ingredient_entity.dart';
 import 'package:yumm_ai/features/chef/domain/entities/instruction_entity.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
+import 'package:yumm_ai/features/chef/domain/entities/recipe_kitchen_tool_entity.dart';
 import 'package:yumm_ai/features/cooking/presentation/view_model/cooking_view_model.dart';
-import 'package:yumm_ai/features/kitchen_tool/domain/entities/kitchen_tool_entity.dart';
 
 /// State class that holds cached recipe states by recipeId.
 /// This is an immutable state class for proper Riverpod reactivity.
@@ -117,7 +117,7 @@ class RecipeStateCacheNotifier extends Notifier<RecipeStateCache> {
     final recipe = state.get(recipeId);
     if (recipe == null) return;
 
-    final kitchenTools = List<KitchenToolEntity>.from(recipe.kitchenTools);
+    final kitchenTools = List<RecipeKitchenToolEntity>.from(recipe.kitchenTools);
     kitchenTools[index] = kitchenTools[index].copyWith(isReady: value);
 
     final newRecipe = recipe.copyWith(kitchenTools: kitchenTools);

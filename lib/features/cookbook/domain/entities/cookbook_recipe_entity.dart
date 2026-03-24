@@ -3,7 +3,7 @@ import 'package:yumm_ai/features/chef/domain/entities/initial_preparation_entity
 import 'package:yumm_ai/features/chef/domain/entities/instruction_entity.dart';
 import 'package:yumm_ai/features/chef/domain/entities/nutrition_entity.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
-import 'package:yumm_ai/features/kitchen_tool/domain/entities/kitchen_tool_entity.dart';
+import 'package:yumm_ai/features/chef/domain/entities/recipe_kitchen_tool_entity.dart';
 
 /// Entity representing a user-specific recipe instance in their cookbook.
 /// This allows users to track their own progress (checked ingredients, instructions, tools)
@@ -34,7 +34,7 @@ class CookbookRecipeEntity {
   final List<InitialPreparationEntity> initialPreparation;
 
   /// User's kitchen tools list with their own progress tracking
-  final List<KitchenToolEntity> kitchenTools;
+  final List<RecipeKitchenToolEntity> kitchenTools;
 
   /// Experience level required
   final String experienceLevel;
@@ -105,7 +105,7 @@ class CookbookRecipeEntity {
     List<IngredientEntity>? ingredients,
     List<InstructionEntity>? steps,
     List<InitialPreparationEntity>? initialPreparation,
-    List<KitchenToolEntity>? kitchenTools,
+    List<RecipeKitchenToolEntity>? kitchenTools,
     String? experienceLevel,
     String? estCookingTime,
     String? description,

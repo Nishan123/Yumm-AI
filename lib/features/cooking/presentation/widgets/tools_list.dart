@@ -1,13 +1,13 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
+import 'package:yumm_ai/features/chef/data/models/recipe_kitchen_tool_model.dart';
+import 'package:yumm_ai/features/chef/domain/entities/recipe_kitchen_tool_entity.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/tools_list_tile.dart';
-import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.dart';
-import 'package:yumm_ai/features/kitchen_tool/domain/entities/kitchen_tool_entity.dart';
 
 class ToolsList extends StatelessWidget {
   final bool isActive;
-  final List<KitchenToolEntity> kitchenTool;
+  final List<RecipeKitchenToolEntity> kitchenTool;
   final Function(int index, bool value) onToggle;
 
   const ToolsList({
@@ -46,7 +46,7 @@ class ToolsList extends StatelessWidget {
         final kitchenTools = kitchenTool[index - 1];
         return ToolsListTile(
           onChecked: (value) => onToggle(index - 1, value ?? false),
-          kitchenTool: KitchenToolModel.fromEntity(kitchenTools),
+          kitchenTool: RecipeKitchenToolModel.fromEntity(kitchenTools),
           textColor: colorForIndex(index),
         );
       },

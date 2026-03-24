@@ -12,6 +12,7 @@ import 'package:yumm_ai/core/widgets/secondary_button.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
 import 'package:yumm_ai/features/chef/data/models/instruction_model.dart';
 import 'package:yumm_ai/features/chef/data/models/initial_preparation_model.dart';
+import 'package:yumm_ai/features/chef/data/models/recipe_kitchen_tool_model.dart';
 import 'package:yumm_ai/features/chef/data/models/recipe_model.dart';
 import 'package:yumm_ai/features/chef/domain/entities/instruction_entity.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
@@ -26,7 +27,6 @@ import 'package:yumm_ai/features/chef/presentation/widgets/available_time_select
 import 'package:yumm_ai/features/cookbook/domain/entities/cookbook_recipe_entity.dart';
 import 'package:yumm_ai/features/cookbook/presentation/state/cookbook_state.dart';
 import 'package:yumm_ai/features/cookbook/presentation/view_model/cookbook_view_model.dart';
-import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.dart';
 
 /// Parameters passed to EditRecipeScreen
 class EditRecipeParams {
@@ -309,7 +309,7 @@ class _EditRecipeScreenState extends ConsumerState<EditRecipeScreen> {
               .toList(),
           kitchenTools: params.recipe.kitchenTools
               .map(
-                (e) => KitchenToolModel(
+                (e) => RecipeKitchenToolModel(
                   toolId: e.toolId,
                   toolName: e.toolName,
                   imageUrl: e.imageUrl,

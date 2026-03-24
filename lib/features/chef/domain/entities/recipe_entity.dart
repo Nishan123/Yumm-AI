@@ -1,7 +1,8 @@
+import 'package:yumm_ai/features/chef/domain/entities/recipe_kitchen_tool_entity.dart';
+
 import 'initial_preparation_entity.dart';
 import 'instruction_entity.dart';
 import 'ingredient_entity.dart';
-import '../../../kitchen_tool/domain/entities/kitchen_tool_entity.dart';
 import 'nutrition_entity.dart';
 
 class RecipeEntity {
@@ -11,7 +12,7 @@ class RecipeEntity {
   final List<IngredientEntity> ingredients;
   final List<InstructionEntity> steps;
   final List<InitialPreparationEntity> initialPreparation;
-  final List<KitchenToolEntity> kitchenTools;
+  final List<RecipeKitchenToolEntity> kitchenTools;
   final String experienceLevel;
   final String estCookingTime;
   final String description;
@@ -58,7 +59,7 @@ class RecipeEntity {
     List<IngredientEntity>? ingredients,
     List<InstructionEntity>? steps,
     List<InitialPreparationEntity>? initialPreparation,
-    List<KitchenToolEntity>? kitchenTools,
+    List<RecipeKitchenToolEntity>? kitchenTools,
     String? experienceLevel,
     String? estCookingTime,
     String? description,

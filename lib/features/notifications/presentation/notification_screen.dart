@@ -12,13 +12,22 @@ class NotificationScreen extends ConsumerStatefulWidget {
 
 class _NotificationScreenState extends ConsumerState<NotificationScreen> {
   late ScrollController _scrollController;
-  bool _hasFetched = false;
 
+  void _loadNotifications({bool forceRefresh = false}){
+    final currentState = ref.read(notificationViewModelProvider);
+    if(!forceRefresh && currentState.notifications.isNotEmpty){
+      return;
+    }
+    ref.read(notificationViewModelProvider.notifier).fetchNotifications(isRefresh: forceRefresh || currentState.notifications.isEmpty);
+  }
+
+  
   @override
   void initState() {
     super.initState();
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_)=>_loadNotifications());
   }
 
   void _onScroll() {
@@ -30,6 +39,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
       }
     }
   }
+  
 
   @override
   void dispose() {
@@ -41,16 +51,6 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(notificationViewModelProvider);
 
-    // Fetch notifications once on first build
-    if (!_hasFetched) {
-      _hasFetched = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        ref
-            .read(notificationViewModelProvider.notifier)
-            .fetchNotifications(isRefresh: true);
-      });
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -61,9 +61,7 @@ class _NotificationScreenState extends ConsumerState<NotificationScreen> {
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
-            await ref
-                .read(notificationViewModelProvider.notifier)
-                .fetchNotifications(isRefresh: true);
+            _loadNotifications(forceRefresh: true);
           },
           child: Builder(
             builder: (context) {

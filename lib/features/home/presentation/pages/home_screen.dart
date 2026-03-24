@@ -34,141 +34,140 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final cacheKey = ref.watch(profilePicCacheKeyProvider);
 
     return Scaffold(
-      body: SafeArea(
-        child: RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(recipeStateCacheProvider);
-            ref.invalidate(recipeStateProvider);
-            ref.invalidate(recipeRemoteDataSourceProvider);
-            ref.invalidate(currentUserProvider);
-            ref.invalidate(publicRecipesProvider);
-            ref.invalidate(topPublicRecipesProvider);
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(recipeStateCacheProvider);
+          ref.invalidate(recipeStateProvider);
+          ref.invalidate(recipeRemoteDataSourceProvider);
+          ref.invalidate(currentUserProvider);
+          ref.invalidate(publicRecipesProvider);
+          ref.invalidate(topPublicRecipesProvider);
+        },
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (scrollInfo) {
+            if (scrollInfo.metrics.pixels >=
+                    scrollInfo.metrics.maxScrollExtent * 0.9 &&
+                ref.read(topPublicRecipesProvider.notifier).canLoadMore) {
+              ref.read(topPublicRecipesProvider.notifier).loadMore();
+            }
+            return false;
           },
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (scrollInfo) {
-              if (scrollInfo.metrics.pixels >=
-                      scrollInfo.metrics.maxScrollExtent * 0.9 &&
-                  ref.read(topPublicRecipesProvider.notifier).canLoadMore) {
-                ref.read(topPublicRecipesProvider.notifier).loadMore();
-              }
-              return false;
-            },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(
-                parent: ClampingScrollPhysics(),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Home app bar
-                  userAsync.when(
-                    data: (user) {
-                      String profilePicUrl = user!.profilePic!;
-                      if (profilePicUrl.isNotEmpty) {
-                        final separator = profilePicUrl.contains('?')
-                            ? '&'
-                            : '?';
-                        profilePicUrl = '$profilePicUrl${separator}v=$cacheKey';
-                      }
-                      return HomeAppBar(
-                        profilePic: profilePicUrl,
-                        userName: user.fullName.split(" ").first,
-                      );
-                    },
-                    loading: () {
-                      return HomeAppBarLoadingSkelaton();
-                    },
-                    error: (error, stack) {
-                      return HomeAppBar(profilePic: "", userName: "n/a");
-                    },
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(
+              parent: ClampingScrollPhysics(),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 60,),
+                // Home app bar
+                userAsync.when(
+                  data: (user) {
+                    String profilePicUrl = user!.profilePic!;
+                    if (profilePicUrl.isNotEmpty) {
+                      final separator = profilePicUrl.contains('?')
+                          ? '&'
+                          : '?';
+                      profilePicUrl = '$profilePicUrl${separator}v=$cacheKey';
+                    }
+                    return HomeAppBar(
+                      profilePic: profilePicUrl,
+                      userName: user.fullName.split(" ").first,
+                    );
+                  },
+                  loading: () {
+                    return HomeAppBarLoadingSkelaton();
+                  },
+                  error: (error, stack) {
+                    return HomeAppBar(profilePic: "", userName: "n/a");
+                  },
+                ),
+                SizedBox(height: 21),
+                // Custom Search Bar
+                HomeSearchBar(
+                  onTap: () {
+                    Navigator.of(context).push(SearchScreen.route());
+                  },
+                  onFilterTap: () {
+                    Navigator.of(
+                      context,
+                    ).push(SearchScreen.route(focusFilter: true));
+                  },
+                ),
+                SizedBox(height: 18),
+                //Premium Card
+                PremiumAdBanner(
+                  text: 'Unlock\nUnlimited Recipes',
+                  backgroundImage:
+                      '${ConstantsString.assetSvg}/ad_banner.svg',
+                  buttonText: 'Go Premium',
+                ),
+      
+                //Choice Chips
+                CustomChoiceChip<Meal>(
+                  values: Meal.values,
+                  onSelected: (value) {
+                    ref.read(selectedMealTypeProvider.notifier).state = value;
+                  },
+                  labelBuilder: (meal) => meal.text,
+                  iconBuilder: (meal) => meal.icon,
+                ),
+                SizedBox(height: 18),
+      
+                //Recommendations Card
+                RecommendedFoodScrollSnap(),
+      
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 18,
+                    top: 18,
+                    bottom: 18,
                   ),
-                  SizedBox(height: 21),
-                  // Custom Search Bar
-                  HomeSearchBar(
-                    onTap: () {
-                      Navigator.of(context).push(SearchScreen.route());
-                    },
-                    onFilterTap: () {
-                      Navigator.of(
-                        context,
-                      ).push(SearchScreen.route(focusFilter: true));
-                    },
-                  ),
-                  SizedBox(height: 18),
-                  //Premium Card
-                  PremiumAdBanner(
-                    text: 'Unlock\nUnlimited Recipes',
-                    backgroundImage:
-                        '${ConstantsString.assetSvg}/ad_banner.svg',
-                    buttonText: 'Go Premium',
-                  ),
-
-                  //Choice Chips
-                  CustomChoiceChip<Meal>(
-                    values: Meal.values,
-                    onSelected: (value) {
-                      ref.read(selectedMealTypeProvider.notifier).state = value;
-                    },
-                    labelBuilder: (meal) => meal.text,
-                    iconBuilder: (meal) => meal.icon,
-                  ),
-                  SizedBox(height: 18),
-
-                  //Recommendations Card
-                  RecommendedFoodScrollSnap(),
-
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 18,
-                      top: 18,
-                      bottom: 18,
-                    ),
-                    child: Text("Top Recipes", style: AppTextStyles.title),
-                  ),
-
-                  //Top Recipes
-                  Consumer(
-                    builder: (context, ref, child) {
-                      final topRecipesAsync = ref.watch(
-                        topPublicRecipesProvider,
-                      );
-
-                      return topRecipesAsync.when(
-                        data: (recipes) {
-                          return ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount:
-                                recipes.length +
-                                (ref
-                                        .read(topPublicRecipesProvider.notifier)
-                                        .canLoadMore
-                                    ? 1
-                                    : 0),
-                            itemBuilder: (context, index) {
-                              if (index == recipes.length) {
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              }
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  TopRecipeCard(recipe: recipes[index]),
-                                ],
+                  child: Text("Top Recipes", style: AppTextStyles.title),
+                ),
+      
+                //Top Recipes
+                Consumer(
+                  builder: (context, ref, child) {
+                    final topRecipesAsync = ref.watch(
+                      topPublicRecipesProvider,
+                    );
+      
+                    return topRecipesAsync.when(
+                      data: (recipes) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount:
+                              recipes.length +
+                              (ref
+                                      .read(topPublicRecipesProvider.notifier)
+                                      .canLoadMore
+                                  ? 1
+                                  : 0),
+                          itemBuilder: (context, index) {
+                            if (index == recipes.length) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
                               );
-                            },
-                          );
-                        },
-                        error: (error, stack) =>
-                            Center(child: Text('Error: $error')),
-                        loading: () => TopRecipeLoadingSkelaton(),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 80),
-                ],
-              ),
+                            }
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TopRecipeCard(recipe: recipes[index]),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      error: (error, stack) =>
+                          Center(child: Text('Error: $error')),
+                      loading: () => TopRecipeLoadingSkelaton(),
+                    );
+                  },
+                ),
+                SizedBox(height: 80),
+              ],
             ),
           ),
         ),

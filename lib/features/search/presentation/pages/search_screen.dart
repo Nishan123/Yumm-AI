@@ -14,8 +14,8 @@ class SearchScreen extends ConsumerStatefulWidget {
   static Route<void> route({bool? focus, bool focusFilter = false}) {
     return PageRouteBuilder<void>(
       settings: RouteSettings(arguments: {'focusFilter': focusFilter}),
-      transitionDuration: const Duration(milliseconds: 320),
-      reverseTransitionDuration: const Duration(milliseconds: 250),
+      transitionDuration: const Duration(milliseconds: 340),
+      reverseTransitionDuration: const Duration(milliseconds: 350),
       pageBuilder: (context, animation, secondaryAnimation) =>
           const SearchScreen(),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
+import 'package:yumm_ai/features/chef/data/models/recipe_kitchen_tool_model.dart';
 import 'package:yumm_ai/features/cooking/presentation/widgets/cached_image_error_widget.dart';
-import 'package:yumm_ai/features/kitchen_tool/data/models/kitchen_tools_model.dart';
 
 class ToolsListTile extends StatelessWidget {
-  final KitchenToolModel kitchenTool;
+  final RecipeKitchenToolModel kitchenTool;
   final Color textColor;
   final Function(bool?)? onChecked;
   const ToolsListTile({
