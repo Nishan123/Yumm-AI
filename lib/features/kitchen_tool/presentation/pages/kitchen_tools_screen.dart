@@ -25,12 +25,23 @@ class _KitchenToolsScreenState extends ConsumerState<KitchenToolsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final uidAsync = ref.read(currentUserUidProvider);
-      uidAsync.whenData((uid) {
-        if (uid != null) {
-          ref.read(kitchenViewModelProvider.notifier).getUserTools(uid: uid);
-        }
-      });
+      _loadInitialTools();
+    });
+  }
+
+  void _loadInitialTools() {
+    final currentState = ref.read(kitchenViewModelProvider);
+    if (currentState.status == ToolsStatus.loaded &&
+        currentState.kitchenTools != null &&
+        currentState.kitchenTools!.isNotEmpty) {
+      return;
+    }
+
+    final uidAsync = ref.read(currentUserUidProvider);
+    uidAsync.whenData((uid) {
+      if (uid != null) {
+        ref.read(kitchenViewModelProvider.notifier).getUserTools(uid: uid);
+      }
     });
   }
 
@@ -41,6 +52,16 @@ class _KitchenToolsScreenState extends ConsumerState<KitchenToolsScreen> {
     ref.listen<ToolsState>(kitchenViewModelProvider, (previous, next) {
       if (next.status == ToolsStatus.error && next.message != null) {
         CustomSnackBar.showErrorSnackBar(context, next.message!);
+      }
+
+      if (previous?.actionStatus != next.actionStatus) {
+        if (next.actionStatus == ToolsStatus.error &&
+            next.actionMessage != null) {
+          CustomSnackBar.showErrorSnackBar(context, next.actionMessage!);
+        } else if (next.actionStatus == ToolsStatus.success &&
+            next.actionMessage != null) {
+          CustomSnackBar.showSuccessSnackBar(context, next.actionMessage!);
+        }
       }
     });
 
@@ -62,19 +83,22 @@ class _KitchenToolsScreenState extends ConsumerState<KitchenToolsScreen> {
               builder: (context) {
                 return AddToolBottomSheet(
                   onSubmit: (List<KitchenToolModel> tools) {
-                    final ownedIds = toolState.kitchenTools
-                            ?.map((t) => t.toolId)
-                            .toSet() ??
+                    final ownedIds =
+                        toolState.kitchenTools?.map((t) => t.toolId).toSet() ??
                         {};
-                    for (var tool in tools) {
-                      if (!ownedIds.contains(tool.toolId)) {
-                        ref.read(kitchenViewModelProvider.notifier).addKitchenTool(
-                              kitchenTool: tool.toEntity(),
-                            );
-                      }
+                    final newTools = tools
+                        .where((tool) => !ownedIds.contains(tool.toolId))
+                        .map((tool) => tool.toEntity())
+                        .toList();
+                    
+                    if (newTools.isNotEmpty) {
+                      ref
+                          .read(kitchenViewModelProvider.notifier)
+                          .addMultipleKitchenTools(tools: newTools);
                     }
                   },
-                  selectedTools: toolState.kitchenTools
+                  selectedTools:
+                      toolState.kitchenTools
                           ?.map((e) => KitchenToolModel.fromEntity(e))
                           .toList() ??
                       [],
@@ -156,11 +180,12 @@ class _KitchenToolsScreenState extends ConsumerState<KitchenToolsScreen> {
                 if (uid != null) {
                   await ref
                       .read(kitchenViewModelProvider.notifier)
-                      .deleteKitchenTool(uid: uid, toolId: tool.toolId);
+                      .deleteKitchenTool(
+                        uid: uid,
+                        toolId: tool.toolId,
+                      );
                 }
-                if (context.mounted) {
-                  context.pop();
-                }
+              
               },
               onOkTap: () {
                 context.pop();

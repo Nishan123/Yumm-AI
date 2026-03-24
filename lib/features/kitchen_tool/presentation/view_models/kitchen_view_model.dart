@@ -17,11 +17,17 @@ class KitchenViewModel extends Notifier<ToolsState> {
     _addKitchenToolUsecase = ref.read(addKitchenToolProvider);
     _deleteKitchenToolUsecase = ref.read(deleteKitchenToolProvider);
     _getUserKitchenToolUsecase = ref.read(getKitchenToolProvider);
-    return ToolsState();
+    return const ToolsState();
   }
 
-  Future<void> addKitchenTool({required KitchenToolEntity kitchenTool}) async {
-    state = state.copyWith(status: ToolsStatus.loading);
+  Future<void> addKitchenTool({
+    required KitchenToolEntity kitchenTool,
+    required int selectedCount,
+  }) async {
+    state = state.copyWith(
+      actionStatus: ToolsStatus.loading,
+      actionMessage: null,
+    );
     final result = await _addKitchenToolUsecase.call(
       AddKitchenToolsUsecaseParams(
         toolId: kitchenTool.toolId,
@@ -33,38 +39,95 @@ class KitchenViewModel extends Notifier<ToolsState> {
     result.fold(
       (failure) {
         state = state.copyWith(
-          status: ToolsStatus.error,
-          message: failure.errorMessage,
+          actionStatus: ToolsStatus.error,
+          actionMessage: "Failed to add kitchen tool: ${failure.errorMessage}",
         );
       },
       (success) {
         final currentTools = state.kitchenTools ?? [];
         state = state.copyWith(
-          status: ToolsStatus.success,
+          actionStatus: ToolsStatus.success,
+          actionMessage: "$selectedCount Kitchen tool added successfully",
           kitchenTools: [...currentTools, success],
         );
       },
     );
   }
 
+  Future<void> addMultipleKitchenTools({
+    required List<KitchenToolEntity> tools,
+  }) async {
+    state = state.copyWith(
+      actionStatus: ToolsStatus.loading,
+      actionMessage: null,
+    );
+
+    int successCount = 0;
+    String? errorMessage;
+    final List<KitchenToolEntity> newlyAddedTools = [];
+
+    for (var tool in tools) {
+      final result = await _addKitchenToolUsecase.call(
+        AddKitchenToolsUsecaseParams(
+          toolId: tool.toolId,
+          toolName: tool.toolName,
+          imageUrl: tool.imageUrl,
+          isReady: tool.isReady,
+        ),
+      );
+      result.fold(
+        (failure) {
+          errorMessage = failure.errorMessage;
+        },
+        (success) {
+          successCount++;
+          newlyAddedTools.add(success);
+        },
+      );
+    }
+
+    if (successCount > 0) {
+      final currentTools = state.kitchenTools ?? [];
+      state = state.copyWith(
+        actionStatus: ToolsStatus.success,
+        actionMessage: "$successCount Kitchen tools added successfully",
+        kitchenTools: [...currentTools, ...newlyAddedTools],
+      );
+    } else if (errorMessage != null) {
+      state = state.copyWith(
+        actionStatus: ToolsStatus.error,
+        actionMessage: "Failed to add kitchen tools: $errorMessage",
+      );
+    } else {
+      state = state.copyWith(actionStatus: ToolsStatus.initial);
+    }
+  }
+
   Future<void> deleteKitchenTool({
     required String uid,
     required String toolId,
   }) async {
-    state = state.copyWith(status: ToolsStatus.loading);
+    state = state.copyWith(
+      actionStatus: ToolsStatus.loading,
+      actionMessage: null,
+    );
     final result = await _deleteKitchenToolUsecase.call(
       DeleteKitchenToolUsecaseParams(uid: uid, toolId: toolId),
     );
     result.fold(
       (failure) {
-        state = state.copyWith(status: ToolsStatus.error);
+        state = state.copyWith(
+          actionStatus: ToolsStatus.error,
+          actionMessage: "Failed to delete kitchen tool: ${failure.errorMessage}",
+        );
       },
       (success) {
         final currentTools = state.kitchenTools ?? [];
         final updatedTools =
             currentTools.where((t) => t.toolId != toolId).toList();
         state = state.copyWith(
-          status: ToolsStatus.success,
+          actionStatus: ToolsStatus.success,
+          actionMessage: "Tool removed from the kitchen",
           kitchenTools: updatedTools,
         );
       },
@@ -72,14 +135,35 @@ class KitchenViewModel extends Notifier<ToolsState> {
   }
 
   Future<void> getUserTools({required String uid}) async {
-    state = state.copyWith(status: ToolsStatus.loading);
+    state = state.copyWith(
+      status: ToolsStatus.loading,
+      message: null,
+      actionStatus: ToolsStatus.initial,
+      actionMessage: null,
+    );
     final result = await _getUserKitchenToolUsecase.call(
       GetAvailableKitchenToolsUsecaseParams(uid: uid),
     );
-    result.fold((failure) {
-      state = state.copyWith(status: ToolsStatus.error, message: failure.errorMessage);
-    }, (tools) {
-      state = state.copyWith(status: ToolsStatus.loaded, kitchenTools: tools);
-    });
+    result.fold(
+      (failure) {
+        state = state.copyWith(
+          status: ToolsStatus.error,
+          message: failure.errorMessage,
+        );
+      },
+      (tools) {
+        state = state.copyWith(
+          status: ToolsStatus.loaded,
+          kitchenTools: tools,
+        );
+      },
+    );
+  }
+
+  void resetActionStatus() {
+    state = state.copyWith(
+      actionStatus: ToolsStatus.initial,
+      actionMessage: null,
+    );
   }
 }

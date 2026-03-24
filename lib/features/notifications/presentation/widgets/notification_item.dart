@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/features/notifications/domain/entities/notification_entity.dart';
 import 'package:intl/intl.dart';
 
@@ -12,30 +14,15 @@ class NotificationItem extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(width: 1, color: AppColors.lightBlackColor),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: _getStatusColor(notification.status).withOpacity(0.15),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            Icons.notifications_active,
-            color: _getStatusColor(notification.status),
-            size: 22,
-          ),
+        leading: Icon(
+          LucideIcons.bell,
+          color: _getStatusColor(notification.status),
+          size: 22,
         ),
         title: Text(
           notification.title,
@@ -52,11 +39,11 @@ class NotificationItem extends StatelessWidget {
               style: TextStyle(fontSize: 13, color: Colors.grey[600]),
             ),
             const SizedBox(height: 6),
-            Text(
-              _formatDate(notification.createdAt),
-              style: TextStyle(fontSize: 11, color: Colors.grey[500]),
-            ),
           ],
+        ),
+        trailing: Text(
+          _formatDate(notification.createdAt),
+          style: TextStyle(fontSize: 11, color: Colors.grey[500]),
         ),
       ),
     );

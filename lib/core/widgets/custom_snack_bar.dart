@@ -38,15 +38,15 @@ class CustomSnackBar {
   }
 
   static void showSuccessSnackBar(BuildContext context, String text) {
-    _show(context, LucideIcons.laugh, AppColors.primaryColor.withGreen(100), text);
+    _show(context, LucideIcons.laugh, AppColors.primaryColor.withValues(alpha: 12), text);
   }
 
   static void showErrorSnackBar(BuildContext context, String text) {
-    _show(context, LucideIcons.frown, AppColors.redColor.withRed(100), text);
+    _show(context, LucideIcons.frown, AppColors.redColor.withValues(alpha:12), text);
   }
 
   static void showNormalSnackBar(BuildContext context, String text) {
-    _show(context, LucideIcons.meh, AppColors.blueColor.withBlue(100), text);
+    _show(context, LucideIcons.meh, AppColors.blueColor.withValues(alpha: 12), text);
   }
 }
 
