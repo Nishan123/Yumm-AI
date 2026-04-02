@@ -298,6 +298,7 @@ class AuthRepository implements IAuthRepository {
         final userApiModel = await _userRemoteDatasource.signInWithApple(
           idToken,
           fullName: fullName,
+          
         );
         if (userApiModel != null) {
           return Right(userApiModel.toEntity());

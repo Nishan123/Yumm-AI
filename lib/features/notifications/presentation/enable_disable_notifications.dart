@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/core/services/storage/notification_pref_storage.dart';
 import 'package:yumm_ai/features/notifications/presentation/widgets/enable_disable_notifications_widget.dart';
 
@@ -42,8 +43,11 @@ class _EnableDisableNotificationsState
       ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 12),
+            Text("Restart the app to load changes",style: TextStyle(color: AppColors.redColor),),
+            const SizedBox(height: 12,),
             EnableDisableNotificationsWidget(
               value: isToggleOn,
               onChanged: (value) {

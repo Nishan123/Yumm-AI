@@ -5,6 +5,7 @@ import 'package:yumm_ai/features/chef/presentation/view_model/pantry_chef_view_m
 import 'package:yumm_ai/features/cookbook/presentation/view_model/cookbook_view_model.dart';
 import 'package:yumm_ai/features/cooking/presentation/providers/recipe_provider.dart';
 import 'package:yumm_ai/features/cooking/presentation/providers/recipe_state_provider.dart';
+import 'package:yumm_ai/features/kitchen_tool/presentation/view_models/kitchen_view_model.dart';
 import 'package:yumm_ai/features/profile/presentation/view_model/profile_view_model.dart';
 import 'package:yumm_ai/features/shopping_list/presentation/view_model/shopping_list_view_model.dart';
 import 'package:yumm_ai/features/subscription/presentation/view_model/subscription_view_model.dart';
@@ -56,5 +57,8 @@ class AppStateResetService {
 
     // Reste shopping list state
     _ref.invalidate(shoppingListViewModelProvider);
+
+    // Reset kitchen tools state
+    _ref.invalidate(kitchenViewModelProvider);
   }
 }

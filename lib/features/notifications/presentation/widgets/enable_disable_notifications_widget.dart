@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 
 class EnableDisableNotificationsWidget extends StatelessWidget {
@@ -12,8 +13,13 @@ class EnableDisableNotificationsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+      margin: EdgeInsets.symmetric(horizontal: 12,vertical: 16),
+      decoration: BoxDecoration(
+        border: Border.all(width: 0.3,color: AppColors.blackColor),
+        borderRadius: BorderRadius.circular(22)
+      ),
       child: Row(
         children: [
           Switch(value: value, onChanged: onChanged),
@@ -26,7 +32,7 @@ class EnableDisableNotificationsWidget extends StatelessWidget {
                   value
                       ? "Disable push notifications"
                       : "Enable push notifications",
-                  style: AppTextStyles.title,
+                  style: AppTextStyles.h5,
                 ),
                 
                 Text(
@@ -34,6 +40,7 @@ class EnableDisableNotificationsWidget extends StatelessWidget {
                       ? "You will not receive any notifications from this application if you disable notification"
                       : "You will receive all the notifications from this application with include new updates and feature",
                       softWrap: true,
+                      style: AppTextStyles.descriptionText,
                 ),
               ],
             ),
