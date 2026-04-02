@@ -1,16 +1,16 @@
 
-import 'dart:io';
+// import 'dart:io';
 
 class ApiEndpoints {
   ApiEndpoints._();
 
-  static String get baseUrl {
-    if (Platform.isAndroid) return 'http://10.0.2.2:5000/api';
-    if (Platform.isIOS) return 'http://localhost:5000/api';
-    return 'http://localhost:5000/api';
-  }
+  // static String get baseUrl {
+  //   if (Platform.isAndroid) return 'http://10.0.2.2:5000/api';
+  //   if (Platform.isIOS) return 'http://localhost:5000/api';
+  //   return 'http://localhost:5000/api';
+  // }
 
-  // static const String baseUrl = 'https://yumm-ai-server.vercel.app/api';
+  static const String baseUrl = 'https://yumm-ai-server.vercel.app/api';
 
   static const Duration connectionTimeout = Duration(seconds: 30);
   static const Duration receiveTimeout = Duration(seconds: 30);

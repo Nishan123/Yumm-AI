@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 
-class HomeAppBarLoadingSkelaton extends StatelessWidget
-    implements PreferredSizeWidget {
+class HomeAppBarLoadingSkelaton extends StatelessWidget {
   const HomeAppBarLoadingSkelaton({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      title: Shimmer.fromColors(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      child: Shimmer.fromColors(
         baseColor: AppColors.extraLightBlackColor,
         highlightColor: AppColors.whiteColor,
         child: Row(
@@ -46,11 +46,11 @@ class HomeAppBarLoadingSkelaton extends StatelessWidget
               ],
             ),
             Spacer(),
-              Container(
+            Container(
               height: 46,
               width: 46,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(16),
                 color: AppColors.extraLightBlackColor,
               ),
             ),
@@ -59,7 +59,4 @@ class HomeAppBarLoadingSkelaton extends StatelessWidget
       ),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

@@ -8,8 +8,6 @@ import 'package:yumm_ai/features/bug_report/presentation/providers/screenshot_pr
 import 'package:yumm_ai/features/bug_report/presentation/providers/shake_detector_provider.dart';
 import 'package:yumm_ai/features/settings/presentation/providers/theme_provider.dart';
 
-final AppRoutes _routingConfig = AppRoutes();
-
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
@@ -18,6 +16,7 @@ class MyApp extends ConsumerWidget {
     ref.watch(shakeDetectorProvider);
     final screenshotController = ref.watch(screenshotControllerProvider);
     final themeMode = ref.watch(effectiveThemeModeProvider);
+    final router = ref.watch(routerProvider);
 
     AppColors.currentThemeMode = themeMode;
 
@@ -29,7 +28,7 @@ class MyApp extends ConsumerWidget {
         darkTheme: getDarkTheme(),
         themeMode: themeMode,
         debugShowCheckedModeBanner: false,
-        routerConfig: _routingConfig.appRoutes,
+        routerConfig: router,
       ),
     );
   }

@@ -31,11 +31,22 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkCookbookStatus();
+      _checkCookbookStatusAsync();
     });
   }
 
-  Future<void> _checkCookbookStatus() async {
+  Future<void> _checkCookbookStatusAsync() async {
+    final cookbookState = ref.read(cookbookViewModelProvider);
+
+    // If we already found it locally (from the recipes list), skip the API call
+    final localMatch = cookbookState.recipes
+        .where((r) => r.originalRecipeId == widget.recipe.recipeId)
+        .firstOrNull;
+    if (localMatch != null) {
+      ref.read(cookbookViewModelProvider.notifier).setCurrentRecipe(localMatch);
+      return;
+    }
+
     final userAsync = ref.read(currentUserProvider);
     final user = userAsync.value;
 
@@ -204,6 +215,17 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
     final cookbookState = ref.watch(cookbookViewModelProvider);
     final saveRecipeState = ref.watch(saveRecipeViewModelProvider);
 
+    // ── Synchronous local cookbook check ──
+    // The cookbook recipes are already fetched on the home screen.
+    // We check the in-memory list directly so the very first frame
+    // renders the correct widget with zero delay.
+    final localMatch = cookbookState.recipes
+        .where((r) => r.originalRecipeId == widget.recipe.recipeId)
+        .firstOrNull;
+    final isInCookbook =
+        localMatch != null || cookbookState.isInCookbook == true;
+    final matchedCookbookRecipe = localMatch ?? cookbookState.currentRecipe;
+
     // Helper to determine if liked based on available data
     bool checkIsLiked() {
       // 1. If we have optimistic local state, use it (highest priority for immediate UI feedback)
@@ -255,6 +277,7 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
 
     return Scaffold(
       body: SafeArea(
+        bottom: false,
         child: Stack(
           children: [
             Container(
@@ -276,9 +299,8 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
                         final isOwner =
                             currentUserId != null &&
                             widget.recipe.generatedBy == currentUserId;
-                        final isInCookbook = cookbookState.isInCookbook == true;
                         final userRecipeId =
-                            cookbookState.currentRecipe?.userRecipeId;
+                            matchedCookbookRecipe?.userRecipeId;
 
                         // Show menu only if user is owner OR recipe is in cookbook
                         final shouldShowMenu = isOwner || isInCookbook;
@@ -419,12 +441,11 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
                 final isOwner =
                     currentUserId != null &&
                     widget.recipe.generatedBy == currentUserId;
-                final isInCookbook = cookbookState.isInCookbook == true;
 
-                // Case 1: Recipe is in cookbook AND we have the user's copy - show cookbook version
-                if (isInCookbook && cookbookState.currentRecipe != null) {
+                // Case 1: Recipe is in cookbook AND we have the user's copy
+                if (isInCookbook && matchedCookbookRecipe != null) {
                   return CookbookRecipeDetailsWidget(
-                    recipe: cookbookState.currentRecipe!,
+                    recipe: matchedCookbookRecipe,
                   );
                 }
 
@@ -433,18 +454,16 @@ class _CookingScreenState extends ConsumerState<CookingScreen> {
                   return RecipeDetailsWidget(recipe: widget.recipe);
                 }
 
-                // Case 2b: Recipe is in cookbook but we couldn't fetch it - fallback to read-only
-                // This happens when checkRecipeWithFallback found it in cookbook but fetch failed
-                // Show original recipe but disable "Add to Cookbook" since it's already added
-                if (isInCookbook && cookbookState.currentRecipe == null) {
+                // Case 2b: In cookbook but couldn't fetch copy - disable add button
+                if (isInCookbook && matchedCookbookRecipe == null) {
                   return ReadOnlyRecipeView(
                     recipe: widget.recipe,
-                    onAddToCookbook: () {}, // Already added
+                    onAddToCookbook: () {},
                     isAddingToCookbook: false,
                   );
                 }
 
-                // Case 3: Recipe is not in cookbook - show read-only view with add button
+                // Case 3: Not in cookbook - show read-only view with add button
                 return ReadOnlyRecipeView(
                   recipe: widget.recipe,
                   onAddToCookbook: _handleAddToCookbook,

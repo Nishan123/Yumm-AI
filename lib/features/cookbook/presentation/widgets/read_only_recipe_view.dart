@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
-import 'package:yumm_ai/app/theme/container_property.dart';
-import 'package:yumm_ai/core/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/core/widgets/primary_button.dart';
-import 'package:yumm_ai/core/widgets/read_more_widget.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
-import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_info_card.dart';
-import 'package:yumm_ai/features/cooking/presentation/widgets/recipe_title_widget.dart';
+import 'package:yumm_ai/features/cooking/presentation/widgets/shared_recipe_bottom_sheet.dart';
 
 /// A read-only view of recipe details for users who haven't added the recipe
 /// to their cookbook. Shows recipe information without interactive checkboxes.
@@ -27,191 +23,29 @@ class ReadOnlyRecipeView extends StatefulWidget {
   State<ReadOnlyRecipeView> createState() => _ReadOnlyRecipeViewState();
 }
 
-class _ReadOnlyRecipeViewState extends State<ReadOnlyRecipeView>
-    with SingleTickerProviderStateMixin {
-  static const double _collapsedFraction = 0.64;
-  static const double _expandedFraction = 0.9;
-  bool _isTitleExpanded = false;
-
-  late final DraggableScrollableController _draggableController;
-  late TabController _tabController;
-  int _currentTabIndex = 0;
-
-  bool get _isSheetAttached => _draggableController.isAttached;
-
-  void _handleDragUpdate(DragUpdateDetails details, double parentHeight) {
-    final delta = details.primaryDelta;
-    if (delta == null || parentHeight == 0 || !_isSheetAttached) return;
-
-    final newSize = (_draggableController.size - delta / parentHeight).clamp(
-      _collapsedFraction,
-      _expandedFraction,
-    );
-    _draggableController.jumpTo(newSize);
-  }
-
-  void _snapSheet() {
-    if (!_isSheetAttached) return;
-    final midpoint = (_collapsedFraction + _expandedFraction) / 2;
-    final target = _draggableController.size >= midpoint
-        ? _expandedFraction
-        : _collapsedFraction;
-
-    _draggableController.animateTo(
-      target,
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
-    );
-  }
-
-  void _handleTabChange() {
-    if (_tabController.indexIsChanging) return;
-    if (_currentTabIndex != _tabController.index) {
-      setState(() {
-        _currentTabIndex = _tabController.index;
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _draggableController = DraggableScrollableController();
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(_handleTabChange);
-  }
-
-  @override
-  void dispose() {
-    _draggableController.dispose();
-    _tabController.removeListener(_handleTabChange);
-    _tabController.dispose();
-    super.dispose();
-  }
-
+class _ReadOnlyRecipeViewState extends State<ReadOnlyRecipeView> {
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: DraggableScrollableSheet(
-        controller: _draggableController,
-        initialChildSize: _collapsedFraction,
-        minChildSize: _collapsedFraction,
-        maxChildSize: _expandedFraction,
-        snap: true,
-        builder: (context, scrollController) {
-          return LayoutBuilder(
-            builder: (context, constraints) {
-              final parentHeight = constraints.biggest.height;
-
-              return GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onVerticalDragUpdate: (details) =>
-                    _handleDragUpdate(details, parentHeight),
-                onVerticalDragEnd: (_) => _snapSheet(),
-                child: Container(
-                  clipBehavior: Clip.none,
-                  width: screenWidth,
-                  padding: const EdgeInsets.only(top: 14),
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    boxShadow: [ContainerProperty.darkerShadow],
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: screenWidth * 0.3,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColors.descriptionTextColor,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      RecipeTitleWidget(
-                        recipeName: widget.recipe.recipeName,
-                        onTap: () {
-                          setState(() {
-                            _isTitleExpanded = !_isTitleExpanded;
-                          });
-                        },
-                        isTitleExpanded: _isTitleExpanded,
-                      ),
-                      const SizedBox(height: 6),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ReadMoreWidget(
-                          text: widget.recipe.description,
-                          trimLine: 3,
-                        ),
-                      ),
-                      RecipeInfoCard(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        duration: widget.recipe.estCookingTime,
-                        steps: widget.recipe.steps.length,
-                        expertise: widget.recipe.experienceLevel,
-                      ),
-                      // Add to Cookbook Button
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: PrimaryButton(
-                          text: widget.isAddingToCookbook
-                              ? "Adding..."
-                              : "Add to Cookbook to Start Cooking",
-                          isLoading: widget.isAddingToCookbook,
-                          onTap: widget.onAddToCookbook,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      // Tab Bar
-                      CustomTabBar(
-                        externalController: _tabController,
-                        tabItems: const [
-                          "Ingredients",
-                          "Instructions",
-                          "Tools",
-                        ],
-                        margin: const EdgeInsets.symmetric(horizontal: 16),
-                        itemTextStyle: AppTextStyles.descriptionText.copyWith(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.blackColor,
-                        ),
-                        onTabChanged: (value) {},
-                      ),
-                      Expanded(
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            _buildReadOnlyIngredientsList(scrollController),
-                            _buildReadOnlyInstructionsList(scrollController),
-                            _buildReadOnlyToolsList(scrollController),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
-        },
+    return SharedRecipeBottomSheet(
+      recipe: widget.recipe,
+      actionWidget: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: PrimaryButton(
+          text: widget.isAddingToCookbook
+              ? "Adding..."
+              : "Add to Cookbook to Start Cooking",
+          isLoading: widget.isAddingToCookbook,
+          onTap: widget.onAddToCookbook,
+        ),
       ),
+      ingredientsBody: _buildReadOnlyIngredientsList(),
+      instructionsBody: _buildReadOnlyInstructionsList(),
+      toolsBody: _buildReadOnlyToolsList(),
     );
   }
 
-  Widget _buildReadOnlyIngredientsList(ScrollController scrollController) {
+  Widget _buildReadOnlyIngredientsList() {
     return ListView.builder(
-      controller: scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: widget.recipe.ingredients.length,
       itemBuilder: (context, index) {
@@ -268,9 +102,8 @@ class _ReadOnlyRecipeViewState extends State<ReadOnlyRecipeView>
     );
   }
 
-  Widget _buildReadOnlyInstructionsList(ScrollController scrollController) {
+  Widget _buildReadOnlyInstructionsList() {
     return ListView.builder(
-      controller: scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: widget.recipe.steps.length,
       itemBuilder: (context, index) {
@@ -313,9 +146,8 @@ class _ReadOnlyRecipeViewState extends State<ReadOnlyRecipeView>
     );
   }
 
-  Widget _buildReadOnlyToolsList(ScrollController scrollController) {
+  Widget _buildReadOnlyToolsList() {
     return ListView.builder(
-      controller: scrollController,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       itemCount: widget.recipe.kitchenTools.length,
       itemBuilder: (context, index) {

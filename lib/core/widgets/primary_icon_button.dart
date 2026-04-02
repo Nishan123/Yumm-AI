@@ -9,13 +9,15 @@ class PrimaryIconButton extends StatelessWidget {
   final Color? iconColor;
   final Color? backgroundColor;
   final double? iconSize;
+  final BoxShape? shape;
   const PrimaryIconButton({
     super.key,
     required this.icon,
     required this.onTap,
     this.iconColor,
     this.backgroundColor,
-    this.iconSize
+    this.iconSize,
+    this.shape
   });
 
   @override
@@ -26,12 +28,16 @@ class PrimaryIconButton extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
         child: Container(
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
+            shape: shape??BoxShape.circle,
             color: backgroundColor ?? AppColors.lightBlackColor,
           ),
           child: IconButton(
             onPressed: onTap,
-            icon: Icon(icon, color: iconColor ?? AppColors.blackColor,size: iconSize??24,),
+            icon: Icon(
+              icon,
+              color: iconColor ?? AppColors.blackColor,
+              size: iconSize ?? 24,
+            ),
           ),
         ),
       ),

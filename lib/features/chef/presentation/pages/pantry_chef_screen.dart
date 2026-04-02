@@ -12,14 +12,17 @@ import 'package:yumm_ai/core/widgets/custom_tab_bar.dart';
 import 'package:yumm_ai/core/widgets/input_widget_title.dart';
 import 'package:yumm_ai/core/widgets/secondary_button.dart';
 import 'package:yumm_ai/features/chef/data/models/ingredient_model.dart';
+import 'package:yumm_ai/features/chef/domain/entities/recipe_kitchen_tool_entity.dart';
 import 'package:yumm_ai/features/chef/presentation/state/chef_state.dart';
 import 'package:yumm_ai/features/chef/presentation/view_model/active_chef_provider.dart';
 import 'package:yumm_ai/features/chef/presentation/view_model/pantry_chef_view_model.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/add_ingredients_bottom_sheet.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/available_time_selector.dart';
+import 'package:yumm_ai/features/chef/presentation/widgets/consider_kitchen_tool_widget.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_chip.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/ingredients_wrap_container.dart';
 import 'package:yumm_ai/features/chef/presentation/widgets/visibility_selector.dart';
+import 'package:yumm_ai/features/kitchen_tool/presentation/view_models/kitchen_view_model.dart';
 import 'package:yumm_ai/features/pantry_inventory/presentation/providers/pantry_inventory_provider.dart';
 
 class PantryChefScreen extends ConsumerStatefulWidget {
@@ -36,6 +39,7 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
   List<IngredientModel> selectedIngredients = [];
   bool _isPublic = true;
   int _selectedTabIndex = 0;
+  bool _isToolSelected = false;
 
   void onAddItem() {
     showModalBottomSheet(
@@ -52,6 +56,17 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final uid = ref.read(currentUserUidProvider).value;
+      if (uid != null) {
+        ref.read(kitchenViewModelProvider.notifier).getUserTools(uid: uid);
+      }
+    });
   }
 
   void _onTabChanged(int index) {
@@ -103,6 +118,18 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
         context.pushNamed('generating_recipe');
       }
     });
+
+    final toolState = ref.watch(kitchenViewModelProvider);
+    final availableTools = toolState.kitchenTools ?? [];
+    final recipeTools = availableTools
+        .map(
+          (tool) => RecipeKitchenToolEntity(
+            toolId: tool.toolId,
+            toolName: tool.toolName,
+            imageUrl: tool.imageUrl,
+          ),
+        )
+        .toList();
 
     final isInventoryTab = _selectedTabIndex == 1;
 
@@ -189,7 +216,6 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
                     },
                   ),
                   SizedBox(height: 6),
-
                   InputWidgetTitle(title: "Select your expertise in cooking."),
                   CustomTabBar(
                     tabItems: [
@@ -207,6 +233,16 @@ class _PantryChefScreenState extends ConsumerState<PantryChefScreen> {
                       CookingExpertise.canCook,
                       CookingExpertise.expert,
                     ],
+                  ),
+                  SizedBox(height: 6),
+                  ConsiderKitchenToolWidget(
+                    isSelected: _isToolSelected,
+                    onSelect: (value) {
+                      setState(() {
+                        _isToolSelected = value;
+                      });
+                    },
+                    kitchenTools: _isToolSelected ? recipeTools : [],
                   ),
                   SizedBox(height: 6),
                   // recipe  visibility selector

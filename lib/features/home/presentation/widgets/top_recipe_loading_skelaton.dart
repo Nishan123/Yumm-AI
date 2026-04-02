@@ -13,6 +13,7 @@ class TopRecipeLoadingSkelaton extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: ListView.builder(
+          padding: EdgeInsets.only(top: 16),
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
           itemCount: 5,
@@ -41,7 +42,6 @@ Widget _topRecipeLoadingCard(BuildContext context) {
             borderRadius: BorderRadius.circular(26),
             color: AppColors.extraLightBlackColor,
           ),
-
         ),
         Container(
           height: mq.height * 0.03,

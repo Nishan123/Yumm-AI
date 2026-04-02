@@ -166,6 +166,26 @@ class CookbookViewModel extends Notifier<CookbookState> {
     );
   }
 
+  /// Instantly checks if a recipe is in the local cookbook states list.
+  /// This avoids a visual flash by doing a synchronous check before UI builds.
+  void checkRecipeLocalFallback({required String originalRecipeId}) {
+    try {
+      final recipe = state.recipes.firstWhere(
+        (r) => r.originalRecipeId == originalRecipeId,
+      );
+      state = state.copyWith(
+        status: CookbookStatus.loaded,
+        isInCookbook: true,
+        currentRecipe: recipe,
+        errorMessage: null,
+      );
+    } catch (e) {
+      // Not found locally. The cooking_screen normally handles calling `checkRecipeWithFallback`
+      // if it's missing, but we still reset `isInCookbook` first.
+      state = state.copyWith(isInCookbook: false, currentRecipe: null);
+    }
+  }
+
   /// Check if recipe is in cookbook and fetch user's copy with fallback handling
   ///
   /// This is the improved method that combines both checking and fetching into one

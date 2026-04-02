@@ -76,6 +76,9 @@ class SettingScreen extends ConsumerWidget {
                   groupName: "Preferences",
                   settingLists: [
                     SettingItemCard(
+                      onTap: (){
+                        context.pushNamed("notifications_pref");
+                      },
                       leadingIcon: LucideIcons.bell,
                       title: 'Notifications',
                       subTitle: 'Select the kind of notification you get.',

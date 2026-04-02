@@ -27,7 +27,7 @@ class _RecommendedFoodScrollSnapState
   Widget build(BuildContext context) {
     final recipesAsyncValue = ref.watch(publicRecipesProvider);
     final screenHeight = MediaQuery.sizeOf(context).height;
-    final responsiveHeight = screenHeight * 0.52;
+    final responsiveHeight = screenHeight * 0.53;
 
     ref.listen(publicRecipesProvider, (previous, next) {
       if (previous is AsyncLoading && next is AsyncData) {

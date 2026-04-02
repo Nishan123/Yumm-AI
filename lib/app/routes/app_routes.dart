@@ -1,5 +1,7 @@
-import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yumm_ai/app/routes/router_notifier.dart';
 import 'package:yumm_ai/features/auth/presentation/pages/change_password_screen.dart';
 import 'package:yumm_ai/features/bug_report/presentation/pages/report_bug_screen.dart';
 import 'package:yumm_ai/features/chef/domain/entities/recipe_entity.dart';
@@ -17,6 +19,7 @@ import 'package:yumm_ai/features/cookbook/presentation/pages/edit_recipe_screen.
 import 'package:yumm_ai/features/cooking/presentation/pages/cooking_screen.dart';
 import 'package:yumm_ai/features/dashboard/presentation/pages/main_screen.dart';
 import 'package:yumm_ai/features/kitchen_tool/presentation/pages/kitchen_tools_screen.dart';
+import 'package:yumm_ai/features/notifications/presentation/enable_disable_notifications.dart';
 import 'package:yumm_ai/features/pantry_inventory/presentation/pages/pantry_inventory_screen.dart';
 import 'package:yumm_ai/features/profile/presentation/pages/delete_profile_screen.dart';
 import 'package:yumm_ai/features/profile/presentation/pages/profile_screen.dart';
@@ -32,11 +35,45 @@ import 'package:yumm_ai/features/notifications/presentation/notification_screen.
 
 import 'package:yumm_ai/core/utils/navigator_key.dart';
 
-class AppRoutes {
-  AppRoutes();
-  final GoRouter appRoutes = GoRouter(
+final routerProvider = Provider<GoRouter>((ref) {
+  final routerNotifier = ref.watch(routerNotifierProvider);
+
+  return GoRouter(
     navigatorKey: navigatorKey,
+    debugLogDiagnostics: kDebugMode,
     initialLocation: "/",
+    refreshListenable: routerNotifier,
+
+    redirect: (context, state) {
+      final currentPath = state.uri.path;
+
+      if (!routerNotifier.isReady) {
+        if (currentPath != "/") {
+          return "/";
+        }
+        return null;
+      }
+
+      final isAuthenticated = routerNotifier.isAuthenticated;
+
+      const publicRoutes = ["/login", "/signup", "/forgot_password"];
+      final isPublicRoute = publicRoutes.contains(currentPath);
+
+      if (isAuthenticated) {
+        if (currentPath == "/" || isPublicRoute) {
+          return "/main";
+        }
+        return null;
+      }
+
+      if (currentPath == "/") {
+        return "/login";
+      }
+
+      if (isPublicRoute) return null;
+
+      return "/login";
+    },
     routes: [
       GoRoute(
         path: "/",
@@ -253,6 +290,13 @@ class AppRoutes {
           return const NotificationScreen();
         },
       ),
+      GoRoute(
+        path: "/notifications_pref",
+        name: "notifications_pref",
+        builder: (context, state) {
+          return const EnableDisableNotifications();
+        },
+      ),
     ],
   );
-}
+});

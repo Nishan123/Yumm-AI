@@ -59,15 +59,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 60,),
+                SizedBox(height: 60),
                 // Home app bar
                 userAsync.when(
                   data: (user) {
                     String profilePicUrl = user!.profilePic!;
                     if (profilePicUrl.isNotEmpty) {
-                      final separator = profilePicUrl.contains('?')
-                          ? '&'
-                          : '?';
+                      final separator = profilePicUrl.contains('?') ? '&' : '?';
                       profilePicUrl = '$profilePicUrl${separator}v=$cacheKey';
                     }
                     return HomeAppBar(
@@ -98,11 +96,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 //Premium Card
                 PremiumAdBanner(
                   text: 'Unlock\nUnlimited Recipes',
-                  backgroundImage:
-                      '${ConstantsString.assetSvg}/ad_banner.svg',
+                  backgroundImage: '${ConstantsString.assetSvg}/ad_banner.svg',
                   buttonText: 'Go Premium',
                 ),
-      
+
                 //Choice Chips
                 CustomChoiceChip<Meal>(
                   values: Meal.values,
@@ -113,29 +110,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   iconBuilder: (meal) => meal.icon,
                 ),
                 SizedBox(height: 18),
-      
+
                 //Recommendations Card
                 RecommendedFoodScrollSnap(),
-      
+
                 Padding(
-                  padding: const EdgeInsets.only(
-                    left: 18,
-                    top: 18,
-                    bottom: 18,
-                  ),
+                  padding: const EdgeInsets.only(left: 18, top: 26),
                   child: Text("Top Recipes", style: AppTextStyles.title),
                 ),
-      
+
                 //Top Recipes
                 Consumer(
                   builder: (context, ref, child) {
-                    final topRecipesAsync = ref.watch(
-                      topPublicRecipesProvider,
-                    );
-      
+                    final topRecipesAsync = ref.watch(topPublicRecipesProvider);
+
                     return topRecipesAsync.when(
                       data: (recipes) {
                         return ListView.builder(
+                          padding: EdgeInsets.only(top: 16),
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount:
@@ -153,9 +145,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             }
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TopRecipeCard(recipe: recipes[index]),
-                              ],
+                              children: [TopRecipeCard(recipe: recipes[index])],
                             );
                           },
                         );

@@ -111,6 +111,7 @@ class _KitchenToolsScreenState extends ConsumerState<KitchenToolsScreen> {
       ),
       appBar: AppBar(title: Text("Available Kitchen tools")),
       body: SafeArea(
+        bottom: false,
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 12),
           child: _buildBody(toolState),

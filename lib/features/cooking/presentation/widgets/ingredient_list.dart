@@ -38,7 +38,7 @@ class IngredientList extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(left: 16, top: 16),
             child: Text(
-              "All the ingredients you'll need 🍎",
+              "All the ingredients you'll need",
               style: AppTextStyles.h3.copyWith(fontWeight: FontWeight.w700),
             ),
           );

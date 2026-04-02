@@ -51,66 +51,45 @@ class _CustomChoiceChipState<T> extends State<CustomChoiceChip<T>> {
     }
   }
 
+  void _handleSelection(bool selected, int index, T item) {
+    if (selected) {
+      setState(() => _selectedIndex = index);
+      widget.onSelected?.call(item);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final chips = widget.values.asMap().entries.map((entry) {
       final index = entry.key;
       final item = entry.value;
-      final label = widget.labelBuilder(item);
-      final icon = widget.iconBuilder?.call(item);
 
-      final chip = ChoiceChip(
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-        showCheckmark: false,
-        label: Row(
-          spacing: icon == null ? 0 : 8,
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            icon == null
-                ? SizedBox()
-                : Icon(
-                    icon,
-                    size: 20,
-                    color: _selectedIndex == index
-                        ? AppColors.whiteColor
-                        : AppColors.blackColor,
-                  ),
-            Text(label),
-          ],
-        ),
-        selected: _selectedIndex == index,
+      final chip = _AnimatedChip<T>(
+        isWrap: widget.isWrap,
+        key: ValueKey(index),
+        index: index,
+        item: item,
+        label: widget.labelBuilder(item),
+        icon: widget.iconBuilder?.call(item),
+        isSelected: _selectedIndex == index,
         onSelected: (selected) => _handleSelection(selected, index, item),
-        selectedColor: AppColors.blackColor,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(color: AppColors.blackColor),
-          borderRadius: BorderRadiusGeometry.circular(30),
-        ),
-        labelStyle: TextStyle(
-          fontSize: 15,
-          color: _selectedIndex == index
-              ? AppColors.whiteColor
-              : AppColors.blackColor,
-        ),
-        backgroundColor: AppColors.whiteColor,
       );
 
-      if (widget.isWrap) {
-        return chip;
-      }
+      if (widget.isWrap) return chip as Widget;
 
       return Padding(
-        padding: index == 0
-            ? const EdgeInsets.only(left: 18, right: 10)
-            : const EdgeInsets.only(right: 10),
-        child: chip,
-      );
+            padding: index == 0
+                ? const EdgeInsets.only(left: 18, right: 10)
+                : const EdgeInsets.only(right: 10),
+            child: chip,
+          )
+          as Widget;
     }).toList();
 
     if (widget.isWrap) {
       return Padding(
         padding: widget.padding,
-        child: Wrap(spacing: 12, runSpacing:2, children: chips),
+        child: Wrap(spacing: 12, runSpacing: 2, children: chips),
       );
     }
 
@@ -122,11 +101,161 @@ class _CustomChoiceChipState<T> extends State<CustomChoiceChip<T>> {
       ),
     );
   }
+}
 
-  void _handleSelection(bool selected, int index, T item) {
-    if (selected) {
-      setState(() => _selectedIndex = index);
-      widget.onSelected?.call(item);
+// ── Animated individual chip ──────────────────────────────────────────────────
+
+class _AnimatedChip<T> extends StatefulWidget {
+  final int index;
+  final T item;
+  final String label;
+  final IconData? icon;
+  final bool isSelected;
+  final void Function(bool) onSelected;
+  final bool isWrap;
+
+  const _AnimatedChip({
+    super.key,
+    required this.index,
+    required this.item,
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onSelected,
+    required this.isWrap
+  });
+
+  @override
+  State<_AnimatedChip<T>> createState() => _AnimatedChipState<T>();
+}
+
+class _AnimatedChipState<T> extends State<_AnimatedChip<T>>
+    with TickerProviderStateMixin {
+  late final AnimationController _colorController;
+  late final AnimationController _popController;
+
+  late final Animation<double> _colorT;
+  late final Animation<double> _popScale;
+
+  late bool _wasSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    _wasSelected = widget.isSelected;
+
+    // Separate controller for color — animates both forward and backward smoothly
+    _colorController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+      value: widget.isSelected ? 1.0 : 0.0, // jump to correct state, no flash
+    );
+
+    // Separate controller for pop — only ever plays forward on select
+    _popController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 320),
+    );
+
+    _colorT = CurvedAnimation(
+      parent: _colorController,
+      curve: Curves.easeInOutCubic,
+    );
+
+    _popScale = TweenSequence<double>([
+      TweenSequenceItem(
+        tween: Tween(
+          begin: 1.0,
+          end: 0.94, // Premium Apple feel: Press inwards
+        ).chain(CurveTween(curve: Curves.easeOutCubic)),
+        weight: 40,
+      ),
+      TweenSequenceItem(
+        tween: Tween(
+          begin: 0.94,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.easeOutBack)), // Snappy spring release
+        weight: 60,
+      ),
+    ]).animate(_popController);
+  }
+
+  @override
+  void didUpdateWidget(_AnimatedChip<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.isSelected == _wasSelected) return;
+    _wasSelected = widget.isSelected;
+
+    if (widget.isSelected) {
+      // Selecting: animate color fill + trigger pop
+      _colorController.animateTo(1.0);
+      _popController.forward(from: 0.0);
+    } else {
+      // Deselecting: animate color drain only — pop controller untouched (stays at 1.0/idle)
+      _colorController.animateTo(0.0);
     }
+  }
+
+  @override
+  void dispose() {
+    _colorController.dispose();
+    _popController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: Listenable.merge([_colorController, _popController]),
+      builder: (context, _) {
+        final t = _colorT.value;
+        final bgColor = Color.lerp(
+          AppColors.whiteColor,
+          AppColors.blackColor,
+          t,
+        )!;
+        final contentColor = Color.lerp(
+          AppColors.blackColor,
+          AppColors.whiteColor,
+          t,
+        )!;
+
+        return Transform.scale(
+          scale: _popScale.value,
+          child: GestureDetector(
+            onTap: () => widget.onSelected(!widget.isSelected),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              margin: widget.isWrap?EdgeInsets.only(bottom: 8):EdgeInsets.all(0),
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: AppColors.blackColor, width: 1.0),
+              ),
+              child: Row(
+                spacing: widget.icon == null ? 0 : 8,
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (widget.icon != null)
+                    Icon(widget.icon, size: 20, color: contentColor),
+                  if (widget.icon == null) const SizedBox(),
+                  Text(
+                    widget.label,
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: contentColor,
+                      fontWeight:
+                          FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

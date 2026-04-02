@@ -1,10 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yumm_ai/app/theme/app_colors.dart';
 import 'package:yumm_ai/app/theme/app_text_styles.dart';
 import 'package:yumm_ai/core/constants/constants_string.dart';
-import 'package:yumm_ai/core/widgets/primary_icon_button.dart';
 
 class HomeAppBar extends StatelessWidget {
   final String profilePic;
@@ -18,9 +18,7 @@ class HomeAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 18
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 18),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         spacing: 6,
@@ -52,7 +50,6 @@ class HomeAppBar extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              
               Row(
                 children: [
                   Text("Hi,", style: AppTextStyles.h5),
@@ -73,12 +70,25 @@ class HomeAppBar extends StatelessWidget {
             ],
           ),
           Spacer(),
-          PrimaryIconButton(
-          onTap: () {
-            context.pushNamed("notifications");
-          },
-          icon: LucideIcons.bell,
-        ),
+          ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+              child: Container(
+                decoration: BoxDecoration(color: AppColors.lightBlackColor),
+                child: IconButton(
+                  onPressed: () {
+                    context.pushNamed("notifications");
+                  },
+                  icon: Icon(
+                    LucideIcons.bell,
+                    color: AppColors.blackColor,
+                    size: 24,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

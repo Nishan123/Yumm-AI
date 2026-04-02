@@ -178,7 +178,7 @@ class _ReportBugScreenState extends ConsumerState<ReportBugScreen> {
                   child: Text("Issue is related to:", style: AppTextStyles.h6),
                 ),
                 CustomChoiceChip<IssueType>(
-                  padding: const EdgeInsetsGeometry.only(left: 16),
+                  padding: const EdgeInsetsGeometry.only(left: 16,bottom: 30),
                   values: IssueType.values,
                   labelBuilder: (type) => type.text,
                   iconBuilder: (type) => type.icon,
